@@ -33,21 +33,32 @@ async def run_scan(src: Path, narration: str | None = None, emit: Emit = _print_
     root = config.SCANS_DIR / scan_id
     api = meta_client()
     costs: dict[str, float] = {}
+    timings: dict[str, float] = {}
+    mark_t = time.perf_counter()
+
+    def lap(name: str) -> None:
+        nonlocal mark_t
+        now = time.perf_counter()
+        timings[name] = round(now - mark_t, 1)
+        mark_t = now
 
     emit("ingest", {"scan_id": scan_id, "source": src.name})
     proxy = media.make_proxy(src, root / "proxy.mp4")
     frames = media.extract_frames(proxy, root / "frames")
     info = media.probe(proxy)
     keyframes = media.pick_keyframes(len(frames), config.KEYFRAMES)
+    lap("ingest")
     emit("ingest.done", {"frames": len(frames), "duration_s": round(info["duration_s"], 1), "keyframes": keyframes})
 
     # Upload while the planner looks at the room.
     file_task = asyncio.create_task(upload_video(api, proxy))
     plan, plan_meta = await planner.plan(api, [frames[i] for i in keyframes], narration)
     costs["planner"] = plan_meta["cost_usd"]
+    lap("planner")
     emit("planner.done", {"room_type": plan["room_type"], "concepts": [c["concept"] for c in plan["concepts"]],
                           "reasoning_summary": plan_meta["reasoning_summary"]})
     file_id = await file_task
+    lap("upload_wait")
 
     sem = asyncio.Semaphore(config.SAM_CONCURRENCY)
 
@@ -68,6 +79,7 @@ async def run_scan(src: Path, narration: str | None = None, emit: Emit = _print_
     sam_results = [r for attempts in await asyncio.gather(*(track(c) for c in plan["concepts"])) for r in attempts]
     costs["sam"] = sum(sam_cost(len(frames)) for _ in sam_results)
     tracks = [t for r in sam_results for t in r.tracks]
+    lap("sam")
     marks = som.assign_marks(tracks)
 
     marked = []
@@ -75,10 +87,12 @@ async def run_scan(src: Path, narration: str | None = None, emit: Emit = _print_
         out = root / "marked" / f"{frame:05d}.jpg"
         som.draw_marks(frames[frame], frame, marks, out)
         marked.append((frame, out))
-    emit("marks.done", {"objects": {m: t.concept for m, t in marks.items()}})
+    emit("marks.done", {"objects": {m: t.concept for m, t in marks.items()},
+                        "images": [str(p.relative_to(root)) for _, p in marked]})
 
     survey, survey_meta = await surveyor.survey(api, marked, list(marks), plan, narration)
     costs["surveyor"] = survey_meta["cost_usd"]
+    lap("surveyor")
 
     hazards = []
     for i, h in enumerate(survey["hazards"]):
@@ -112,6 +126,7 @@ async def run_scan(src: Path, narration: str | None = None, emit: Emit = _print_
         "disclaimer": DISCLAIMER,
         "cost_usd": {k: round(v, 4) for k, v in costs.items()} | {"total": round(sum(costs.values()), 4)},
         "seconds": round(time.perf_counter() - started, 1),
+        "timings_s": timings,
         "provenance": {
             "source_sha256": sha256_file(src),
             "proxy": {"fps": config.PROXY_FPS, **info},
