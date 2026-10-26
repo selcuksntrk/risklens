@@ -16,20 +16,29 @@ Status: 🚧 in progress (Meta Global AI Developer Hackathon, Oct 26 – Nov 4 2
 | Planner agent | **Muse Spark 1.3** | Looks at the room and decides what to track, with alternate wordings when segmentation finds nothing |
 | Perception | **SAM 3.1** | Tracks every planned object through the video with stable IDs |
 | Surveyor agent | **Muse Spark 1.3** | Reasons over set-of-marks keyframes: what can fall onto the bed, block the exit, tip over or shatter |
-| *(coming)* Voice capture | Muse Voice Transcribe | Turkish/English narration while filming ("kids sleep here") |
+| Voice capture | **Muse Voice Transcribe** | Live Turkish/English narration while filming ("kids sleep here"), streamed through a server-side proxy |
 | *(coming)* Fix planner | Muse Spark + FEMA E-74 | Cited, practical fixes |
 | *(coming)* Auditor | Muse Spark Open (open weights, Baseten) | Independent second opinion with readable reasoning in the audit trail |
 | *(coming)* Fix cards | Muse Image | Your own room, shown fixed |
 | *(coming)* Verify-after-fix | SAM 3.1 + Muse Spark | Re-film; proves the hazard is gone |
 
-## Run it (CLI, today)
+## Run it
+Requires `ffmpeg`, [uv](https://docs.astral.sh/uv/) and Node 20+. Put `MODEL_API_KEY` in `.env` (see `.env.example`).
 ```bash
-cd backend
-cp ../.env.example ../.env   # add MODEL_API_KEY
-uv run --env-file ../.env python -m app.cli scan path/to/room.mp4 --narration "bedroom, kids sleep here"
-uv run --group dev pytest -q
+# web app: one server for API + PWA at http://localhost:8000
+(cd frontend && npm install && npm run build)
+cd backend && uv run --env-file ../.env uvicorn app.main:app --port 8000
+
+# frontend dev with hot reload (proxies /api to :8000)
+cd frontend && npm run dev
+
+# CLI: one room video -> scans/<id>/report.json + marked keyframes + evidence images
+cd backend && uv run --env-file ../.env python -m app.cli scan path/to/room.mp4 --narration "bedroom, kids sleep here"
+
+# tests (no API calls)
+cd backend && uv run --group dev pytest -q
 ```
-Output: `scans/<id>/report.json` plus marked keyframes and evidence images. Requires `ffmpeg`.
+The phone camera needs HTTPS: open the app through an HTTPS tunnel or the deployed URL.
 
 ## Built during the hackathon
 Everything in this repo was written during the event window (Oct 26 – Nov 4 2026); see the commit history.

@@ -16,8 +16,10 @@ INSTRUCTIONS = (
     "video. Tracked objects carry a colored box and a number (the mark). For each hazard, give the mark of the object "
     "that causes it (or 'none' if it is unmarked, and then name it), the relation, a severity and the frame that "
     "shows it best. Relations: " + "; ".join(f"{k} = {v}" for k, v in RELATIONS.items()) + ". "
-    "Severity: high = can injure a person in a likely spot (bed, exit, play area); medium = can injure or block "
-    "but less likely; low = damage or minor risk. Only report what is visible; one entry per object and relation; "
+    "Severity: high = heavy enough to seriously injure a person in a likely spot (bed, exit, play area); medium = "
+    "can injure or block but less likely; low = light objects, damage or minor risk (plants, small decor and light "
+    "lamps are low unless they are heavy and directly over a bed). Report what a professional surveyor would list, "
+    "not every object. Only report what is visible; one entry per object and relation; "
     "say in the rationale what you saw (position, size, anchoring if visible). If you see straps, brackets or other "
     "anchoring, do not report tip-over for that object. Do not assess the building structure."
 )

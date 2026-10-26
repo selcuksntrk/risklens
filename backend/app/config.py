@@ -20,6 +20,6 @@ PROXY_FPS = 5           # SAM bills per frame: 60 s clip = 300 frames per concep
 PROXY_HEIGHT = 720
 MAX_CONCEPTS = 8
 KEYFRAMES = 6           # frames the planner/surveyor see
-SAM_CONCURRENCY = 4
+SAM_CONCURRENCY = 8      # all planned concepts at once; SAM allows 3,000 RPM
 
 SCANS_DIR = Path(os.environ.get("RISKLENS_SCANS", Path(__file__).resolve().parents[2] / "scans"))

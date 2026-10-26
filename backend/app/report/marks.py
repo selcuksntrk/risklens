@@ -50,7 +50,9 @@ def draw_marks(frame_path: Path, frame: int, marks: dict[str, Track], out: Path,
         color = PALETTE[(int(mark) - 1) % len(PALETTE)]
         draw.rectangle(box, outline=color, width=max(3, image.height // 240))
         label = f"{mark} {track.concept}" if only is not None else mark
-        x, y = box[0] + 4, box[1] + 4
+        width = draw.textlength(label, font=font)
+        x = min(max(box[0] + 4, 3), image.width - width - 6)    # keep labels inside the frame
+        y = max(box[1] + 4, 3)
         tb = draw.textbbox((x, y), label, font=font)
         draw.rectangle((tb[0] - 3, tb[1] - 3, tb[2] + 3, tb[3] + 3), fill=color)
         draw.text((x, y), label, fill="white", font=font)

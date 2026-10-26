@@ -98,6 +98,9 @@ async def run_scan(src: Path, narration: str | None = None, emit: Emit = _print_
     for i, h in enumerate(survey["hazards"]):
         frame = int(h["evidence_frame"])
         track = marks.get(h["mark"])
+        if track and som.box_near(track, frame) is None:     # surveyor cited a frame where SAM never saw it
+            frame = min(track.frames, key=lambda f: abs(f - frame))
+            h = {**h, "evidence_frame": str(frame)}
         evidence = root / "evidence" / f"h{i + 1}.jpg"
         if track:
             som.draw_marks(frames[frame], frame, {h["mark"]: track}, evidence, only={h["mark"]})
