@@ -1,0 +1,17 @@
+[project]
+name = "risklens"
+version = "0.1.0"
+description = "Phone video -> insurer-grade non-structural home hazard survey, fix plan and verify-after-fix (Meta Muse + SAM 3.1)"
+requires-python = ">=3.11"
+dependencies = [
+    "openai>=1.40",
+    "meta-sam-parser>=0.0.6",
+    "pillow>=10",
+]
+
+[dependency-groups]
+dev = ["pytest>=8"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["."]
