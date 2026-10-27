@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { go } from './App'
-import { fileUrl, getScan, RELATION_LABELS, ROOM_LABELS, type Hazard, type Report, type TimelineEvent } from './api'
+import { fileUrl, getScan, RELATION_LABELS, ROOM_LABELS, type Fix, type Hazard, type Report, type TimelineEvent } from './api'
 
 export function riskBand(score: number) {
   if (score >= 70) return { label: 'High risk', cls: 'high' }
@@ -62,6 +62,7 @@ function Timeline({ events, scanId }: { events: TimelineEvent[]; scanId: string 
   const planner = find('planner.done')
   const marks = find('marks.done')
   const surveyor = find('surveyor.done')
+  const fixer = find('fixer.done')
   const sam = new Map<string, { done: boolean; objects?: number }>()
   for (const e of events) {
     if (e.step === 'sam.start') sam.set(String(e.concept), { done: false })
@@ -104,6 +105,11 @@ function Timeline({ events, scanId }: { events: TimelineEvent[]; scanId: string 
             <small>{String(surveyor.hazards)} hazards found</small>
             <Summary lines={surveyor.reasoning_summary as string[]} />
           </>}
+        </li>
+        <li className={step(!!fixer, !!surveyor && !fixer)}>
+          <b>Fix planner</b> <span className="tag">{MODEL.spark}</span> <span className="tag">FEMA E-74</span>
+          {!!surveyor && !fixer && <small>Looking up FEMA E-74 guidance for each hazard…</small>}
+          {fixer && <small>Read FEMA sections {(fixer.fema_lookups as string[][]).flat().join(', ')}</small>}
         </li>
       </ol>
     </section>
@@ -159,8 +165,29 @@ function HazardCard({ hazard, scanId }: { hazard: Hazard; scanId: string }) {
         </div>
         <h4>{hazard.object}</h4>
         <p>{hazard.rationale}</p>
+        {hazard.fix && <FixBlock fix={hazard.fix} />}
         {hazard.track && <small className="muted">Tracked by SAM 3.1 as {hazard.track} · frame {hazard.evidence_frame}</small>}
       </div>
     </li>
+  )
+}
+
+function FixBlock({ fix }: { fix: Fix }) {
+  return (
+    <div className="fix">
+      <div className="fix-head">
+        <b>How to fix</b>
+        <span className={`pill ${fix.diy ? 'diy' : 'pro'}`}>{fix.diy ? 'DIY' : 'Professional'}</span>
+        <span className="muted">{fix.cost} · ~{fix.minutes} min</span>
+      </div>
+      <ol>{fix.actions.map((a, i) => <li key={i}>{a}</li>)}</ol>
+      {fix.fema_sections.length > 0 && (
+        <small className="muted">
+          Source: FEMA E-74 {fix.fema_sections.map((s, i) => (
+            <span key={s.id}>{i > 0 && ', '}<a href={s.url} target="_blank" rel="noreferrer">§{s.id} {s.title}</a> (p. {s.pages})</span>
+          ))}
+        </small>
+      )}
+    </div>
   )
 }

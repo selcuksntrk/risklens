@@ -17,7 +17,7 @@ Status: 🚧 in progress (Meta Global AI Developer Hackathon, Oct 26 – Nov 4 2
 | Perception | **SAM 3.1** | Tracks every planned object through the video with stable IDs |
 | Surveyor agent | **Muse Spark 1.3** | Reasons over set-of-marks keyframes: what can fall onto the bed, block the exit, tip over or shatter |
 | Voice capture | **Muse Voice Transcribe** | Live Turkish/English narration while filming ("kids sleep here"), streamed through a server-side proxy |
-| *(coming)* Fix planner | Muse Spark + FEMA E-74 | Cited, practical fixes |
+| Fix planner agent | **Muse Spark 1.3** + FEMA E-74 tool | Looks up FEMA E-74 sections through a function tool, then writes cited, practical fixes (DIY vs professional, cost, time); citations it didn't read are dropped |
 | *(coming)* Auditor | Muse Spark Open (open weights, Baseten) | Independent second opinion with readable reasoning in the audit trail |
 | *(coming)* Fix cards | Muse Image | Your own room, shown fixed |
 | *(coming)* Verify-after-fix | SAM 3.1 + Muse Spark | Re-film; proves the hazard is gone |

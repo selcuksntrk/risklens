@@ -12,7 +12,7 @@ from collections.abc import Callable
 from pathlib import Path
 
 from app import config, media
-from app.agents import planner, surveyor
+from app.agents import fixer, planner, surveyor
 from app.hazards import DISCLAIMER, risk_score
 from app.meta.clients import meta_client, upload_video
 from app.meta.sam import sam_cost, track_concept
@@ -116,12 +116,21 @@ async def run_scan(src: Path, narration: str | None = None, emit: Emit = _print_
         })
     emit("surveyor.done", {"hazards": len(hazards), "reasoning_summary": survey_meta["reasoning_summary"]})
 
+    room = {"type": plan["room_type"], "sleeping_area": plan["sleeping_area"], "exit_visible": plan["exit_visible"],
+            "summary": survey["room_summary"], "risk_score": risk_score(hazards)}
+    fixes, fix_meta = await fixer.plan_fixes(api, hazards, room)
+    costs["fixer"] = fix_meta["cost_usd"]
+    for h in hazards:
+        h["fix"] = fixes.get(h["id"])
+    lap("fixer")
+    emit("fixer.done", {"fixes": len(fixes), "fema_lookups": [fixer.normalize_ids(json.loads(c["arguments"]).get("section_ids", []))
+                                                              for c in fix_meta["tool_calls"]],
+                        "reasoning_summary": fix_meta["reasoning_summary"]})
+
     report = {
         "scan_id": scan_id,
         "created_at": now_iso(),
-        "room": {"type": plan["room_type"], "sleeping_area": plan["sleeping_area"],
-                 "exit_visible": plan["exit_visible"], "summary": survey["room_summary"],
-                 "risk_score": risk_score(hazards)},
+        "room": room,
         "hazards": hazards,
         "plan": plan,
         "objects": {m: {"concept": t.concept, "track": t.key, "frames": [t.frames[0], t.frames[-1]]}
@@ -133,14 +142,18 @@ async def run_scan(src: Path, narration: str | None = None, emit: Emit = _print_
         "provenance": {
             "source_sha256": sha256_file(src),
             "proxy": {"fps": config.PROXY_FPS, **info},
-            "models": {"planner": plan_meta["model"], "surveyor": survey_meta["model"], "tracking": config.SAM_MODEL},
+            "models": {"planner": plan_meta["model"], "surveyor": survey_meta["model"],
+                       "fixer": fix_meta.get("model"), "tracking": config.SAM_MODEL},
             "prompts_sha256": {"planner": sha256_text(planner.INSTRUCTIONS),
-                               "surveyor": sha256_text(surveyor.INSTRUCTIONS)},
+                               "surveyor": sha256_text(surveyor.INSTRUCTIONS),
+                               "fixer": sha256_text(fixer.instructions())},
+            "grounding": {"source": fixer.fema()["source"], "tool_calls": fix_meta["tool_calls"]},
             "sam": [{"concept": r.concept, "status": r.status, "objects": len(r.tracks), "seconds": r.seconds,
                      "error": r.error} for r in sam_results],
             "reasoning_summaries": {"planner": plan_meta["reasoning_summary"],
-                                    "surveyor": survey_meta["reasoning_summary"]},
-            "usage": {"planner": plan_meta["usage"], "surveyor": survey_meta["usage"]},
+                                    "surveyor": survey_meta["reasoning_summary"],
+                                    "fixer": fix_meta["reasoning_summary"]},
+            "usage": {"planner": plan_meta["usage"], "surveyor": survey_meta["usage"], "fixer": fix_meta["usage"]},
         },
     }
     (root / "report.json").write_text(json.dumps(report, indent=2, ensure_ascii=False) + "\n")

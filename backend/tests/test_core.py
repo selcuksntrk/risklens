@@ -42,3 +42,11 @@ def test_risk_score_grows_without_saturating():
     assert risk_score([{"severity": "low"}, {"severity": "medium"}]) == 32
     assert risk_score([{"severity": "medium"}] * 5) == 76
     assert risk_score([{"severity": "high"}] * 4) == 91
+
+
+def test_fema_lookup_returns_known_sections_and_flags_unknown():
+    from app.agents.fixer import fema_lookup
+    out = fema_lookup(["6.5.2.1", "9.9.9"])
+    assert [s["id"] for s in out["sections"]] == ["6.5.2.1"] and out["unknown_ids"] == ["9.9.9"]
+    assert out["sections"][0]["mitigation"]
+    assert [s["id"] for s in fema_lookup(["6.5.2.1 Bookshelves", "§6.5.6.3"])["sections"]] == ["6.5.2.1", "6.5.6.3"]

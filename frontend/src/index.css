@@ -125,3 +125,12 @@ p { margin: 0 0 .6em; }
   .hazard { display: grid; grid-template-columns: 300px 1fr; }
   .hazard img { height: 100%; object-fit: cover; }
 }
+
+.fix { background: var(--surface-2); border-radius: 10px; padding: 10px 12px; margin: 10px 0 8px; font-size: .9rem; }
+.fix-head { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin-bottom: 4px; }
+.fix ol { margin: 6px 0; padding-left: 20px; }
+.fix li { margin-bottom: 4px; }
+.fix a { color: var(--accent); }
+.pill { font-size: .7rem; font-weight: 700; padding: 2px 8px; border-radius: 999px; }
+.pill.diy { background: color-mix(in srgb, var(--low) 25%, transparent); color: var(--low); }
+.pill.pro { background: color-mix(in srgb, var(--medium) 25%, transparent); color: var(--medium); }

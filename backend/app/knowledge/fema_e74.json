@@ -1,0 +1,252 @@
+{
+ "source": "FEMA E-74, Reducing the Risks of Nonstructural Earthquake Damage: A Practical Guide (FEMA, December 2012). US federal work, public domain.",
+ "sections": [
+  {
+   "id": "6.3.2.3",
+   "title": "Glazed interior partitions",
+   "pages": "6-80–6-88",
+   "summary": "",
+   "causes": [
+    "Glazing assemblies may be damaged as a result of either in-plane or out-of-plane loading unless properly detailed. Failure of glazed partitions may create falling hazards, block corridors, and endanger occupants attempting to exit from damaged buildings. Glazing is particularly vulnerable in assemblies where there is insufficient clearance in the glazing pockets or insufficient isolation from the structure to accommodate inter- story drifts.",
+    "Full height glazed partitions in flexible structures may fail unless they are isolated from the building deformations. In addition to broken glass, the mullions, gaskets, or setting block may be damaged. Damage may also include cracked or spalled finishes surrounding the glazing, deformed partition framing, and failed connections. Partial height glazed partitions may damage ceiling framing to which they are attached or can fall out-of-plane unless they are laterally braced to the structure above. Particularly hazardous is glazing used at the top portion of partial height partitions where it can fall from increased height; such glazing is often used to allow light transmission but reduce sound transmission.",
+    "Glazed partitions may be damaged by impact from unanchored furniture or contents or suspended items without appropriate sway bracing."
+   ],
+   "mitigation": [
+    "Architectural Design for Earthquake (Charleson, 2007) provides discussion and graphics pertaining to seismic detailing for glazing and glazed partitions. In addition, the American Architectural Manufacturer’s Association (AAMA) has published guidelines for testing glazing assemblies and determining Δfallout. These guidelines may be obtained at www.aamanet.org.",
+    "Glazing may be found in heavy, light, or demountable partitions; glazed partitions may be either full height or partial height. Anchorage details for heavy partitions are shown in Section 6.3.2.1, light partition details are shown in Section 6.3.2.2, and demountable partition details are shown in Section 6.5.5.2. The nonstructural surround must be self- supporting and not deliver loads to the glazing assembly from above or either side; thus, wall elements above the glazed portion may need to be suspended from above or have an adequate lintel so the weight does not bear on the glazing or mullions. A deep leg slip track could be installed either at the top of the mullion or at the structure above, depending on the structural framing configuration. Note that because glazed partitions must meet the seismic drift limits for glass components, glazed partitions may require additional or different bracing than a similar partition without glazing. Also note that where the partition is properly detailed to be isolated from the seismic inter-story drift of the surrounding structure, the glass-to-frame clearance required around each pane of glazing is reduced. Special care should be given when detailing glass on intersecting planes such as corners and reentrant corners as these locations are particularly vulnerable to damage.",
+    "Safety glazing, such as laminated or tempered glass, may be required in areas adjacent to stairways or subject to human impact; check the applicable code for specific requirements. Use of safety glass will reduce the hazard in the event that some of the glazing breaks in an earthquake.",
+    "All glass assemblies have become common for enclosing lobby areas or atria in large commercial buildings. These typically are suspended from specially designed steel framing and may include details such as glass fins and steel connecting hardware. These assemblies are typically left free to slip at the bottom and must be specially detailed at edges and corners to avoid impact with adjacent panes.",
+    "Glazed partitions should not be used to provide lateral support to other nonstructural components such as book shelves, electrical panels, file cabinets, unless adequate lateral resistance can be shown. In addition, such items should not be located where they can tip, fall, or swing and break the partition glazing.",
+    "The use of glazed partitions should be avoided in emergency exit corridors or stairways; limiting the height and area of partition glazing or using multiple smaller panes of glass may be less hazardous than larger and taller panes."
+   ],
+   "url": "https://femae74.atcouncil.org/docman/abbreviated/section-6-3/23-16-femae-74-chapter6-3-2-3"
+  },
+  {
+   "id": "6.4.2.4",
+   "title": "Water heaters",
+   "pages": "6-338–6-345",
+   "summary": "",
+   "causes": [
+    "Nonhazardous fluid piping is sensitive to both acceleration and deformation. Vulnerable locations include joints, bends, connections to rigidly mounted equipment and risers subjected to significant relative movement between floors. These piping systems have failure modes common to all piping systems.",
+    "Fluids may leak from damaged joints or broken pipe; water leakage has been a major source of damage in past earthquakes.",
+    "Damage to any part of the piping system may compromise its functionality and connected equipment or systems may be disabled due to piping leaks or failures."
+   ],
+   "mitigation": [
+    "Seismic restraint details for pressure piping shown in Sections 6.4.3.1 through 6.4.3.8 can be adapted for use with fluid piping. The same types of suspended, wall-, floor-, or roof-mounted details also apply to these types of piping.",
+    "Insulation must be coordinated with pipe supports; the presence of insulation or a protective sleeve between the pipe and the pipe strap or clamp may allow the pipe to slip longitudinally.",
+    "Note that where a pipe carries water in a facility that uses magnesium, it should be treated the same as hazardous material piping due to the potentially violent reaction between some forms of magnesium and water."
+   ],
+   "url": "https://femae74.atcouncil.org/docman/abbreviated/section-6-4/53-46-femae-74-chapter6-4-2-4"
+  },
+  {
+   "id": "6.4.9.3",
+   "title": "Pendant light fixtures",
+   "pages": "6-416–6-426",
+   "summary": "",
+   "causes": [
+    "Recessed fixtures supported by a suspended ceiling without independent safety wires to the structure above can become dislodged and fall. Fixtures with proper safety wires may fall from the grid and dangle from the safety wire but will not threaten occupants.",
+    "Unless secured to a properly braced ceiling grid, relative movement between the light fixture and the ceiling may damage the ceiling finishes, ceiling grid, wiring, or the light fixture. Heavy fixtures that are hung independently but not laterally braced may swing independent of the ceiling and damage the ceiling system.",
+    "Unsecured lenses and bulbs may fall independent of the fixture and cause damage below.",
+    "Most observed damage to recessed light fixtures in the U.S. has involved fixtures in suspended acoustic tile ceilings which do not have much inherent in-plane stiffness; damage to fixtures in gypsum board ceilings has been less common."
+   ],
+   "mitigation": [
+    "Requirements for recessed lighting fixtures may vary depending on requirements for the type of ceiling in which they are located. Recessed light fixtures may be found in any type of ceiling system. Requirements for suspended acoustic ceilings and suspended gypsum board ceilings are discussed below.",
+    "For acoustic tile ceilings, California schools require safety wires or independent vertical support for each light fixture, positive attachment from the light fixtures to the ceiling grid, and bracing for the ceiling grid that is adequate to resist the lateral loading from the ceiling, lights, and diffusers. DSA IR 25-5 Metal Suspension Systems for Lay-in Panel Ceilings (California Department of General Services, 2009c) provides details for lights in suspended acoustic ceiling grids. The requirements in DSA IR 25-5 differ slightly from ASTM E580: California schools require two safety wires on all fixtures under 56 pounds; require all 4 ft x 4 ft fixtures have a slack #12 safety wire at each corner, even if the fixture weight is less than 56 lb; and for fixtures weighing more than 56 lb, require they be independently supported by not less than four taut #12 wires, and that these wires be capable of supporting four times the weight of the fixture.",
+    "Per ASCE 7-10, certain types of suspended ceilings with screw-attached gypsum board built at one level do not require special seismic details; these ceilings also do not require safety wires for light fixtures (see Section 6.3.4.3 for a discussion of exempt ceilings). The weight of recessed light fixtures in suspended gypsum board ceilings must be supported by main runners, supplementary framing supported by the main runners, or directly by the structure above. Neither the ceiling finish material nor the cross furring should be used to support light fixtures. The fixture should be positively attached with screws or other approved connectors to the ceiling grid. Requirements for California schools are in DSA IR 25-3 Drywall Ceiling Suspension Conventional Construction-One Layer (California Department of General Services, 2005b). For suspended gypsum ceilings built at multiple levels, or other types of heavy ceilings, seismic detailing and safety wires for lighting may be required; check applicable code provisions.",
+    "International Code Council Evaluation Service has published AC184, Acceptance Criteria for Attachment Devices for Recessed Lighting Fixtures (Luminaries) in Suspended Ceiling Systems (ICC-ES, 2006), with information on attachments of light fixtures to suspended ceiling grids. The website located at http://www.agi-seismic.com/code/ac184.html# provides footage of lighting fixture failures where the lights are attached only with tie wires. A discussion of issues related to the code design provisions and the requirement for positive attachments is also provided. In some instances, where approved seismic fixture clamps (SFC) are used to anchor the lighting to a properly braced ceiling grid, the independent tie wires are not required.",
+    "For existing construction where the ceiling grid is not adequately braced or not strong enough to provide lateral restraint for the lighting, splay wire bracing at each corner of the fixture can be used to provide horizontal restraint. Such bracing would also help prevent swinging lights from damaging the surrounding ceiling. At a minimum, such fixtures should be retrofit with independent safety wires to prevent them from falling.",
+    "Lenses and bulbs may require independent restraints to keep them from falling from the fixture.",
+    "For fire rated ceiling assemblies, only fixtures and attachments with an approved fire rating may be used. Check with the manufacturer for approved systems. Some fixtures may require lead shielding or a fire-rated enclosure; check local code provisions.",
+    "Do not attach lights to ducts, piping, or other nonstructural items in the ceiling plenum."
+   ],
+   "url": "https://femae74.atcouncil.org/docman/abbreviated/section-6-4/63-57-femae-74-chapter6-4-9-3"
+  },
+  {
+   "id": "6.4.9.4",
+   "title": "Heavy light fixtures",
+   "pages": "6-427–6-434",
+   "summary": "",
+   "causes": [
+    "Surface lighting that is not equipped with independent safety wires may fall to the floor. Lighting with proper safety wires may fall from the ceiling and dangle from the safety wires but will not pose a safety risk to occupants.",
+    "Unless secured to a properly braced ceiling grid, relative movement between the light fixture and the ceiling may damage the ceiling finishes, ceiling grid, wiring, or the light fixture.",
+    "Unsecured lenses and bulbs may become dislodged and fall to the floor even where the fixture is restrained. This may occur with both ceiling and wall mounted surface lighting.",
+    "Most observed damage to light fixtures in the U.S. has involved fixtures in suspended acoustic tile ceilings which do not have much inherent in-plane stiffness; damage to fixtures mounted in or on gypsum board ceilings has been less common."
+   ],
+   "mitigation": [
+    "Retrofit of surface-mounted light fixtures is generally performed by following the prescriptive requirements for new construction. The key considerations include attachment to the ceiling suspension system with positive clamping devices that completely surround the supporting members. Safety wires are required between the clamping device and the adjacent ceiling hanger or to the structure above. The weight of the fixture shall not exceed the design carrying capacity of the supporting members. One, two, or four safety wires are required from the fixture housing to the structure above.",
+    "For suspended acoustic ceilings, ASTM E580 has other requirements related to the grid itself. Intermediate or heavy duty ceiling grid is required where lights will be supported and supplementary ceiling framing and supplementary hanger wires may be required adjacent to fixtures. Lateral restraint for lighting is assumed to be provided by the ceiling grid so the design of the grid must account for the overall weight of all the attached lighting and mechanical registers. See Section 6.3.4 for additional information regarding ceilings.",
+    "Per ASCE 7-10, certain types of suspended ceilings with screw-attached gypsum board built at one level do not require special seismic details; these ceilings also do not require safety wires for light fixtures (see Section 6.3.4.3). The weight of surface- mounted fixtures must be supported by main runners, supplementary framing supported by the main runners, or directly by the structure above. Neither the ceiling finish material nor the cross furring should be used to support light fixtures. The fixture should be positively attached with screws or other approved connectors to the ceiling grid. Requirements for California schools are in DSA IR 25-3 Drywall Ceiling Suspension Conventional Construction-One Layer (California Department of General Services, 2005b) and read “Surface-mounted fixtures shall be attached to a main runner with a positive clamping device made of material with a minimum of 14 gage. Rotational spring clamps do not comply.” For suspended gypsum ceilings built at multiple levels, or other types of heavy ceilings, seismic detailing and safety wires may be required; check applicable code provisions.",
+    "International Code Council Evaluation Service has published Acceptance Criteria AC184 (ICC-ES, 2006) with information on attachments of light fixtures to suspended ceiling grids. The website located at http://www.agi-seismic.com/code/ac184.html provides footage of lighting fixture failures where the lights are attached only with tie wires. A discussion of issues related to the code design provisions and the requirement for positive attachments is also provided. In some instances, where approved seismic fixture clamps are used to anchor the lighting to a properly braced ceiling grid, independent tie wires are not required. Check for pre-approved details for such devices in the applicable jurisdiction.",
+    "For surface-mounted fixtures in existing buildings where the ceiling grid is unbraced, such fixtures should be retrofit with safety wires at a minimum to prevent them from falling. Providing independent lateral bracing for the fixture may reduce the potential for the light to damage an existing unbraced ceiling.",
+    "For fire rated ceiling assemblies, only fixtures and attachments with an approved fire rating may be used. Check with the manufacturer for approved systems. Some fixtures may require lead shielding or a fire-rated enclosure; check local code provisions.",
+    "Do not attach lights to ducts, piping, or other nonstructural items in the ceiling plenum."
+   ],
+   "url": "https://femae74.atcouncil.org/docman/abbreviated/section-6-4/64-58-femae-74-chapter6-4-9-4"
+  },
+  {
+   "id": "6.5.1.1",
+   "title": "Light duty shelving",
+   "pages": "6-482–6-490",
+   "summary": "",
+   "causes": [
+    "Shelving units may slide or overturn and the contents may become dislodged or fall. Where there are rows of freestanding or poorly anchored shelves, the failure of a few may result in progressive collapse of many. Broken bottles, spilled chemicals, mixed or damaged inventory are often the result of the failure of storage or display units.",
+    "Mobile storage carts may roll, overturn, or impact other items. Stored contents may become dislodged or fall.",
+    "Damage to contents or inventory that has fallen from shelving can be costly to repair or replace and may result in substantial business interruption."
+   ],
+   "mitigation": [
+    "For sheet metal cabinets or shelving, anchor units to floor, tie back-to-back units together, strap rows of units together across the top, or anchor units to an adjacent wall. Light duty steel storage racks may additionally require cross bracing.",
+    "See Section 6.5.6.1 for recommendations regarding edge restraints and arrangement of shelf-mounted items. Do not locate cabinets or racks adjacent to doors or exits if their failure would block the exit.",
+    "Any connections to stud walls must engage the structural studs. Stud walls and partitions may not have adequate lateral capacity to support many shelving units; engineering may be required. Where items are anchored to heavy partitions, the bracing or anchorage of these partitions to the structure above must also be checked for adequacy considering the seismic loads imposed by all anchored items.",
+    "The details shown are intended for light duty units; heavy duty units with large loads may require engineering. See FEMA 460, Seismic Considerations for Steel Storage Racks Located in Areas Accessible to the Public (2005), for additional information on the performance of industrial storage racks. Some racks are available with enhanced seismic performance; check other resources, such as the internet for additional options."
+   ],
+   "url": "https://femae74.atcouncil.org/docman/abbreviated/section-6-5/72-65-femae-74-chapter6-5-1-1"
+  },
+  {
+   "id": "6.5.2.1",
+   "title": "Bookshelves",
+   "pages": "6-501–6-507",
+   "summary": "Tall wood or metal shelving units frequently tip or overturn in earthquakes unless they are properly anchored.",
+   "causes": [
+    "Tall, narrow shelving may tip, slide, overturn or collapse and the contents may spill. Overturned shelving may injure occupants and block doors or exits.",
+    "Books, files, medical records may fall and get scrambled or damaged. Clean-up and reorganization of spilled items may take many hours or days and result in costly business interruption."
+   ],
+   "mitigation": [
+    "Permanent floor-supported shelving or storage cabinets over 6 ft tall must be designed as architectural components per ASCE 7-10, Minimum Design Loads for Buildings and Other Structures (ASCE, 2010). Bracing and anchorage for these units should be designed considering the weight of the unit and weight of shelved contents. The details shown in Figure 6.5.2.1-4 and 6.5.2.1-5 are for shelving units up to 6 feet tall.",
+    "Bookcases and shelving should be anchored to an adjacent stud wall or concrete or masonry wall. For freestanding units, see Section 6.5.1.1 for recommended details for bracing units and tying back-to-back units together.",
+    "See Section 6.5.6.1 for recommendations regarding edge restraints and arrangement for shelf-mounted items. Do not locate shelving adjacent to doors or exits if their failure would block the exit.",
+    "Any connections to stud walls must engage the structural studs; do not rely on gypsum or plaster to support shelving. Stud walls and partitions and unreinforced or lightly reinforced heavy partitions may not have adequate lateral capacity to support multiple shelving units; engineering may be required. The bracing or anchorage of walls and partitions to the structure above must also be checked for adequacy considering the seismic loads imposed by all anchored items.",
+    "Bookcase or cabinet anchorage can be located either outside or inside the unit as long as the attachment properly engages the “structural” studs. Where aesthetics are a concern, it may be preferable to locate the screws or clip angles on the inside of the unit. In a commercial setting where maintenance personnel or movers may need to verify the anchorage or relocate the unit periodically, it may be preferable to provide exterior anchorage that is readily visible."
+   ],
+   "url": "https://femae74.atcouncil.org/docman/abbreviated/section-6-5/74-67-femae-74-chapter6-5-2-1"
+  },
+  {
+   "id": "6.5.3.3",
+   "title": "Desktop computers and accessories",
+   "pages": "6-535–6-537",
+   "summary": "",
+   "causes": [
+    "Desktop items may slide, tip, collide with other items or fall. If one item falls, the cords and cables may pull other items down resulting in additional damage.",
+    "Equipment may suffer internal damage and be rendered inoperable. Business interruption losses may result."
+   ],
+   "mitigation": [
+    "Desktop equipment should be anchored or tethered to prevent earthquake damage, loss of equipment and loss of electronic files. The supporting desk, table or cart should also be anchored or tethered if movement could cause additional damage. Alternatively, cables and cords should be installed with sufficient slack to allow for some movement.",
+    "Many proprietary safety fasteners are currently available to use to restrain desktop items. See also Section 6.5.6.2 for tether details."
+   ],
+   "url": "https://femae74.atcouncil.org/docman/abbreviated/section-6-5/78-71-femae-74-chapter6-5-3-3"
+  },
+  {
+   "id": "6.5.3.4",
+   "title": "Televisions and video monitors, wall-mounted",
+   "pages": "6-538–6-543",
+   "summary": "",
+   "causes": [
+    "These items may shake, bounce, impact adjacent items, or fall. Wall or ceiling-mounted items can become dislodged and fall from the supporting bracket, the bracket could pull out from the wall or ceiling, or the bracket can break and the television or monitor may be damaged or broken.",
+    "These items are heavy and could cause serious bodily injury if they fall on someone. EXISTING CONDITION magnitude-8.8 Chile Earthquake; bracket still anchored to the wall (Photos courtesy of Rodrigo Retamales, Rubén Boroschek & Associates)"
+   ],
+   "mitigation": [
+    "Proprietary video mounting brackets are available to support overhead or wall-mounted televisions, monitors, and screen of all sizes. These come as rigid mount, tilt mount, or motorized mount. Check the internet; some of these products indicate they are seismic rated for safer installations.",
+    "Brackets will not provide seismic protection unless properly installed; follow the manufacturer’s installation instructions. It is critical that the lag bolts, screws, or expansion bolts used be installed directly into structural elements such as studs, concrete or masonry wall, or ceiling joists that have adequate capacity to support the additional loading. Do not anchor to gypsum board, plaster or a suspended ceiling grid. See the installation notes in Section 6.6 of this document for more information on anchorage details.",
+    "If the bracket can be adjusted into different positions, make sure it cannot swing and hit a window or light; providing a safety cable or tether to restrict the range of motion may reduce the risk of impact with other objects and the risk of falling.",
+    "Do not locate overhead items directly over a bed, couch, bench, or desk in a classroom where people are likely to be.",
+    "For televisions or monitors resting on furniture or a home entertainment center, heavy- duty safety fasteners or tethers should be used to prevent the television from falling and the furniture should be anchored to the floor or wall."
+   ],
+   "url": "https://femae74.atcouncil.org/docman/abbreviated/section-6-5/79-72-femae-74-chapter6-5-3-4"
+  },
+  {
+   "id": "6.5.5.1",
+   "title": "File cabinets",
+   "pages": "6-550–6-556",
+   "summary": "should be anchored to the floor or wall. Where cabinets or shelving are anchored to a partition, check that the partition, bracing and attachment to the structure above are adequate for the imposed loading. - Adjacent freestanding file cabinets should be anchored together and to the floor. Gang multiple units together to create a more stable arrangement. - Provide strong drawer latches to prevent the drawers from sliding open. Fluids and files don’t mix; do not place flower vases or other breakable fluid containers on top of file cabinets. - There are many acceptable ways to reliably protect f",
+   "causes": [
+    "Unanchored file cabinets can slide, tip, or overturn. Drawers may slide open increasing the chance that the cabinet will overturn; contents may fall and get scrambled.",
+    "Overturned cabinets may block doors and exit corridors."
+   ],
+   "mitigation": [
+    "ASCE 7-10, Minimum Design Loads for Buildings and Other Structures (ASCE, 2010), requires that permanent floor supported cabinets or shelving over 6 ft tall be treated as architectural components. This requirement does not apply to wall mounted items with both base and wall anchorage.",
+    "Do not locate cabinets where their failure would block a door or exit corridor; note some school districts do not allow file cabinets within 6 feet of a doorway. Do not locate where they could fall and break a window or glass partition.",
+    "File cabinets should be anchored to the floor or wall. Where cabinets or shelving are anchored to a partition, check that the partition, bracing and attachment to the structure above are adequate for the imposed loading.",
+    "Adjacent freestanding file cabinets should be anchored together and to the floor. Gang multiple units together to create a more stable arrangement.",
+    "Provide strong drawer latches to prevent the drawers from sliding open. Fluids and files don’t mix; do not place flower vases or other breakable fluid containers on top of file cabinets.",
+    "There are many acceptable ways to reliably protect file cabinets from earthquake damage. The following details illustrate measures that can protect loaded cabinets up to 6 ft tall in severe ground shaking at the highest locations within a building; engineering may be required for floor-supported items taller than 6 feet. Alternate less robust details may be developed for less severe loading conditions."
+   ],
+   "url": "https://femae74.atcouncil.org/docman/abbreviated/section-6-5/81-74-femae-74-chapter6-5-5-1"
+  },
+  {
+   "id": "6.5.5.3",
+   "title": "Miscellaneous furniture and fixtures",
+   "pages": "6-561–6-565",
+   "summary": "",
+   "causes": [
+    "Unrestrained items may slide, impact other items, tip, and/or overturn. Failure of one item may damage others or cause the collapse of other items.",
+    "Contents supported on furniture or fixtures may fall, break, or spill."
+   ],
+   "mitigation": [
+    "Many proprietary items are available to restrain a wide variety of furniture and fixtures. Check the internet for seismic safety fasteners and security restraints.",
+    "Provide floor or wall anchorage for vulnerable items, especially items near doors, exits, beds or other locations where people spend many hours. Anchor freestanding items together and to the floor. Provide tethers for items like kitchen equipment, vending machines, or grand pianos. Provide edge restraints and drawer and cabinet latches.",
+    "Canvas or metal straps can be used to attach some items where it is not acceptable to penetrate the furniture or housing. Multiple tethers may be needed for strength and stability; for instance a tether to only one leg of a grand piano may pull the leg off.",
+    "Where several items need to be tethered and the edges do not line up with studs in the adjacent wall, a continuous steel angle or wood 2x4 may be attached to the wall and then the tether restraints in turn attached to the steel angle wood stud. Where items are attached to partitions, verify that the partition and attachment or bracing to the structure above are adequate for the imposed loading."
+   ],
+   "url": "https://femae74.atcouncil.org/docman/abbreviated/section-6-5/83-76-femae-74-chapter6-5-5-3"
+  },
+  {
+   "id": "6.5.6.1",
+   "title": "Shelf-mounted items",
+   "pages": "6-566–6-571",
+   "summary": "",
+   "causes": [
+    "Items may slide, break, or fall. Inventory may be damaged, library books and medical records may be scrambled or damaged; broken glass and spilled chemicals may be hazardous for occupants.",
+    "Items falling from shelves can pose a safety hazard for occupants."
+   ],
+   "mitigation": [
+    "Unless each item is packed tightly or individually restrained, loose material will slide around during an earthquake. Thoughtful organization of shelved items can reduce the potential for damage. For instance, o Keep items in their original packaging o Place larger and heavier items on lower shelves and lighter and smaller items on upper shelves o Provide edge restraints with wood, clear plastic or wire as shown o Provide individual restraints for especially toxic or costly items o Purchase storage racks or shelving units with shelving that slopes 3-4 degrees towards the back; or attach a thin wedge to each shelf sloping towards the back as this prevents many items from falling to the floor o Provide positive latches to prevent cabinet doors or drawers from opening; baby proof latches are one example. Don’t keep loose shelved items above a bed, desk or other location that is occupied for long periods of time. o In industrial settings, shrink wrapping of goods on pallets may reduce the risk of falling hazards"
+   ],
+   "url": "https://femae74.atcouncil.org/docman/abbreviated/section-6-5/84-77-femae-74-chapter6-5-6-1"
+  },
+  {
+   "id": "6.5.6.2",
+   "title": "Desktop, countertop items",
+   "pages": "6-572–6-576",
+   "summary": "",
+   "causes": [
+    "Desktop and countertop items may be affected by movement of the surface on which they are supported; they may slide, bang, overturn, or fall. Equipment and glassware may be damaged or be broken."
+   ],
+   "mitigation": [
+    "Provide bracing and anchorage for desks, work benches, and laboratory tables, if located near doors and exits, or if the supported items are required for post-earthquake operations.",
+    "Provide bracing and anchorage for overhead items such as lights, air diffusers, ceilings, and piping that can fall and damage the desktop items.",
+    "Provide tethers, anchors, bumpers, or other safety fasteners to keep desktop items from colliding with other items or falling. Many proprietary devices are available for this purpose; check the internet for seismic safety straps and devices. Many of these are the same as those used for computer equipment. Devices are also available that provide base isolation for individual pieces of delicate or valuable equipment.",
+    "Ensure that any electrical cords or cables have sufficient slack to allow the item to travel to the end of any tether. Tangled cords and cables attached to one item that falls may pull other items down if the cords are tangled; use nylon ties to keep the cords and cables organized.",
+    "Items must be anchored to structural wall or studs; do not use plaster or gypsum board for anchorage. Provide a continuous steel shape or wood 2x4 along the wall at a convenient height anchored to each stud or at 2 foot spacing to facilitate anchorage for multiple items."
+   ],
+   "url": "https://femae74.atcouncil.org/docman/abbreviated/section-6-5/85-78-femae-74-chapter6-5-6-2"
+  },
+  {
+   "id": "6.5.6.3",
+   "title": "Fragile artwork",
+   "pages": "6-577–6-583",
+   "summary": "",
+   "causes": [
+    "Loose items on shelves or hanging items may slide, bang, overturn or fall. Paintings or other wall hangings may fall Sculptures may slide or fall due to shaking."
+   ],
+   "mitigation": [
+    "Many proprietary safety straps, mats, small enclosures, base isolation platforms and other devices are available to protect fragile or expensive art, collectibles and other artifacts. Check the internet for available devices.",
+    "Items hanging on walls should be secured with a positive attachment such as an eyebolt with closed wire loops. Ceramics, glassware, and decorative items on shelves should be individually restrained or provide edge restraint for the shelves. Items hanging from the ceiling should be anchored to structural framing; heavy items should not be located where they can swing and impact a window, wall, or other object. Provide positive restraint for statuary and large vases.Items displayed outdoors must be protected from corrosion and weathering; mounting and connection hardware should be corrosion resistant.",
+    "For protection of valuable items and museum artifacts, seek professional guidance. The J. Paul Getty Museum and Getty Conservation Institute in Los Angeles, California have published a number of references, such as Advances in the Protection of Museum Collections from Earthquake Damage, (Podany, 2006) and Building an Emergency Plan, a Guide for Museums and other Cultural Institutions (Dorge and Jones, 1999)."
+   ],
+   "url": "https://femae74.atcouncil.org/docman/abbreviated/section-6-5/86-79-femae-74-chapter6-5-6-3"
+  },
+  {
+   "id": "6.5.6.4",
+   "title": "Fire extinguisher and cabinet",
+   "pages": "6-584–6-586",
+   "summary": "",
+   "causes": [
+    "Extinguishers can fall and roll; they may be damaged and not function properly. If located in a glazed enclosure, the enclosure may be damaged and the glass may break. DAMAGE EXAMPLE an industrial facility (Photos courtesy of Antonio Iruretagoyena, Rubén Boroschek & Associates)."
+   ],
+   "mitigation": [
+    "Provide safety fasteners with quick release straps for fire extinguishers.",
+    "Anchor cabinets for extinguishers and hoses to structural wall or studs."
+   ],
+   "url": "https://femae74.atcouncil.org/docman/abbreviated/section-6-5/87-80-femae-74-chapter6-5-6-4"
+  }
+ ]
+}

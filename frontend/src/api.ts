@@ -12,6 +12,16 @@ export interface Hazard {
   rationale: string
   track: string | null
   evidence_image: string
+  fix: Fix | null
+}
+
+export interface Fix {
+  actions: string[]
+  fema_sections: { id: string; title: string; pages: string; url: string }[]
+  diy: boolean
+  cost: string
+  minutes: number
+  priority: number
 }
 
 export interface Report {
