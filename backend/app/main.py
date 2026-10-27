@@ -5,9 +5,11 @@
 from __future__ import annotations
 
 import json
+import os
+import time
 from pathlib import Path
 
-from fastapi import FastAPI, File, Form, HTTPException, UploadFile, WebSocket
+from fastapi import FastAPI, File, Form, HTTPException, Request, UploadFile, WebSocket
 from fastapi.responses import FileResponse, StreamingResponse
 from fastapi.staticfiles import StaticFiles
 
@@ -17,13 +19,31 @@ from app.meta import voice
 MAX_UPLOAD_BYTES = 300 * 1024 * 1024
 VIDEO_TYPES = {"video/mp4": ".mp4", "video/quicktime": ".mov", "video/webm": ".webm"}
 FRONTEND = Path(__file__).resolve().parents[2] / "frontend" / "dist"
+MAX_SCANS_PER_DAY = int(os.environ.get("RISKLENS_MAX_SCANS_PER_DAY", "60"))   # ≈ $15/day at ≈ $0.25/scan
+MAX_SCANS_PER_IP = int(os.environ.get("RISKLENS_MAX_SCANS_PER_IP", "10"))
+SCAN_LOG: dict = {"day": "", "total": 0, "per_ip": {}}
 
 app = FastAPI(title="RiskLens")
 config.SCANS_DIR.mkdir(parents=True, exist_ok=True)
 
 
+def check_budget(ip: str) -> None:
+    """Every scan spends Meta credit: cap scans per day overall and per client IP (public URL safety)."""
+    today = time.strftime("%Y-%m-%d")
+    if SCAN_LOG["day"] != today:
+        SCAN_LOG.update(day=today, total=0, per_ip={})
+    if SCAN_LOG["total"] >= MAX_SCANS_PER_DAY:
+        raise HTTPException(429, "Daily scan limit reached. Please try again tomorrow.")
+    if SCAN_LOG["per_ip"].get(ip, 0) >= MAX_SCANS_PER_IP:
+        raise HTTPException(429, "Scan limit for this device reached today.")
+    SCAN_LOG["total"] += 1
+    SCAN_LOG["per_ip"][ip] = SCAN_LOG["per_ip"].get(ip, 0) + 1
+
+
 @app.post("/api/scans")
-async def create_scan(video: UploadFile = File(...), narration: str = Form("")) -> dict:
+async def create_scan(request: Request, video: UploadFile = File(...), narration: str = Form("")) -> dict:
+    ip = request.headers.get("cf-connecting-ip") or (request.client.host if request.client else "?")
+    check_budget(ip)
     content_type = (video.content_type or "").split(";")[0]
     if content_type not in VIDEO_TYPES:
         raise HTTPException(415, f"unsupported video type {content_type!r}")
@@ -44,13 +64,20 @@ async def create_scan(video: UploadFile = File(...), narration: str = Form("")) 
 
 
 @app.get("/api/scans")
-def list_scans() -> list[dict]:
+def list_scans(ids: str = "") -> list[dict]:
+    """Only the scans this browser created (ids it kept) plus featured demo scans: never everyone's homes."""
+    featured = config.SCANS_DIR / "featured.txt"
+    wanted = [i for i in ids.split(",") if i.isalnum()][:50]
+    if featured.exists():
+        wanted += [i for i in featured.read_text().split() if i.isalnum() and i not in wanted]
     rows = []
-    for report in sorted(config.SCANS_DIR.glob("*/report.json"), key=lambda p: p.stat().st_mtime, reverse=True):
-        r = json.loads(report.read_text())
-        rows.append({"scan_id": r["scan_id"], "created_at": r["created_at"], "room": r["room"]["type"],
-                     "risk_score": r["room"]["risk_score"], "hazards": len(r["hazards"])})
-    return rows
+    for scan_id in wanted:
+        report = config.SCANS_DIR / scan_id / "report.json"
+        if report.exists():
+            r = json.loads(report.read_text())
+            rows.append({"scan_id": r["scan_id"], "created_at": r["created_at"], "room": r["room"]["type"],
+                         "risk_score": r["room"]["risk_score"], "hazards": len(r["hazards"])})
+    return sorted(rows, key=lambda r: r["created_at"], reverse=True)
 
 
 @app.get("/api/scans/{scan_id}")

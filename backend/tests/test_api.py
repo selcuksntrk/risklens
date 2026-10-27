@@ -23,7 +23,9 @@ def client(tmp_path, monkeypatch):
         emit("done", {"scan_id": scan_id})
 
     monkeypatch.setattr(jobs, "run_scan", fake_run_scan)
+    from app import main
     from app.main import app
+    main.SCAN_LOG.update(day="", total=0, per_ip={})
     with TestClient(app) as c:
         yield c
 
@@ -40,7 +42,8 @@ def test_upload_streams_timeline_then_serves_report(client):
 
     assert client.get(f"/api/scans/{scan_id}").json()["report"]["room"]["risk_score"] == 25
     assert client.get(f"/api/scans/{scan_id}/files/evidence/h1.jpg").content == b"jpg"
-    assert client.get("/api/scans").json()[0]["scan_id"] == scan_id
+    assert client.get(f"/api/scans?ids={scan_id}").json()[0]["scan_id"] == scan_id
+    assert client.get("/api/scans").json() == []          # other people's scans are never listed
 
 
 def test_rejects_non_video_and_path_escapes(client):
@@ -49,3 +52,12 @@ def test_rejects_non_video_and_path_escapes(client):
     assert client.get(f"/api/scans/{scan_id}/files/source.mp4").status_code == 404   # raw video never served
     assert client.get(f"/api/scans/{scan_id}/files/../../etc/passwd").status_code == 404
     assert client.get("/api/scans/not-a-scan!").status_code in (400, 404)
+
+
+def test_scan_budget_per_ip(client, monkeypatch):
+    from app import main
+    monkeypatch.setattr(main, "MAX_SCANS_PER_IP", 1)
+    main.SCAN_LOG.update(day="", total=0, per_ip={})
+    ok = client.post("/api/scans", files={"video": ("r.mp4", b"\x00", "video/mp4")})
+    blocked = client.post("/api/scans", files={"video": ("r.mp4", b"\x00", "video/mp4")})
+    assert ok.status_code == 200 and blocked.status_code == 429

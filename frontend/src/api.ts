@@ -52,8 +52,17 @@ export type ScanState =
   | { status: 'done'; report: Report }
   | { status: 'error'; message: string }
 
+// This browser's own scan ids (a per-viewer convenience; the server never lists other people's scans).
+const MY_SCANS = 'risklens.scans'
+export function myScanIds(): string[] {
+  try { return JSON.parse(localStorage.getItem(MY_SCANS) ?? '[]') } catch { return [] }
+}
+function rememberScan(id: string) {
+  try { localStorage.setItem(MY_SCANS, JSON.stringify([id, ...myScanIds()].slice(0, 50))) } catch { /* private mode */ }
+}
+
 export async function listScans(): Promise<ScanRow[]> {
-  const r = await fetch('/api/scans')
+  const r = await fetch(`/api/scans?ids=${myScanIds().join(',')}`)
   return r.ok ? r.json() : []
 }
 
@@ -68,8 +77,13 @@ export async function uploadScan(video: Blob, filename: string, narration: strin
   form.append('video', video, filename)
   form.append('narration', narration)
   const r = await fetch('/api/scans', { method: 'POST', body: form })
-  if (!r.ok) throw new Error(`Upload failed: ${r.status} ${await r.text()}`)
-  return (await r.json()).scan_id
+  if (!r.ok) {
+    const detail = await r.json().then((j) => j.detail).catch(() => r.statusText)
+    throw new Error(`Upload failed: ${detail}`)
+  }
+  const id: string = (await r.json()).scan_id
+  rememberScan(id)
+  return id
 }
 
 export const fileUrl = (scanId: string, path: string) => `/api/scans/${scanId}/files/${path}`
