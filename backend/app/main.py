@@ -14,7 +14,8 @@ from fastapi.responses import FileResponse, StreamingResponse
 from fastapi.staticfiles import StaticFiles
 
 from app import config, jobs
-from app.meta import voice
+from app.meta import image, voice
+from app.meta.clients import meta_client
 
 MAX_UPLOAD_BYTES = 300 * 1024 * 1024
 VIDEO_TYPES = {"video/mp4": ".mp4", "video/quicktime": ".mov", "video/webm": ".webm"}
@@ -84,10 +85,29 @@ def list_scans(ids: str = "") -> list[dict]:
 def get_scan(scan_id: str) -> dict:
     root = _scan_dir(scan_id)
     if (root / "report.json").exists():
-        return {"status": "done", "report": json.loads((root / "report.json").read_text())}
+        fixcards = sorted(p.stem for p in (root / "fixcards").glob("h*.jpg") if not p.stem.endswith("_before")) \
+            if (root / "fixcards").is_dir() else []
+        return {"status": "done", "report": json.loads((root / "report.json").read_text()), "fixcards": fixcards}
     if (root / "error.json").exists():
         return {"status": "error", **json.loads((root / "error.json").read_text())}
     return {"status": "running"}
+
+
+@app.post("/api/scans/{scan_id}/hazards/{hazard_id}/fixcard")
+async def make_fix_card(scan_id: str, hazard_id: str) -> dict:
+    """Muse Image edit of the evidence frame showing the fix. On demand (costs $0.01) and cached per hazard."""
+    root = _scan_dir(scan_id)
+    out = root / "fixcards" / f"{hazard_id}.jpg"
+    if not out.exists():
+        report = json.loads((root / "report.json").read_text())
+        hazard = next((h for h in report["hazards"] if h["id"] == hazard_id), None)
+        if hazard is None:
+            raise HTTPException(404, "hazard not found")
+        frame = root / "frames" / f"{int(hazard['evidence_frame']):05d}.jpg"
+        before = image.crop_around(frame, hazard.get("box"), root / "fixcards" / f"{hazard_id}_before.jpg")
+        meta = await image.fix_card(meta_client(), before, image.fix_prompt(report["room"]["type"], hazard), out)
+        (root / "fixcards" / f"{hazard_id}.json").write_text(json.dumps(meta, ensure_ascii=False))
+    return {"image": f"fixcards/{hazard_id}.jpg", "before": f"fixcards/{hazard_id}_before.jpg"}
 
 
 @app.get("/api/scans/{scan_id}/events")

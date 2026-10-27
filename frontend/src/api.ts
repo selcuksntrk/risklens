@@ -49,7 +49,7 @@ export interface TimelineEvent { step: string; t: number; [key: string]: unknown
 
 export type ScanState =
   | { status: 'running' }
-  | { status: 'done'; report: Report }
+  | { status: 'done'; report: Report; fixcards?: string[] }
   | { status: 'error'; message: string }
 
 // This browser's own scan ids (a per-viewer convenience; the server never lists other people's scans).
@@ -100,4 +100,10 @@ export const RELATION_LABELS: Record<string, string> = {
 export const ROOM_LABELS: Record<string, string> = {
   bedroom: 'Bedroom', kids_room: "Kids' room", living_room: 'Living room', kitchen: 'Kitchen',
   hallway: 'Hallway', office: 'Office', bathroom: 'Bathroom', other: 'Room',
+}
+
+export async function makeFixCard(scanId: string, hazardId: string): Promise<{ image: string; before: string }> {
+  const r = await fetch(`/api/scans/${scanId}/hazards/${hazardId}/fixcard`, { method: 'POST' })
+  if (!r.ok) throw new Error(`Fix card failed (${r.status})`)
+  return r.json()
 }

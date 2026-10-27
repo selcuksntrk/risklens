@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { go } from './App'
-import { fileUrl, getScan, RELATION_LABELS, ROOM_LABELS, type Fix, type Hazard, type Report, type TimelineEvent } from './api'
+import { fileUrl, getScan, makeFixCard, RELATION_LABELS, ROOM_LABELS, type Fix, type Hazard, type Report, type TimelineEvent } from './api'
 
 export function riskBand(score: number) {
   if (score >= 70) return { label: 'High risk', cls: 'high' }
@@ -11,6 +11,7 @@ export function riskBand(score: number) {
 function useScan(scanId: string) {
   const [events, setEvents] = useState<TimelineEvent[]>([])
   const [report, setReport] = useState<Report | null>(null)
+  const [fixcards, setFixcards] = useState<string[]>([])
   const [error, setError] = useState('')
 
   useEffect(() => {
@@ -19,7 +20,7 @@ function useScan(scanId: string) {
     const settle = async () => {
       const state = await getScan(scanId)
       if (cancelled) return
-      if (state.status === 'done') setReport(state.report)
+      if (state.status === 'done') { setReport(state.report); setFixcards(state.fixcards ?? []) }
       else if (state.status === 'error') setError(state.message)
       return state.status
     }
@@ -36,11 +37,11 @@ function useScan(scanId: string) {
     })
     return () => { cancelled = true; source?.close() }
   }, [scanId])
-  return { events, report, error }
+  return { events, report, fixcards, error }
 }
 
 export default function Scan({ scanId }: { scanId: string }) {
-  const { events, report, error } = useScan(scanId)
+  const { events, report, fixcards, error } = useScan(scanId)
   return (
     <main className="page">
       <header className="bar">
@@ -49,7 +50,7 @@ export default function Scan({ scanId }: { scanId: string }) {
       </header>
       {error && <p className="error">{error}</p>}
       {!report && <Timeline events={events} scanId={scanId} />}
-      {report && <ReportView report={report} />}
+      {report && <ReportView report={report} fixcards={fixcards} />}
     </main>
   )
 }
@@ -123,7 +124,7 @@ function Summary({ lines }: { lines?: string[] }) {
 
 const SEVERITY_ORDER = { high: 0, medium: 1, low: 2 }
 
-function ReportView({ report }: { report: Report }) {
+function ReportView({ report, fixcards }: { report: Report; fixcards: string[] }) {
   const band = riskBand(report.room.risk_score)
   const hazards = [...report.hazards].sort((a, b) => SEVERITY_ORDER[a.severity] - SEVERITY_ORDER[b.severity])
   return (
@@ -137,7 +138,7 @@ function ReportView({ report }: { report: Report }) {
       </section>
       <h3>{hazards.length} hazard{hazards.length === 1 ? '' : 's'}</h3>
       <ul className="hazards">
-        {hazards.map((h) => <HazardCard key={h.id} hazard={h} scanId={report.scan_id} />)}
+        {hazards.map((h) => <HazardCard key={h.id} hazard={h} scanId={report.scan_id} hasCard={fixcards.includes(h.id)} />)}
       </ul>
       <p className="fine">{report.disclaimer}</p>
       <details className="provenance">
@@ -154,10 +155,36 @@ function ReportView({ report }: { report: Report }) {
   )
 }
 
-function HazardCard({ hazard, scanId }: { hazard: Hazard; scanId: string }) {
+function HazardCard({ hazard, scanId, hasCard }: { hazard: Hazard; scanId: string; hasCard: boolean }) {
+  const [card, setCard] = useState<{ image: string; before: string } | null>(
+    hasCard ? { image: `fixcards/${hazard.id}.jpg`, before: `fixcards/${hazard.id}_before.jpg` } : null)
+  const [view, setView] = useState<'evidence' | 'before' | 'after'>('evidence')
+  const [busy, setBusy] = useState(false)
+  const [error, setError] = useState('')
+  async function showFixed() {
+    setBusy(true); setError('')
+    try { setCard(await makeFixCard(scanId, hazard.id)); setView('after') }
+    catch (e) { setError((e as Error).message) }
+    finally { setBusy(false) }
+  }
+  const src = view === 'evidence' || !card ? hazard.evidence_image : view === 'before' ? card.before : card.image
   return (
     <li className="hazard">
-      <img src={fileUrl(scanId, hazard.evidence_image)} alt={hazard.object} loading="lazy" />
+      <div className="media">
+        <img src={fileUrl(scanId, src)} alt={view === 'after' ? `${hazard.object}, fixed` : hazard.object} loading="lazy" />
+        {view === 'after' && <span className="media-tag">Muse Image · your room, fixed</span>}
+        {card ? (
+          <div className="seg" role="tablist">
+            {(['evidence', 'before', 'after'] as const).map((v) => (
+              <button key={v} role="tab" aria-selected={view === v} className={view === v ? 'on' : ''} onClick={() => setView(v)}>
+                {v === 'evidence' ? 'Evidence' : v === 'before' ? 'Before' : 'Fixed'}
+              </button>
+            ))}
+          </div>
+        ) : hazard.fix && (
+          <button className="show-fixed" onClick={showFixed} disabled={busy}>{busy ? 'Imagining the fix…' : 'Show it fixed'}</button>
+        )}
+      </div>
       <div className="hazard-body">
         <div className="hazard-head">
           <span className={`badge ${hazard.severity}`}>{hazard.severity}</span>
@@ -165,6 +192,7 @@ function HazardCard({ hazard, scanId }: { hazard: Hazard; scanId: string }) {
         </div>
         <h4>{hazard.object}</h4>
         <p>{hazard.rationale}</p>
+        {error && <p className="error">{error}</p>}
         {hazard.fix && <FixBlock fix={hazard.fix} />}
         {hazard.track && <small className="muted">Tracked by SAM 3.1 as {hazard.track} · frame {hazard.evidence_frame}</small>}
       </div>

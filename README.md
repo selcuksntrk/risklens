@@ -19,7 +19,7 @@ Status: 🚧 in progress (Meta Global AI Developer Hackathon, Oct 26 – Nov 4 2
 | Voice capture | **Muse Voice Transcribe** | Live Turkish/English narration while filming ("kids sleep here"), streamed through a server-side proxy |
 | Fix planner agent | **Muse Spark 1.3** + FEMA E-74 tool | Looks up FEMA E-74 sections through a function tool, then writes cited, practical fixes (DIY vs professional, cost, time); citations it didn't read are dropped |
 | *(coming)* Auditor | Muse Spark Open (open weights, Baseten) | Independent second opinion with readable reasoning in the audit trail |
-| *(coming)* Fix cards | Muse Image | Your own room, shown fixed |
+| Fix cards | **Muse Image** | "Show it fixed": edits a crop of *your own* evidence frame (around the SAM box) to show the recommended fix; on demand and cached ($0.01) |
 | *(coming)* Verify-after-fix | SAM 3.1 + Muse Spark | Re-film; proves the hazard is gone |
 
 ## Run it
