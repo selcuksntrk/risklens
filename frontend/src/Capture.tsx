@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import { go } from './App'
-import { uploadScan } from './api'
+import { uploadScan, uploadVerify } from './api'
 import { startVoice, type VoiceSession } from './voice'
 
 const MAX_SECONDS = 60
@@ -17,7 +17,7 @@ function pickMime(): string {
   return ''
 }
 
-export default function Capture() {
+export default function Capture({ verifyScanId }: { verifyScanId?: string }) {
   const video = useRef<HTMLVideoElement>(null)
   const stream = useRef<MediaStream | null>(null)
   const recorder = useRef<MediaRecorder | null>(null)
@@ -88,8 +88,13 @@ export default function Capture() {
   async function send(blob: Blob, type: string, narration: string) {
     setBusy('Uploading…')
     try {
-      const id = await uploadScan(blob, `room.${type.includes('mp4') ? 'mp4' : 'webm'}`, narration)
-      go(`scan/${id}`)
+      const name = `room.${type.includes('mp4') ? 'mp4' : 'webm'}`
+      if (verifyScanId) {
+        const vid = await uploadVerify(verifyScanId, blob, name)
+        go(`scan/${verifyScanId}/v/${vid}`)
+      } else {
+        go(`scan/${await uploadScan(blob, name, narration)}`)
+      }
     } catch (e) {
       setBusy(''); setError((e as Error).message)
     }
@@ -104,11 +109,13 @@ export default function Capture() {
     <main className="capture">
       <video ref={video} autoPlay playsInline muted />
       <div className="capture-top">
-        <button className="ghost" onClick={() => go('')} aria-label="Back">‹ Back</button>
+        <button className="ghost" onClick={() => go(verifyScanId ? `scan/${verifyScanId}` : '')} aria-label="Back">‹ Back</button>
         {recording && <span className="rec">● {seconds}s / {MAX_SECONDS}s</span>}
       </div>
       <div className="capture-bottom">
-        {!recording && !busy && <p className="tip">{TIPS[0]} {TIPS[1]} {TIPS[2]}</p>}
+        {!recording && !busy && (verifyScanId
+          ? <p className="tip"><b>Verify your fixes.</b> Film the same room again, slowly, showing each fixed item and where it is attached.</p>
+          : <p className="tip">{TIPS[0]} {TIPS[1]} {TIPS[2]}</p>)}
         {(turns.length > 0 || partial) && (
           <p className="narration">
             <span className="tag">Muse Voice Transcribe</span>

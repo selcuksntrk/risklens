@@ -20,7 +20,7 @@ Status: 🚧 in progress (Meta Global AI Developer Hackathon, Oct 26 – Nov 4 2
 | Fix planner agent | **Muse Spark 1.3** + FEMA E-74 tool | Looks up FEMA E-74 sections through a function tool, then writes cited, practical fixes (DIY vs professional, cost, time); citations it didn't read are dropped |
 | *(coming)* Auditor | Muse Spark Open (open weights, Baseten) | Independent second opinion with readable reasoning in the audit trail |
 | Fix cards | **Muse Image** | "Show it fixed": edits a crop of *your own* evidence frame (around the SAM box) to show the recommended fix; on demand and cached ($0.01) |
-| *(coming)* Verify-after-fix | SAM 3.1 + Muse Spark | Re-film; proves the hazard is gone |
+| Verify-after-fix | **SAM 3.1** + **Muse Spark 1.3** | Re-film after fixing: SAM re-finds each object (with alternate wordings), a verifier agent compares before/after. A deterministic guard only allows "verified fixed" when SAM re-found the object *and* it is the same physical object; risk score before → after |
 
 ## Run it
 Requires `ffmpeg`, [uv](https://docs.astral.sh/uv/) and Node 20+. Put `MODEL_API_KEY` in `.env` (see `.env.example`).

@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { go } from './App'
-import { fileUrl, getScan, makeFixCard, RELATION_LABELS, ROOM_LABELS, type Fix, type Hazard, type Report, type TimelineEvent } from './api'
+import { fileUrl, getScan, makeFixCard, type Verification, RELATION_LABELS, ROOM_LABELS, type Fix, type Hazard, type Report, type TimelineEvent } from './api'
 
 export function riskBand(score: number) {
   if (score >= 70) return { label: 'High risk', cls: 'high' }
@@ -8,10 +8,12 @@ export function riskBand(score: number) {
   return { label: 'Low risk', cls: 'low' }
 }
 
-function useScan(scanId: string) {
+function useScan(scanId: string, verifyId?: string) {
   const [events, setEvents] = useState<TimelineEvent[]>([])
   const [report, setReport] = useState<Report | null>(null)
   const [fixcards, setFixcards] = useState<string[]>([])
+  const [verification, setVerification] = useState<Verification | null>(null)
+  const [verifying, setVerifying] = useState(!!verifyId)
   const [error, setError] = useState('')
 
   useEffect(() => {
@@ -20,28 +22,31 @@ function useScan(scanId: string) {
     const settle = async () => {
       const state = await getScan(scanId)
       if (cancelled) return
-      if (state.status === 'done') { setReport(state.report); setFixcards(state.fixcards ?? []) }
+      if (state.status === 'done') {
+        setReport(state.report); setFixcards(state.fixcards ?? []); setVerification(state.verification ?? null)
+      }
       else if (state.status === 'error') setError(state.message)
       return state.status
     }
     settle().then((status) => {
-      if (status !== 'running' || cancelled) return
-      source = new EventSource(`/api/scans/${scanId}/events`)
+      if (cancelled || (status !== 'running' && !verifyId)) return
+      if (verifyId && status !== 'done') return
+      source = new EventSource(`/api/scans/${verifyId ?? scanId}/events`)
       source.onmessage = (e) => {
         const event = JSON.parse(e.data) as TimelineEvent
         setEvents((all) => [...all, event])
         if (event.step === 'error') setError(String(event.message))
       }
-      source.addEventListener('end', () => { source?.close(); settle() })
-      source.onerror = () => { source?.close(); settle() }
+      source.addEventListener('end', () => { source?.close(); setVerifying(false); settle() })
+      source.onerror = () => { source?.close(); setVerifying(false); settle() }
     })
     return () => { cancelled = true; source?.close() }
   }, [scanId])
-  return { events, report, fixcards, error }
+  return { events, report, fixcards, verification, verifying, error }
 }
 
-export default function Scan({ scanId }: { scanId: string }) {
-  const { events, report, fixcards, error } = useScan(scanId)
+export default function Scan({ scanId, verifyId }: { scanId: string; verifyId?: string }) {
+  const { events, report, fixcards, verification, verifying, error } = useScan(scanId, verifyId)
   return (
     <main className="page">
       <header className="bar">
@@ -50,7 +55,8 @@ export default function Scan({ scanId }: { scanId: string }) {
       </header>
       {error && <p className="error">{error}</p>}
       {!report && <Timeline events={events} scanId={scanId} />}
-      {report && <ReportView report={report} fixcards={fixcards} />}
+      {report && verifying && <VerifyTimeline events={events} />}
+      {report && !verifying && <ReportView report={report} fixcards={fixcards} verification={verification} />}
     </main>
   )
 }
@@ -124,7 +130,7 @@ function Summary({ lines }: { lines?: string[] }) {
 
 const SEVERITY_ORDER = { high: 0, medium: 1, low: 2 }
 
-function ReportView({ report, fixcards }: { report: Report; fixcards: string[] }) {
+function ReportView({ report, fixcards, verification }: { report: Report; fixcards: string[]; verification: Verification | null }) {
   const band = riskBand(report.room.risk_score)
   const hazards = [...report.hazards].sort((a, b) => SEVERITY_ORDER[a.severity] - SEVERITY_ORDER[b.severity])
   return (
@@ -136,10 +142,24 @@ function ReportView({ report, fixcards }: { report: Report; fixcards: string[] }
           <p>{report.room.summary}</p>
         </div>
       </section>
+      {verification && (
+        <section className="verified-card">
+          <h3>Verified after fixes</h3>
+          <p><b>{verification.fixed} of {hazards.length}</b> hazards verified fixed · risk score
+            {' '}<b>{verification.risk_score_before}</b> → <b>{verification.risk_score_after}</b></p>
+          <small className="muted">Re-filmed {new Date(verification.created_at).toLocaleString()} · checked by SAM 3.1 + Muse Spark</small>
+        </section>
+      )}
       <h3>{hazards.length} hazard{hazards.length === 1 ? '' : 's'}</h3>
       <ul className="hazards">
-        {hazards.map((h) => <HazardCard key={h.id} hazard={h} scanId={report.scan_id} hasCard={fixcards.includes(h.id)} />)}
+        {hazards.map((h) => <HazardCard key={h.id} hazard={h} scanId={report.scan_id} hasCard={fixcards.includes(h.id)}
+          check={verification?.results[h.id]} />)}
       </ul>
+      {hazards.length > 0 && (
+        <button className="primary big" onClick={() => go(`verify/${report.scan_id}`)}>
+          {verification ? 'Re-film again to verify' : 'Fixed something? Re-film to verify'}
+        </button>
+      )}
       <p className="fine">{report.disclaimer}</p>
       <details className="provenance">
         <summary>Audit trail</summary>
@@ -155,10 +175,13 @@ function ReportView({ report, fixcards }: { report: Report; fixcards: string[] }
   )
 }
 
-function HazardCard({ hazard, scanId, hasCard }: { hazard: Hazard; scanId: string; hasCard: boolean }) {
+type Check = Verification['results'][string]
+const VERDICT = { fixed: 'Verified fixed', not_fixed: 'Not fixed yet', cannot_verify: "Couldn't verify" }
+
+function HazardCard({ hazard, scanId, hasCard, check }: { hazard: Hazard; scanId: string; hasCard: boolean; check?: Check }) {
   const [card, setCard] = useState<{ image: string; before: string } | null>(
     hasCard ? { image: `fixcards/${hazard.id}.jpg`, before: `fixcards/${hazard.id}_before.jpg` } : null)
-  const [view, setView] = useState<'evidence' | 'before' | 'after'>('evidence')
+  const [view, setView] = useState<'evidence' | 'before' | 'after' | 'refilmed'>(check?.verdict === 'fixed' ? 'refilmed' : 'evidence')
   const [busy, setBusy] = useState(false)
   const [error, setError] = useState('')
   async function showFixed() {
@@ -167,21 +190,26 @@ function HazardCard({ hazard, scanId, hasCard }: { hazard: Hazard; scanId: strin
     catch (e) { setError((e as Error).message) }
     finally { setBusy(false) }
   }
-  const src = view === 'evidence' || !card ? hazard.evidence_image : view === 'before' ? card.before : card.image
+  const src = view === 'refilmed' && check ? check.after_image
+    : view === 'evidence' || !card ? hazard.evidence_image : view === 'before' ? card.before : card.image
+  const views = [...(['evidence'] as const), ...(check ? (['refilmed'] as const) : []), ...(card ? (['before', 'after'] as const) : [])]
+  const label = { evidence: 'Evidence', refilmed: 'Re-filmed', before: 'Before', after: 'Fixed' }
   return (
     <li className="hazard">
       <div className="media">
         <img src={fileUrl(scanId, src)} alt={view === 'after' ? `${hazard.object}, fixed` : hazard.object} loading="lazy" />
         {view === 'after' && <span className="media-tag">Muse Image · your room, fixed</span>}
-        {card ? (
+        {view === 'refilmed' && <span className="media-tag">After your fix · SAM 3.1</span>}
+        {views.length > 1 && (
           <div className="seg" role="tablist">
-            {(['evidence', 'before', 'after'] as const).map((v) => (
+            {views.map((v) => (
               <button key={v} role="tab" aria-selected={view === v} className={view === v ? 'on' : ''} onClick={() => setView(v)}>
-                {v === 'evidence' ? 'Evidence' : v === 'before' ? 'Before' : 'Fixed'}
+                {label[v]}
               </button>
             ))}
           </div>
-        ) : hazard.fix && (
+        )}
+        {!card && hazard.fix && check?.verdict !== 'fixed' && (
           <button className="show-fixed" onClick={showFixed} disabled={busy}>{busy ? 'Imagining the fix…' : 'Show it fixed'}</button>
         )}
       </div>
@@ -190,6 +218,7 @@ function HazardCard({ hazard, scanId, hasCard }: { hazard: Hazard; scanId: strin
           <span className={`badge ${hazard.severity}`}>{hazard.severity}</span>
           <span className="relation">{RELATION_LABELS[hazard.relation] ?? hazard.relation}</span>
         </div>
+        {check && <p className={`verdict ${check.verdict}`}><b>{VERDICT[check.verdict]}</b> · {check.what_changed}</p>}
         <h4>{hazard.object}</h4>
         <p>{hazard.rationale}</p>
         {error && <p className="error">{error}</p>}
@@ -217,5 +246,27 @@ function FixBlock({ fix }: { fix: Fix }) {
         </small>
       )}
     </div>
+  )
+}
+
+function VerifyTimeline({ events }: { events: TimelineEvent[] }) {
+  const checked = events.filter((e) => e.step === 'verify.hazard')
+  const concepts = events.filter((e) => e.step === 'sam.done')
+  return (
+    <section className="timeline" aria-live="polite">
+      <h2>Verifying your fixes…</h2>
+      <ol>
+        <li className={`step ${concepts.length ? 'done' : 'active'}`}>
+          <b>Re-finding each object</b> <span className="tag">{MODEL.sam}</span>
+          {concepts.length > 0 && <div className="chips">{concepts.map((e) => (
+            <span key={String(e.concept)} className={`chip ${Number(e.objects) ? 'hit' : 'miss'}`}>{String(e.concept)} · {String(e.objects)}</span>
+          ))}</div>}
+        </li>
+        <li className={`step ${checked.length ? 'active' : ''}`}>
+          <b>Comparing before and after</b> <span className="tag">{MODEL.spark}</span>
+          {checked.map((e) => <small key={String(e.hazard_id)}>{String(e.object)}: {VERDICT[e.verdict as keyof typeof VERDICT]}</small>)}
+        </li>
+      </ol>
+    </section>
   )
 }

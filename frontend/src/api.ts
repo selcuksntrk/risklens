@@ -43,13 +43,27 @@ export interface Report {
   }
 }
 
+export type Verdict = 'fixed' | 'not_fixed' | 'cannot_verify'
+
+export interface Verification {
+  verify_id: string
+  created_at: string
+  results: Record<string, { verdict: Verdict; confidence: string; what_changed: string; rationale: string;
+    object_found: boolean; after_image: string }>
+  fixed: number
+  risk_score_before: number
+  risk_score_after: number
+  cost_usd: number
+  seconds: number
+}
+
 export interface ScanRow { scan_id: string; created_at: string; room: string; risk_score: number; hazards: number }
 
 export interface TimelineEvent { step: string; t: number; [key: string]: unknown }
 
 export type ScanState =
   | { status: 'running' }
-  | { status: 'done'; report: Report; fixcards?: string[] }
+  | { status: 'done'; report: Report; fixcards?: string[]; verification?: Verification | null }
   | { status: 'error'; message: string }
 
 // This browser's own scan ids (a per-viewer convenience; the server never lists other people's scans).
@@ -106,4 +120,15 @@ export async function makeFixCard(scanId: string, hazardId: string): Promise<{ i
   const r = await fetch(`/api/scans/${scanId}/hazards/${hazardId}/fixcard`, { method: 'POST' })
   if (!r.ok) throw new Error(`Fix card failed (${r.status})`)
   return r.json()
+}
+
+export async function uploadVerify(scanId: string, video: Blob, filename: string): Promise<string> {
+  const form = new FormData()
+  form.append('video', video, filename)
+  const r = await fetch(`/api/scans/${scanId}/verify`, { method: 'POST', body: form })
+  if (!r.ok) {
+    const detail = await r.json().then((j) => j.detail).catch(() => r.statusText)
+    throw new Error(`Upload failed: ${detail}`)
+  }
+  return (await r.json()).verify_id
 }

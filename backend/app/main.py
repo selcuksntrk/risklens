@@ -45,20 +45,9 @@ def check_budget(ip: str) -> None:
 async def create_scan(request: Request, video: UploadFile = File(...), narration: str = Form("")) -> dict:
     ip = request.headers.get("cf-connecting-ip") or (request.client.host if request.client else "?")
     check_budget(ip)
-    content_type = (video.content_type or "").split(";")[0]
-    if content_type not in VIDEO_TYPES:
-        raise HTTPException(415, f"unsupported video type {content_type!r}")
     scan_id = jobs.new_scan_id()
     root = config.SCANS_DIR / scan_id
-    root.mkdir(parents=True)
-    src = root / f"source{VIDEO_TYPES[content_type]}"
-    size = 0
-    with src.open("wb") as f:
-        while chunk := await video.read(1 << 20):
-            size += len(chunk)
-            if size > MAX_UPLOAD_BYTES:
-                raise HTTPException(413, "video too large")
-            f.write(chunk)
+    src = await _save_upload(video, root)
     (root / "meta.json").write_text(json.dumps({"narration": narration, "filename": video.filename}, ensure_ascii=False))
     jobs.start_scan(scan_id, src, narration.strip() or None)
     return {"scan_id": scan_id}
@@ -87,10 +76,25 @@ def get_scan(scan_id: str) -> dict:
     if (root / "report.json").exists():
         fixcards = sorted(p.stem for p in (root / "fixcards").glob("h*.jpg") if not p.stem.endswith("_before")) \
             if (root / "fixcards").is_dir() else []
-        return {"status": "done", "report": json.loads((root / "report.json").read_text()), "fixcards": fixcards}
+        verification = root / "verification.json"
+        return {"status": "done", "report": json.loads((root / "report.json").read_text()), "fixcards": fixcards,
+                "verification": json.loads(verification.read_text()) if verification.exists() else None}
     if (root / "error.json").exists():
         return {"status": "error", **json.loads((root / "error.json").read_text())}
     return {"status": "running"}
+
+
+@app.post("/api/scans/{scan_id}/verify")
+async def verify_scan(scan_id: str, request: Request, video: UploadFile = File(...)) -> dict:
+    """Re-filmed room after fixes -> per-hazard verdicts (job events stream under the returned verify_id)."""
+    root = _scan_dir(scan_id)
+    if not (root / "report.json").exists():
+        raise HTTPException(409, "scan has no report yet")
+    check_budget(request.headers.get("cf-connecting-ip") or (request.client.host if request.client else "?"))
+    verify_id = f"{scan_id}v{jobs.new_scan_id()[:6]}"
+    src = await _save_upload(video, root / "verify" / verify_id)
+    jobs.start_verify(scan_id, verify_id, src)
+    return {"verify_id": verify_id}
 
 
 @app.post("/api/scans/{scan_id}/hazards/{hazard_id}/fixcard")
@@ -138,6 +142,22 @@ def scan_file(scan_id: str, path: str) -> FileResponse:
 @app.websocket("/api/voice")
 async def voice_ws(ws: WebSocket) -> None:
     await voice.proxy(ws)
+
+
+async def _save_upload(video: UploadFile, root: Path) -> Path:
+    content_type = (video.content_type or "").split(";")[0]
+    if content_type not in VIDEO_TYPES:
+        raise HTTPException(415, f"unsupported video type {content_type!r}")
+    root.mkdir(parents=True, exist_ok=True)
+    src = root / f"source{VIDEO_TYPES[content_type]}"
+    size = 0
+    with src.open("wb") as f:
+        while chunk := await video.read(1 << 20):
+            size += len(chunk)
+            if size > MAX_UPLOAD_BYTES:
+                raise HTTPException(413, "video too large")
+            f.write(chunk)
+    return src
 
 
 def _scan_dir(scan_id: str) -> Path:

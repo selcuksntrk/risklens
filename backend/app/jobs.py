@@ -11,6 +11,7 @@ from pathlib import Path
 
 from app import config
 from app.pipeline import run_scan
+from app.verify import run_verify
 
 
 @dataclass
@@ -34,21 +35,32 @@ def new_scan_id() -> str:
     return uuid.uuid4().hex[:12]
 
 
-def start_scan(scan_id: str, src: Path, narration: str | None) -> Job:
-    job = JOBS[scan_id] = Job(scan_id)
+def _start(job_id: str, work, error_dir: Path) -> Job:
+    job = JOBS[job_id] = Job(job_id)
 
     async def run() -> None:
         try:
-            await run_scan(src, narration, emit=job.emit, scan_id=scan_id)
+            await work(job.emit)
             job.status = "done"
         except Exception as exc:  # surface the failure in the timeline instead of a silent dead job
             traceback.print_exc()
             job.status = "error"
             job.emit("error", {"message": str(exc)[:500]})
-            (config.SCANS_DIR / scan_id / "error.json").write_text(json.dumps({"message": str(exc)}))
+            error_dir.mkdir(parents=True, exist_ok=True)
+            (error_dir / "error.json").write_text(json.dumps({"message": str(exc)}))
 
     asyncio.get_running_loop().create_task(run())
     return job
+
+
+def start_scan(scan_id: str, src: Path, narration: str | None) -> Job:
+    return _start(scan_id, lambda emit: run_scan(src, narration, emit=emit, scan_id=scan_id),
+                  config.SCANS_DIR / scan_id)
+
+
+def start_verify(scan_id: str, verify_id: str, src: Path) -> Job:
+    root = config.SCANS_DIR / scan_id
+    return _start(verify_id, lambda emit: run_verify(root, src, verify_id, emit), root / "verify" / verify_id)
 
 
 async def follow(job: Job):

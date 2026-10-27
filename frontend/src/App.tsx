@@ -18,8 +18,9 @@ function useRoute(): string[] {
 export const go = (path: string) => { location.hash = `#/${path}` }
 
 export default function App() {
-  const [page, id] = useRoute()
+  const [page, id, sub, subId] = useRoute()
   if (page === 'capture') return <Capture />
-  if (page === 'scan' && id) return <Scan scanId={id} />
+  if (page === 'verify' && id) return <Capture verifyScanId={id} />
+  if (page === 'scan' && id) return <Scan key={`${id}/${subId ?? ''}`} scanId={id} verifyId={sub === 'v' ? subId : undefined} />
   return <Home />
 }

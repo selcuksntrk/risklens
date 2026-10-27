@@ -23,6 +23,8 @@ def make_proxy(src: Path, out: Path, fps: int = PROXY_FPS, height: int = PROXY_H
 def extract_frames(proxy: Path, out_dir: Path) -> list[Path]:
     """Every proxy frame as frames/00000.jpg..., so file index == SAM frame index."""
     out_dir.mkdir(parents=True, exist_ok=True)
+    for stale in out_dir.glob("*.jpg"):     # a reused folder must not mix in frames from an older video
+        stale.unlink()
     ffmpeg("-i", str(proxy), "-start_number", "0", "-q:v", "3", str(out_dir / "%05d.jpg"))
     return sorted(out_dir.glob("*.jpg"))
 

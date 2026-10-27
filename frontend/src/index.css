@@ -142,3 +142,10 @@ p { margin: 0 0 .6em; }
 .pill { font-size: .7rem; font-weight: 700; padding: 2px 8px; border-radius: 999px; }
 .pill.diy { background: color-mix(in srgb, var(--low) 25%, transparent); color: var(--low); }
 .pill.pro { background: color-mix(in srgb, var(--medium) 25%, transparent); color: var(--medium); }
+
+.verified-card { background: color-mix(in srgb, var(--low) 14%, var(--surface)); border: 1px solid var(--low); border-radius: var(--radius); padding: 14px 16px; margin-bottom: 18px; }
+.verified-card p { margin: 0 0 4px; }
+.verdict { font-size: .88rem; padding: 6px 10px; border-radius: 8px; margin-bottom: 8px; }
+.verdict.fixed { background: color-mix(in srgb, var(--low) 20%, transparent); }
+.verdict.not_fixed { background: color-mix(in srgb, var(--high) 16%, transparent); }
+.verdict.cannot_verify { background: var(--surface-2); }

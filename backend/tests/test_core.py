@@ -50,3 +50,18 @@ def test_fema_lookup_returns_known_sections_and_flags_unknown():
     assert [s["id"] for s in out["sections"]] == ["6.5.2.1"] and out["unknown_ids"] == ["9.9.9"]
     assert out["sections"][0]["mitigation"]
     assert [s["id"] for s in fema_lookup(["6.5.2.1 Bookshelves", "§6.5.6.3"])["sections"]] == ["6.5.2.1", "6.5.6.3"]
+
+
+def test_best_frames_prefers_big_spread_out_boxes():
+    from app.verify import best_frames
+    t = Track("bookshelf", "0", {f: [0, 0, f, f] for f in range(1, 21)})
+    assert [f for f, _ in best_frames([t], 3)] == [10, 15, 20]
+
+
+def test_verify_guard_needs_sam_evidence_for_fixed():
+    from app.verify import apply_guard
+    claim = {"verdict": "fixed", "confidence": "high", "what_changed": "panel removed", "boxed_is_same_object": "yes"}
+    assert apply_guard(claim, object_found=False)["verdict"] == "cannot_verify"
+    assert apply_guard(claim, object_found=True)["verdict"] == "fixed"
+    assert apply_guard({**claim, "boxed_is_same_object": "no"}, object_found=True)["verdict"] == "cannot_verify"
+    assert apply_guard({**claim, "verdict": "not_fixed"}, object_found=False)["verdict"] == "not_fixed"
