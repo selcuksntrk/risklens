@@ -5,6 +5,7 @@ import base64
 import time
 from pathlib import Path
 
+import httpx
 from openai import AsyncOpenAI
 from PIL import Image
 
@@ -36,15 +37,30 @@ def crop_around(frame: Path, box: list[float] | None, out: Path, pad: float = 0.
     return out
 
 
+class ImageRefused(Exception):
+    """Muse Image's content-safety filter declined the edit (400 content_policy_violation)."""
+
+
 async def fix_card(api: AsyncOpenAI, frame: Path, prompt: str, out: Path) -> dict:
+    """JSON body, not the SDK's multipart upload: multipart silently ignores output_format and the nested
+    tool_enablement object (docs: image-generation), so the image could come back as webp with tools on."""
     started = time.perf_counter()
-    response = await api.images.edit(
-        model=IMAGE_MODEL, prompt=prompt, n=1,
-        image=(frame.name, frame.read_bytes(), "image/jpeg"),
-        extra_body={"output_format": "jpeg", "reasoning_strength": "low",
-                    "tool_enablement": {"enable_web_search": False, "enable_shell": False}},
-    )
+    image_url = "data:image/jpeg;base64," + base64.b64encode(frame.read_bytes()).decode("ascii")
+    async with httpx.AsyncClient(timeout=180) as http:
+        response = await http.post(f"{str(api.base_url).rstrip('/')}/images/edits",
+                                   headers={"Authorization": f"Bearer {api.api_key}"},
+                                   json={"model": IMAGE_MODEL, "prompt": prompt, "n": 1,
+                                         "images": [{"image_url": image_url}],
+                                         "output_format": "jpeg", "reasoning_strength": "low",
+                                         "tool_enablement": {"enable_image_search": False,
+                                                             "enable_web_search": False, "enable_shell": False}})
+    if response.status_code == 400 and "content_policy_violation" in response.text:
+        raise ImageRefused("Muse Image declined to edit this photo.")
+    response.raise_for_status()
+    body = response.json()
+    if body.get("output_format", "jpeg") != "jpeg":
+        raise RuntimeError(f"expected jpeg, got {body.get('output_format')}")
     out.parent.mkdir(parents=True, exist_ok=True)
-    out.write_bytes(base64.b64decode(response.data[0].b64_json))
+    out.write_bytes(base64.b64decode(body["data"][0]["b64_json"]))
     return {"model": IMAGE_MODEL, "seconds": round(time.perf_counter() - started, 1), "cost_usd": USD_PER_IMAGE,
             "prompt": prompt}

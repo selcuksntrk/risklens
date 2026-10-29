@@ -98,7 +98,11 @@ async def make_fix_card(scan_id: str, hazard_id: str) -> dict:
                 raise HTTPException(410, f"Video frames are deleted after {guard.RETENTION_DAYS} days.")
             guard.charge_fixcard()
             before = image.crop_around(frame, hazard.get("box"), root / "fixcards" / f"{hazard_id}_before.jpg")
-            meta = await image.fix_card(meta_client(), before, image.fix_prompt(report["room"]["type"], hazard), out)
+            try:
+                meta = await image.fix_card(meta_client(), before, image.fix_prompt(report["room"]["type"], hazard),
+                                            out)
+            except image.ImageRefused as exc:
+                raise HTTPException(422, str(exc)) from exc
             guard.add_spend(meta["cost_usd"])
             (root / "fixcards" / f"{hazard_id}.json").write_text(json.dumps(meta, ensure_ascii=False))
     return {"image": f"fixcards/{hazard_id}.jpg", "before": f"fixcards/{hazard_id}_before.jpg"}
