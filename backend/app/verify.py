@@ -12,7 +12,7 @@ from app import config, media
 from app.agents import verifier
 from app.hazards import risk_score
 from app.meta.clients import meta_client, upload_video
-from app.meta.sam import Track, sam_cost, track_concept
+from app.meta.sam import Track, result_cost, track_concept
 from app.report import marks as som
 from app.report.provenance import now_iso, sha256_file, sha256_text
 
@@ -55,13 +55,6 @@ async def run_verify(scan_root: Path, src: Path, verify_id: str, emit: Emit) -> 
     report = json.loads((scan_root / "report.json").read_text())
     root = scan_root / "verify" / verify_id
     api = meta_client()
-    emitted: list[str] = []
-    outer_emit = emit
-
-    def emit(step: str, data: dict) -> None:  # count SAM requests for the cost line
-        emitted.append(step)
-        outer_emit(step, data)
-
     emit("ingest", {"verify_id": verify_id})
     proxy = await asyncio.to_thread(media.make_proxy, src, root / "proxy.mp4")   # off the event loop
     frames = await asyncio.to_thread(media.extract_frames, proxy, root / "frames")
@@ -77,12 +70,15 @@ async def run_verify(scan_root: Path, src: Path, verify_id: str, emit: Emit) -> 
         for name in [item["concept"], *item.get("alternates", [])]:
             alternates[name] = [w for w in [item["concept"], *item.get("alternates", [])] if w != name]
 
+    sam_cost_usd: list[float] = []
+
     async def track(concept: str):
         """Same wording as the scan first, then the planner's alternates while SAM finds nothing."""
         for wording in [concept, *alternates.get(concept, [])]:
             async with sem:
                 emit("sam.start", {"concept": wording})
                 result = await track_concept(api, file_id, wording)
+            sam_cost_usd.append(result_cost(result, len(frames)))
             emit("sam.done", {"concept": wording, "objects": len(result.tracks)})
             if result.tracks:
                 break
@@ -118,8 +114,7 @@ async def run_verify(scan_root: Path, src: Path, verify_id: str, emit: Emit) -> 
     checked = await asyncio.gather(*(check(h) for h in hazards))
     results = {hid: r for hid, r, _ in checked}
     remaining = [h for h in hazards if results[h["id"]]["verdict"] != "fixed"]
-    sam_requests = sum(1 for e in emitted if e == "sam.done")
-    cost = sam_requests * sam_cost(len(frames)) + sum(m["cost_usd"] for _, _, m in checked)
+    cost = sum(sam_cost_usd) + sum(m["cost_usd"] for _, _, m in checked)
     verification = {
         "verify_id": verify_id, "created_at": now_iso(),
         "results": results,

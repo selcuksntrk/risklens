@@ -15,7 +15,7 @@ from app import config, media
 from app.agents import fixer, planner, surveyor
 from app.hazards import DISCLAIMER, risk_score
 from app.meta.clients import meta_client, upload_video
-from app.meta.sam import sam_cost, track_concept
+from app.meta.sam import result_cost, track_concept
 from app.report import marks as som
 from app.report.provenance import now_iso, sha256_file, sha256_text
 
@@ -78,7 +78,7 @@ async def run_scan(src: Path, narration: str | None = None, emit: Emit = _print_
         return attempts
 
     sam_results = [r for attempts in await asyncio.gather(*(track(c) for c in plan["concepts"])) for r in attempts]
-    costs["sam"] = sum(sam_cost(len(frames)) for _ in sam_results)
+    costs["sam"] = sum(result_cost(r, len(frames)) for r in sam_results)
     tracks = [t for r in sam_results for t in r.tracks]
     lap("sam")
     marks = som.assign_marks(tracks)

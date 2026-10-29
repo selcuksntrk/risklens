@@ -110,3 +110,34 @@ def test_chain_retries_a_lagging_previous_response(monkeypatch):
     monkeypatch.setattr(spark.asyncio, "sleep", no_wait)
     api = SimpleNamespace(responses=SimpleNamespace(create=create))
     assert asyncio.run(spark.chain(api)) == "ok" and len(calls) == 3
+
+
+def test_parse_boxes_ignores_frame_markers_inside_mask_payloads():
+    text = ("<0f>0<|box;x1=1;y1=2;x2=3;y2=4;w=10;h=10|><|mask;x=0;y=0;data=!a<12f>Qz~|>,"
+            "1<|box;x1=5;y1=5;x2=6;y2=6;w=10;h=10|><|mask;x=0;y=0;data=!b|>\n"
+            "<1f>0<|box;x1=1;y1=2;x2=3;y2=5;w=10;h=10|><|mask;x=0;y=0;data=!c|>\n")
+    tracks, _ = parse_boxes(text)
+    assert tracks == {"0": {0: [1, 2, 3, 4], 1: [1, 2, 3, 5]}, "1": {0: [5, 5, 6, 6]}}
+
+
+def test_sam_backoff_honours_retry_after_and_caps():
+    from app.meta.sam import backoff
+    assert backoff(0, "3") == 3 and backoff(0, "60") == 10
+    assert 0.5 <= backoff(0, None) <= 1.0 and 2 <= backoff(2, None) <= 2.5
+
+
+def test_sam_does_not_retry_a_bad_request(monkeypatch):
+    import asyncio
+    from types import SimpleNamespace
+    import httpx
+    from openai import BadRequestError
+    from app.meta.sam import track_concept
+    calls = []
+
+    async def create(**kwargs):
+        calls.append(1)
+        raise BadRequestError("bad concept", response=httpx.Response(400, request=httpx.Request("POST", "http://x")),
+                              body=None)
+    api = SimpleNamespace(responses=SimpleNamespace(create=create))
+    result = asyncio.run(track_concept(api, "file", "lamp"))
+    assert len(calls) == 1 and result.status == "error" and result.tracks == []
