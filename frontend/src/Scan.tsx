@@ -18,6 +18,7 @@ function useScan(scanId: string, verifyId?: string) {
 
   useEffect(() => {
     let source: EventSource | null = null
+    let timer = 0
     let cancelled = false
     const settle = async () => {
       const state = await getScan(scanId)
@@ -27,6 +28,11 @@ function useScan(scanId: string, verifyId?: string) {
       }
       else if (state.status === 'error') setError(state.message)
       return state.status
+    }
+    // The live stream dropped (network, server restart): ask for the state every 3 s until it settles.
+    const poll = async (left: number) => {
+      const status = await settle()
+      if (!cancelled && status === 'running' && left > 0) timer = window.setTimeout(() => void poll(left - 1), 3000)
     }
     settle().then((status) => {
       if (cancelled || (status !== 'running' && !verifyId)) return
@@ -38,9 +44,9 @@ function useScan(scanId: string, verifyId?: string) {
         if (event.step === 'error') setError(String(event.message))
       }
       source.addEventListener('end', () => { source?.close(); setVerifying(false); settle() })
-      source.onerror = () => { source?.close(); setVerifying(false); settle() }
+      source.onerror = () => { source?.close(); setVerifying(false); void poll(60) }
     })
-    return () => { cancelled = true; source?.close() }
+    return () => { cancelled = true; source?.close(); window.clearTimeout(timer) }
   }, [scanId])
   return { events, report, fixcards, verification, verifying, error }
 }

@@ -64,6 +64,8 @@ def get_scan(scan_id: str) -> dict:
                 "verification": json.loads(verification.read_text()) if verification.exists() else None}
     if (root / "error.json").exists():   # the stored detail stays server-side
         return {"status": "error", "message": json.loads((root / "error.json").read_text())["message"]}
+    if scan_id not in jobs.JOBS:         # one process: no live job means a restart or deploy cut it off
+        return {"status": "error", "message": "This scan was interrupted by a server restart. Please scan again."}
     return {"status": "running"}
 
 

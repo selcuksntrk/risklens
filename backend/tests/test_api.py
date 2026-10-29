@@ -113,3 +113,9 @@ def test_voice_proxy_rejects_other_origins(client):
             with client.websocket_connect("/api/voice", headers=headers) as ws:
                 ws.receive_text()
         assert closed.value.code == 1008
+
+
+def test_scan_without_a_live_job_reports_interrupted(client, tmp_path):
+    (tmp_path / "abc123").mkdir()
+    state = client.get("/api/scans/abc123").json()
+    assert state["status"] == "error" and "interrupted" in state["message"]

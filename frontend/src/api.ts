@@ -118,7 +118,10 @@ export const ROOM_LABELS: Record<string, string> = {
 
 export async function makeFixCard(scanId: string, hazardId: string): Promise<{ image: string; before: string }> {
   const r = await fetch(`/api/scans/${scanId}/hazards/${hazardId}/fixcard`, { method: 'POST' })
-  if (!r.ok) throw new Error(`Fix card failed (${r.status})`)
+  if (!r.ok) {
+    const detail = await r.json().then((j) => j.detail).catch(() => r.statusText)
+    throw new Error(`Couldn't show the fix: ${detail}`)
+  }
   return r.json()
 }
 

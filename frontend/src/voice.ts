@@ -58,7 +58,8 @@ export async function startVoice(stream: MediaStream, h: VoiceHandlers): Promise
       await ctx.close()
       if (ws.readyState === WebSocket.OPEN) {
         ws.send('end')                                  // server sends endStream; final turns still arrive
-        await Promise.race([done, new Promise((r) => setTimeout(r, 4000))])
+        // the server closes the socket once Meta has flushed the last turn; closing first can drop it
+        await Promise.race([done, new Promise((r) => setTimeout(r, 8000))])
       }
       ws.close()
     },
