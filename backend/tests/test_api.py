@@ -48,6 +48,8 @@ def test_upload_streams_timeline_then_serves_report(client):
 
 def test_rejects_non_video_and_path_escapes(client):
     assert client.post("/api/scans", files={"video": ("x.txt", b"hi", "text/plain")}).status_code == 415
+    assert client.post("/api/scans", files={"video": ("x.bin", b"hi", "application/octet-stream")}).status_code == 415
+    assert client.post("/api/scans", files={"video": ("room.MOV", b"\x00", "application/octet-stream")}).status_code == 200
     scan_id = client.post("/api/scans", files={"video": ("r.mp4", b"\x00", "video/mp4")}).json()["scan_id"]
     assert client.get(f"/api/scans/{scan_id}/files/source.mp4").status_code == 404   # raw video never served
     assert client.get(f"/api/scans/{scan_id}/files/../../etc/passwd").status_code == 404

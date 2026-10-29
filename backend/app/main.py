@@ -146,6 +146,9 @@ async def voice_ws(ws: WebSocket) -> None:
 
 async def _save_upload(video: UploadFile, root: Path) -> Path:
     content_type = (video.content_type or "").split(";")[0]
+    if content_type not in VIDEO_TYPES:     # some pickers send application/octet-stream: trust the extension
+        suffix = Path(video.filename or "").suffix.lower()
+        content_type = next((t for t, s in VIDEO_TYPES.items() if s == suffix), content_type)
     if content_type not in VIDEO_TYPES:
         raise HTTPException(415, f"unsupported video type {content_type!r}")
     root.mkdir(parents=True, exist_ok=True)
