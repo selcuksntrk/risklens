@@ -17,6 +17,8 @@ PRICES = {
 }
 
 PROXY_FPS = 5           # SAM bills per frame: 60 s clip = 300 frames per concept
+MAX_VIDEO_SECONDS = 90  # longer uploads are trimmed: caps SAM frames (and cost) per scan
+FFMPEG_TIMEOUT_S = 180  # a broken or hostile file must not hang the worker
 PROXY_HEIGHT = 720
 MAX_CONCEPTS = 8
 KEYFRAMES = 6           # frames the planner/surveyor see

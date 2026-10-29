@@ -48,7 +48,8 @@ async def run_scan(src: Path, narration: str | None = None, emit: Emit = _print_
     info = media.probe(proxy)
     keyframes = media.pick_keyframes(len(frames), config.KEYFRAMES)
     lap("ingest")
-    emit("ingest.done", {"frames": len(frames), "duration_s": round(info["duration_s"], 1), "keyframes": keyframes})
+    emit("ingest.done", {"frames": len(frames), "duration_s": round(info["duration_s"], 1), "keyframes": keyframes,
+                         "trimmed": info["duration_s"] >= config.MAX_VIDEO_SECONDS - 0.5})
 
     # Upload while the planner looks at the room.
     file_task = asyncio.create_task(upload_video(api, proxy))

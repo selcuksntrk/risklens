@@ -65,3 +65,11 @@ def test_verify_guard_needs_sam_evidence_for_fixed():
     assert apply_guard(claim, object_found=True)["verdict"] == "fixed"
     assert apply_guard({**claim, "boxed_is_same_object": "no"}, object_found=True)["verdict"] == "cannot_verify"
     assert apply_guard({**claim, "verdict": "not_fixed"}, object_found=False)["verdict"] == "not_fixed"
+
+
+def test_proxy_is_trimmed_to_max_seconds(tmp_path):
+    from app.media import ffmpeg, make_proxy, probe
+    src = tmp_path / "long.mp4"
+    ffmpeg("-f", "lavfi", "-i", "testsrc=duration=4:size=320x240:rate=10", "-pix_fmt", "yuv420p", str(src))
+    proxy = make_proxy(src, tmp_path / "proxy.mp4", max_seconds=2)
+    assert probe(proxy)["duration_s"] <= 2.2
