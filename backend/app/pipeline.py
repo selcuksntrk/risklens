@@ -120,7 +120,12 @@ async def run_scan(src: Path, narration: str | None = None, emit: Emit = _print_
 
     room = {"type": plan["room_type"], "sleeping_area": plan["sleeping_area"], "exit_visible": plan["exit_visible"],
             "summary": survey["room_summary"], "risk_score": risk_score(hazards)}
-    fixes, fix_meta = await fixer.plan_fixes(api, hazards, room)
+    try:
+        fixes, fix_meta = await fixer.plan_fixes(api, hazards, room)
+    except Exception as exc:  # the survey stands on its own: report it without fixes rather than fail the scan
+        print(f"fixer failed: {exc!r}")
+        fixes, fix_meta = {}, {"cost_usd": 0.0, "reasoning_summary": [], "tool_calls": [], "usage": {}}
+        emit("fixer.error", {"message": "The fix plan could not be written for this scan."})
     costs["fixer"] = fix_meta["cost_usd"]
     for h in hazards:
         h["fix"] = fixes.get(h["id"])

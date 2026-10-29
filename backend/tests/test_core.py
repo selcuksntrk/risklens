@@ -73,3 +73,40 @@ def test_proxy_is_trimmed_to_max_seconds(tmp_path):
     ffmpeg("-f", "lavfi", "-i", "testsrc=duration=4:size=320x240:rate=10", "-pix_fmt", "yuv420p", str(src))
     proxy = make_proxy(src, tmp_path / "proxy.mp4", max_seconds=2)
     assert probe(proxy)["duration_s"] <= 2.2
+
+
+def test_spark_json_retries_a_cut_off_answer_with_more_budget():
+    import asyncio
+    from types import SimpleNamespace
+    from app.meta.spark import spark_json
+    budgets = []
+
+    async def create(**kwargs):
+        budgets.append(kwargs["max_output_tokens"])
+        status = "incomplete" if len(budgets) == 1 else "completed"
+        return SimpleNamespace(status=status, usage=None, output=[], output_text='{"ok": true}',
+                               incomplete_details=SimpleNamespace(reason="max_output_tokens"))
+    api = SimpleNamespace(responses=SimpleNamespace(create=create))
+    out, _ = asyncio.run(spark_json(api, [], {}, "t", instructions="", max_tokens=100))
+    assert out == {"ok": True} and budgets == [100, 200]
+
+
+def test_chain_retries_a_lagging_previous_response(monkeypatch):
+    import asyncio
+    from types import SimpleNamespace
+    import httpx
+    from openai import BadRequestError
+    from app.meta import spark
+    calls = []
+
+    async def create(**kwargs):
+        calls.append(1)
+        if len(calls) < 3:
+            raise BadRequestError("not yet", response=httpx.Response(400, request=httpx.Request("POST", "http://x")),
+                                  body=None)
+        return "ok"
+    async def no_wait(_):
+        return None
+    monkeypatch.setattr(spark.asyncio, "sleep", no_wait)
+    api = SimpleNamespace(responses=SimpleNamespace(create=create))
+    assert asyncio.run(spark.chain(api)) == "ok" and len(calls) == 3

@@ -1,12 +1,13 @@
 """Muse Spark structured-output calls with usage, cost and reasoning summaries (shown in the agent timeline)."""
 from __future__ import annotations
 
+import asyncio
 import base64
 import json
 import time
 from pathlib import Path
 
-from openai import AsyncOpenAI
+from openai import AsyncOpenAI, BadRequestError
 
 from app.config import PRICES, SPARK_MODEL
 
@@ -26,22 +27,45 @@ def spark_cost(model: str, usage: dict) -> float:
 async def spark_json(api: AsyncOpenAI, content: list[dict], schema: dict, name: str, *,
                      instructions: str, effort: str = "medium", max_tokens: int = 8000) -> tuple[dict, dict]:
     """One strict structured-output Responses call. Returns (parsed JSON, meta with usage/cost/summary)."""
-    started = time.perf_counter()
-    response = await api.responses.create(
-        model=SPARK_MODEL,
-        instructions=instructions,
-        reasoning={"effort": effort, "summary": "auto"},
-        max_output_tokens=max_tokens,
-        input=[{"role": "user", "content": content}],
-        text={"format": {"type": "json_schema", "name": name, "schema": schema, "strict": True}},
-        store=False,                # single call, never chained: room photos are not kept server-side
-    )
-    usage = response.usage.model_dump() if response.usage else {}
+    started, cost = time.perf_counter(), 0.0
+    for budget in (max_tokens, max_tokens * 2):  # the cap covers reasoning + answer: retry a cut-off answer once
+        response = await api.responses.create(
+            model=SPARK_MODEL,
+            instructions=instructions,
+            reasoning={"effort": effort, "summary": "auto"},
+            max_output_tokens=budget,
+            input=[{"role": "user", "content": content}],
+            text={"format": {"type": "json_schema", "name": name, "schema": schema, "strict": True}},
+            store=False,            # single call, never chained: room photos are not kept server-side
+        )
+        usage = response.usage.model_dump() if response.usage else {}
+        cost += spark_cost(SPARK_MODEL, usage)
+        if response.status != "incomplete":
+            break
     summary = [part.text for item in response.output if item.type == "reasoning"
                for part in (getattr(item, "summary", None) or []) if getattr(part, "text", None)]
     meta = {"model": SPARK_MODEL, "seconds": round(time.perf_counter() - started, 1), "usage": usage,
-            "cost_usd": spark_cost(SPARK_MODEL, usage), "reasoning_summary": summary}
-    return json.loads(response.output_text), meta
+            "cost_usd": cost, "reasoning_summary": summary}
+    return parse_output(response, name), meta
+
+
+def parse_output(response, name: str) -> dict:
+    if response.status == "incomplete":
+        reason = getattr(response.incomplete_details, "reason", None)
+        raise RuntimeError(f"{name}: answer cut off ({reason})")
+    return json.loads(response.output_text)
+
+
+async def chain(api: AsyncOpenAI, **kwargs):
+    """Continue a stored response. Persistence can briefly lag the completed event, so a chained call may return
+    400 for a few seconds; the docs say to retry once or twice with a short backoff."""
+    for delay in (0.5, 1.5, None):
+        try:
+            return await api.responses.create(**kwargs)
+        except BadRequestError:
+            if delay is None:
+                raise
+            await asyncio.sleep(delay)
 
 
 async def spark_agent(api: AsyncOpenAI, content: list[dict], schema: dict, name: str, *, instructions: str,
@@ -76,7 +100,7 @@ async def spark_agent(api: AsyncOpenAI, content: list[dict], schema: dict, name:
                 result = {"error": str(exc)[:300]}
             calls.append({"tool": call.name, "arguments": call.arguments})
             outputs.append({"type": "function_call_output", "call_id": call.call_id, "output": json.dumps(result)})
-        response = await api.responses.create(previous_response_id=response.id, input=outputs, **kwargs)
+        response = await chain(api, previous_response_id=response.id, input=outputs, **kwargs)
     meta = {"model": SPARK_MODEL, "seconds": round(time.perf_counter() - started, 1), "usage": usage_total,
             "cost_usd": cost, "reasoning_summary": summary, "tool_calls": calls}
-    return json.loads(response.output_text), meta
+    return parse_output(response, name), meta
