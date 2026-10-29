@@ -43,9 +43,9 @@ async def run_scan(src: Path, narration: str | None = None, emit: Emit = _print_
         mark_t = now
 
     emit("ingest", {"scan_id": scan_id, "source": src.name})
-    proxy = media.make_proxy(src, root / "proxy.mp4")
-    frames = media.extract_frames(proxy, root / "frames")
-    info = media.probe(proxy)
+    proxy = await asyncio.to_thread(media.make_proxy, src, root / "proxy.mp4")   # off the event loop
+    frames = await asyncio.to_thread(media.extract_frames, proxy, root / "frames")
+    info = await asyncio.to_thread(media.probe, proxy)
     keyframes = media.pick_keyframes(len(frames), config.KEYFRAMES)
     lap("ingest")
     emit("ingest.done", {"frames": len(frames), "duration_s": round(info["duration_s"], 1), "keyframes": keyframes,
@@ -86,7 +86,7 @@ async def run_scan(src: Path, narration: str | None = None, emit: Emit = _print_
     marked = []
     for frame in keyframes:
         out = root / "marked" / f"{frame:05d}.jpg"
-        som.draw_marks(frames[frame], frame, marks, out)
+        await asyncio.to_thread(som.draw_marks, frames[frame], frame, marks, out)
         marked.append((frame, out))
     emit("marks.done", {"objects": {m: t.concept for m, t in marks.items()},
                         "images": [str(p.relative_to(root)) for _, p in marked]})
@@ -104,7 +104,8 @@ async def run_scan(src: Path, narration: str | None = None, emit: Emit = _print_
             h = {**h, "evidence_frame": str(frame)}
         evidence = root / "evidence" / f"h{i + 1}.jpg"
         if track:
-            som.draw_marks(frames[frame], frame, {h["mark"]: track}, evidence, only={h["mark"]})
+            await asyncio.to_thread(som.draw_marks, frames[frame], frame, {h["mark"]: track}, evidence,
+                                    only={h["mark"]})
         else:
             evidence.parent.mkdir(parents=True, exist_ok=True)
             evidence.write_bytes(frames[frame].read_bytes())

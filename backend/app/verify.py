@@ -63,8 +63,8 @@ async def run_verify(scan_root: Path, src: Path, verify_id: str, emit: Emit) -> 
         outer_emit(step, data)
 
     emit("ingest", {"verify_id": verify_id})
-    proxy = media.make_proxy(src, root / "proxy.mp4")
-    frames = media.extract_frames(proxy, root / "frames")
+    proxy = await asyncio.to_thread(media.make_proxy, src, root / "proxy.mp4")   # off the event loop
+    frames = await asyncio.to_thread(media.extract_frames, proxy, root / "frames")
     file_id = await upload_video(api, proxy)
     emit("ingest.done", {"frames": len(frames)})
 
@@ -103,7 +103,7 @@ async def run_verify(scan_root: Path, src: Path, verify_id: str, emit: Emit) -> 
             after = []
             for frame, t in best_frames(tracks):
                 out = root / "after" / f"{h['id']}_{frame:05d}.jpg"
-                som.draw_marks(frames[frame], frame, {"1": t}, out, only={"1"})
+                await asyncio.to_thread(som.draw_marks, frames[frame], frame, {"1": t}, out, only={"1"})
                 after.append((frame, out))
         else:
             after = overview
