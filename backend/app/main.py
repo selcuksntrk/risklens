@@ -4,50 +4,35 @@
 """
 from __future__ import annotations
 
+import asyncio
 import json
-import os
-import time
+import shutil
 from pathlib import Path
 
 from fastapi import FastAPI, File, Form, HTTPException, Request, UploadFile, WebSocket
 from fastapi.responses import FileResponse, StreamingResponse
 from fastapi.staticfiles import StaticFiles
 
-from app import config, jobs
+from app import config, guard, jobs
 from app.meta import image, voice
 from app.meta.clients import meta_client
 
 MAX_UPLOAD_BYTES = 300 * 1024 * 1024
 VIDEO_TYPES = {"video/mp4": ".mp4", "video/quicktime": ".mov", "video/webm": ".webm"}
 FRONTEND = Path(__file__).resolve().parents[2] / "frontend" / "dist"
-MAX_SCANS_PER_DAY = int(os.environ.get("RISKLENS_MAX_SCANS_PER_DAY", "60"))   # ≈ $15/day at ≈ $0.25/scan
-MAX_SCANS_PER_IP = int(os.environ.get("RISKLENS_MAX_SCANS_PER_IP", "10"))
-SCAN_LOG: dict = {"day": "", "total": 0, "per_ip": {}}
+SERVED_DIRS = {"evidence", "marked", "fixcards"}     # plus verify/<id>/after; never source, proxy or raw frames
+FIXCARD_LOCKS: dict[str, asyncio.Lock] = {}
 
 app = FastAPI(title="RiskLens")
 config.SCANS_DIR.mkdir(parents=True, exist_ok=True)
 
 
-def check_budget(ip: str) -> None:
-    """Every scan spends Meta credit: cap scans per day overall and per client IP (public URL safety)."""
-    today = time.strftime("%Y-%m-%d")
-    if SCAN_LOG["day"] != today:
-        SCAN_LOG.update(day=today, total=0, per_ip={})
-    if SCAN_LOG["total"] >= MAX_SCANS_PER_DAY:
-        raise HTTPException(429, "Daily scan limit reached. Please try again tomorrow.")
-    if SCAN_LOG["per_ip"].get(ip, 0) >= MAX_SCANS_PER_IP:
-        raise HTTPException(429, "Scan limit for this device reached today.")
-    SCAN_LOG["total"] += 1
-    SCAN_LOG["per_ip"][ip] = SCAN_LOG["per_ip"].get(ip, 0) + 1
-
-
 @app.post("/api/scans")
 async def create_scan(request: Request, video: UploadFile = File(...), narration: str = Form("")) -> dict:
-    ip = request.headers.get("cf-connecting-ip") or (request.client.host if request.client else "?")
-    check_budget(ip)
+    guard.purge_old_media()
     scan_id = jobs.new_scan_id()
     root = config.SCANS_DIR / scan_id
-    src = await _save_upload(video, root)
+    src = await _save_upload(video, root, guard.client_ip(request))
     (root / "meta.json").write_text(json.dumps({"narration": narration, "filename": video.filename}, ensure_ascii=False))
     jobs.start_scan(scan_id, src, narration.strip() or None)
     return {"scan_id": scan_id}
@@ -56,10 +41,8 @@ async def create_scan(request: Request, video: UploadFile = File(...), narration
 @app.get("/api/scans")
 def list_scans(ids: str = "") -> list[dict]:
     """Only the scans this browser created (ids it kept) plus featured demo scans: never everyone's homes."""
-    featured = config.SCANS_DIR / "featured.txt"
     wanted = [i for i in ids.split(",") if i.isalnum()][:50]
-    if featured.exists():
-        wanted += [i for i in featured.read_text().split() if i.isalnum() and i not in wanted]
+    wanted += sorted(guard.featured_ids() - set(wanted))
     rows = []
     for scan_id in wanted:
         report = config.SCANS_DIR / scan_id / "report.json"
@@ -79,8 +62,8 @@ def get_scan(scan_id: str) -> dict:
         verification = root / "verification.json"
         return {"status": "done", "report": json.loads((root / "report.json").read_text()), "fixcards": fixcards,
                 "verification": json.loads(verification.read_text()) if verification.exists() else None}
-    if (root / "error.json").exists():
-        return {"status": "error", **json.loads((root / "error.json").read_text())}
+    if (root / "error.json").exists():   # the stored detail stays server-side
+        return {"status": "error", "message": json.loads((root / "error.json").read_text())["message"]}
     return {"status": "running"}
 
 
@@ -90,9 +73,8 @@ async def verify_scan(scan_id: str, request: Request, video: UploadFile = File(.
     root = _scan_dir(scan_id)
     if not (root / "report.json").exists():
         raise HTTPException(409, "scan has no report yet")
-    check_budget(request.headers.get("cf-connecting-ip") or (request.client.host if request.client else "?"))
     verify_id = f"{scan_id}v{jobs.new_scan_id()[:6]}"
-    src = await _save_upload(video, root / "verify" / verify_id)
+    src = await _save_upload(video, root / "verify" / verify_id, guard.client_ip(request))
     jobs.start_verify(scan_id, verify_id, src)
     return {"verify_id": verify_id}
 
@@ -101,16 +83,24 @@ async def verify_scan(scan_id: str, request: Request, video: UploadFile = File(.
 async def make_fix_card(scan_id: str, hazard_id: str) -> dict:
     """Muse Image edit of the evidence frame showing the fix. On demand (costs $0.01) and cached per hazard."""
     root = _scan_dir(scan_id)
+    if not (root / "report.json").exists():
+        raise HTTPException(409, "scan has no report yet")
     out = root / "fixcards" / f"{hazard_id}.jpg"
-    if not out.exists():
-        report = json.loads((root / "report.json").read_text())
-        hazard = next((h for h in report["hazards"] if h["id"] == hazard_id), None)
-        if hazard is None:
-            raise HTTPException(404, "hazard not found")
-        frame = root / "frames" / f"{int(hazard['evidence_frame']):05d}.jpg"
-        before = image.crop_around(frame, hazard.get("box"), root / "fixcards" / f"{hazard_id}_before.jpg")
-        meta = await image.fix_card(meta_client(), before, image.fix_prompt(report["room"]["type"], hazard), out)
-        (root / "fixcards" / f"{hazard_id}.json").write_text(json.dumps(meta, ensure_ascii=False))
+    lock = FIXCARD_LOCKS.setdefault(f"{scan_id}/{hazard_id}", asyncio.Lock())
+    async with lock:                         # two taps must not pay for two images
+        if not out.exists():
+            report = json.loads((root / "report.json").read_text())
+            hazard = next((h for h in report["hazards"] if h["id"] == hazard_id), None)
+            if hazard is None:
+                raise HTTPException(404, "hazard not found")
+            frame = root / "frames" / f"{int(hazard['evidence_frame']):05d}.jpg"
+            if not frame.exists():
+                raise HTTPException(410, f"Video frames are deleted after {guard.RETENTION_DAYS} days.")
+            guard.charge_fixcard()
+            before = image.crop_around(frame, hazard.get("box"), root / "fixcards" / f"{hazard_id}_before.jpg")
+            meta = await image.fix_card(meta_client(), before, image.fix_prompt(report["room"]["type"], hazard), out)
+            guard.add_spend(meta["cost_usd"])
+            (root / "fixcards" / f"{hazard_id}.json").write_text(json.dumps(meta, ensure_ascii=False))
     return {"image": f"fixcards/{hazard_id}.jpg", "before": f"fixcards/{hazard_id}_before.jpg"}
 
 
@@ -134,7 +124,7 @@ async def scan_events(scan_id: str) -> StreamingResponse:
 def scan_file(scan_id: str, path: str) -> FileResponse:
     root = _scan_dir(scan_id).resolve()
     target = (root / path).resolve()
-    if root not in target.parents or not target.is_file() or target.name.startswith("source"):
+    if root not in target.parents or not target.is_file() or not _servable(target.relative_to(root).parts):
         raise HTTPException(404)
     return FileResponse(target)
 
@@ -144,7 +134,14 @@ async def voice_ws(ws: WebSocket) -> None:
     await voice.proxy(ws)
 
 
-async def _save_upload(video: UploadFile, root: Path) -> Path:
+def _servable(parts: tuple[str, ...]) -> bool:
+    """Evidence, marked keyframes, fix cards and verify 'after' images only: never the video or raw frames."""
+    return (len(parts) == 2 and parts[0] in SERVED_DIRS) or (len(parts) == 4 and parts[0] == "verify"
+                                                              and parts[2] == "after")
+
+
+async def _save_upload(video: UploadFile, root: Path, ip: str) -> Path:
+    """Validate and store the upload, then charge the daily budget (rejected files never use up quota)."""
     content_type = (video.content_type or "").split(";")[0]
     if content_type not in VIDEO_TYPES:     # some pickers send application/octet-stream: trust the extension
         suffix = Path(video.filename or "").suffix.lower()
@@ -154,12 +151,17 @@ async def _save_upload(video: UploadFile, root: Path) -> Path:
     root.mkdir(parents=True, exist_ok=True)
     src = root / f"source{VIDEO_TYPES[content_type]}"
     size = 0
-    with src.open("wb") as f:
-        while chunk := await video.read(1 << 20):
-            size += len(chunk)
-            if size > MAX_UPLOAD_BYTES:
-                raise HTTPException(413, "video too large")
-            f.write(chunk)
+    try:
+        with src.open("wb") as f:
+            while chunk := await video.read(1 << 20):
+                size += len(chunk)
+                if size > MAX_UPLOAD_BYTES:
+                    raise HTTPException(413, "video too large")
+                f.write(chunk)
+        guard.charge_scan(ip)
+    except HTTPException:
+        shutil.rmtree(root, ignore_errors=True)
+        raise
     return src
 
 

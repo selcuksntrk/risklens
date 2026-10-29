@@ -25,7 +25,6 @@ def client(tmp_path, monkeypatch):
     monkeypatch.setattr(jobs, "run_scan", fake_run_scan)
     from app import main
     from app.main import app
-    main.SCAN_LOG.update(day="", total=0, per_ip={})
     with TestClient(app) as c:
         yield c
 
@@ -56,10 +55,52 @@ def test_rejects_non_video_and_path_escapes(client):
     assert client.get("/api/scans/not-a-scan!").status_code in (400, 404)
 
 
-def test_scan_budget_per_ip(client, monkeypatch):
-    from app import main
-    monkeypatch.setattr(main, "MAX_SCANS_PER_IP", 1)
-    main.SCAN_LOG.update(day="", total=0, per_ip={})
+def test_scan_budget_per_ip_ignores_spoofed_header_and_survives_restart(client, monkeypatch):
+    from app import guard
+    monkeypatch.setattr(guard, "MAX_SCANS_PER_IP", 1)
     ok = client.post("/api/scans", files={"video": ("r.mp4", b"\x00", "video/mp4")})
-    blocked = client.post("/api/scans", files={"video": ("r.mp4", b"\x00", "video/mp4")})
-    assert ok.status_code == 200 and blocked.status_code == 429
+    spoofed = client.post("/api/scans", files={"video": ("r.mp4", b"\x00", "video/mp4")},
+                          headers={"cf-connecting-ip": "1.2.3.4"})
+    assert ok.status_code == 200 and spoofed.status_code == 429
+    assert guard._load()["scans"] == 1                    # counted on disk, not in process memory
+
+
+def test_rejected_upload_uses_no_quota_and_dollar_cap_blocks(client):
+    from app import guard
+    client.post("/api/scans", files={"video": ("x.txt", b"hi", "text/plain")})
+    assert guard._load()["scans"] == 0
+    guard.add_spend(guard.MAX_USD_PER_DAY)
+    assert client.post("/api/scans", files={"video": ("r.mp4", b"\x00", "video/mp4")}).status_code == 429
+
+
+def test_only_evidence_images_are_served(client, tmp_path):
+    scan_id = client.post("/api/scans", files={"video": ("r.mp4", b"\x00", "video/mp4")}).json()["scan_id"]
+    root = tmp_path / scan_id
+    for rel in ["proxy.mp4", "frames/00001.jpg", "marked/00001.jpg", "verify/abcv1/after/h1.jpg",
+                "verify/abcv1/proxy.mp4"]:
+        (root / rel).parent.mkdir(parents=True, exist_ok=True)
+        (root / rel).write_bytes(b"x")
+    get = lambda rel: client.get(f"/api/scans/{scan_id}/files/{rel}").status_code
+    assert get("proxy.mp4") == get("frames/00001.jpg") == get("verify/abcv1/proxy.mp4") == 404
+    assert get("marked/00001.jpg") == get("verify/abcv1/after/h1.jpg") == 200
+
+
+def test_fixcard_needs_a_report(client, tmp_path):
+    (tmp_path / "abc123").mkdir()
+    assert client.post("/api/scans/abc123/hazards/h1/fixcard").status_code == 409
+
+
+def test_purge_keeps_reports_and_featured_scans(tmp_path, monkeypatch):
+    import os
+    from app import config, guard
+    monkeypatch.setattr(config, "SCANS_DIR", tmp_path)
+    for scan in ("old", "fresh", "feat"):
+        (tmp_path / scan / "frames").mkdir(parents=True)
+        for name in ("source.mp4", "proxy.mp4", "report.json", "meta.json", "frames/00001.jpg"):
+            (tmp_path / scan / name).write_bytes(b"x")
+    (tmp_path / "featured.txt").write_text("feat")
+    for scan in ("old", "feat"):
+        os.utime(tmp_path / scan / "meta.json", (0, 1_000_000))
+    assert guard.purge_old_media(now=1_000_000 + 8 * 86400) == ["old"]
+    assert not (tmp_path / "old" / "source.mp4").exists() and not (tmp_path / "old" / "frames").exists()
+    assert (tmp_path / "old" / "report.json").exists() and (tmp_path / "feat" / "source.mp4").exists()

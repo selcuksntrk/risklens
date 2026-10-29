@@ -9,7 +9,7 @@ import uuid
 from dataclasses import dataclass, field
 from pathlib import Path
 
-from app import config
+from app import config, guard
 from app.pipeline import run_scan
 from app.verify import run_verify
 
@@ -40,14 +40,17 @@ def _start(job_id: str, work, error_dir: Path) -> Job:
 
     async def run() -> None:
         try:
-            await work(job.emit)
+            result = await work(job.emit)
+            cost = result.get("cost_usd", 0) if isinstance(result, dict) else 0
+            guard.add_spend(cost["total"] if isinstance(cost, dict) else cost)
             job.status = "done"
         except Exception as exc:  # surface the failure in the timeline instead of a silent dead job
             traceback.print_exc()
             job.status = "error"
-            job.emit("error", {"message": str(exc)[:500]})
+            message = f"The scan failed ({type(exc).__name__}). Please try again."   # details stay server-side
+            job.emit("error", {"message": message})
             error_dir.mkdir(parents=True, exist_ok=True)
-            (error_dir / "error.json").write_text(json.dumps({"message": str(exc)}))
+            (error_dir / "error.json").write_text(json.dumps({"message": message, "detail": str(exc)[:2000]}))
 
     asyncio.get_running_loop().create_task(run())
     return job

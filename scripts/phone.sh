@@ -4,7 +4,7 @@
 set -euo pipefail
 cd "$(dirname "$0")/.."
 (cd frontend && npm run build >/dev/null)
-(cd backend && uv run --env-file ../.env uvicorn app.main:app --host 127.0.0.1 --port 8000) &
+(cd backend && RISKLENS_TRUST_CF_HEADER=1 uv run --env-file ../.env uvicorn app.main:app --host 127.0.0.1 --port 8000) &
 API=$!
 trap 'kill $API 2>/dev/null' EXIT
 sleep 3
