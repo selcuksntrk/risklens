@@ -2,8 +2,11 @@
 
 **Film a room for a minute. RiskLens finds the earthquake hazards inside it, shows you how to fix them, and verifies the fix, as an insurer-grade survey.**
 
-Most earthquake injuries come from what's *inside* the home: shelves that tip, frames above beds, TVs that fly, furniture that blocks the exit.
-RiskLens turns a phone video into a non-structural hazard survey with evidence frames, FEMA-grounded fixes, an independent audit trail, and before/after proof once you fix things.
+In earthquakes, most indoor injuries come from what's *inside*, not the structure: shelves that tip, frames above beds, TVs that fly, furniture that blocks the exit.
+In New Zealand's 2010–14 earthquakes, 556 of 947 injuries in commercial buildings came from non-structural damage ([Yeow et al., *Earthquake Spectra* 2020](https://doi.org/10.1177/8755293019900775)).
+RiskLens turns a phone video into a non-structural hazard survey with evidence frames, FEMA-grounded fixes, a provenance audit trail (models, prompts, hashes, reasoning summaries), and before/after proof once you fix things.
+
+**Try it:** https://selcuksntrk--risklens-web.us-east.modal.run (phone camera, or upload a room video)
 
 > Theme: **Build for Your World**. Built in Istanbul for homes in earthquake cities everywhere.
 > RiskLens surveys non-structural hazards (furniture, fixtures, contents) only. It does **not** assess the structural safety of a building.
@@ -42,11 +45,15 @@ The phone camera needs HTTPS: open the app through an HTTPS tunnel or the deploy
 
 ## Built during the hackathon
 Everything in this repo was written during the event window (Oct 26 – Nov 4 2026); see the commit history.
-`backend/app/meta/sam.py` and `spark.py` started from our own Day-1 feasibility spikes (Oct 26).
+`backend/app/meta/sam.py` and `spark.py` started from our own Day-1 feasibility spikes (Oct 26, after kickoff), which
+were throwaway research scripts and are not part of this repo.
 
 ## Pre-existing / third-party
 - SAM request shape follows the Meta Model Cookbook `07_sam/01_api_basics` (MIT, © Meta Platforms, Inc.).
-- Libraries: openai (Apache-2.0), meta-sam-parser, Pillow (MIT-CMU), FastAPI (MIT).
+- Frontend scaffold: generated with the Vite `react-ts` template (MIT); everything in `frontend/src` was written for RiskLens.
+- Libraries: openai (Apache-2.0), Pillow (MIT-CMU), FastAPI (MIT), uvicorn (BSD-3), websockets (BSD-3),
+  python-multipart (Apache-2.0), React (MIT), Vite (MIT). Video processing uses the ffmpeg binary (LGPL/GPL), called as an
+  external program.
 - Data: see [`DATA_LICENSES.md`](DATA_LICENSES.md). No raw datasets are committed.
 
 ## License

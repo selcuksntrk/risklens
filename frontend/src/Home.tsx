@@ -14,10 +14,12 @@ export default function Home() {
         <h1>RiskLens</h1>
       </header>
       <section className="hero">
-        <h2>Most earthquake injuries come from what's inside the home.</h2>
+        <h2>In earthquakes, most indoor injuries come from what's inside, not the structure.</h2>
         <p>Film a room for a minute. RiskLens finds what can fall, tip, shatter or block your way out, and shows you how to fix it.</p>
         <button className="primary big" onClick={() => go('capture')}>Scan a room</button>
         <p className="fine">Non-structural hazards only. RiskLens does not assess the building's structure.</p>
+        <p className="fine">556 of 947 injuries in New Zealand buildings in the 2010–14 earthquakes came from non-structural
+          damage (<a href="https://doi.org/10.1177/8755293019900775" target="_blank" rel="noreferrer">Yeow et al., 2020</a>).</p>
       </section>
       {scans.length > 0 && (
         <section>
