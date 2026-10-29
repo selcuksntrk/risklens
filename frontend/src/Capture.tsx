@@ -116,6 +116,9 @@ export default function Capture({ verifyScanId }: { verifyScanId?: string }) {
         {!recording && !busy && (verifyScanId
           ? <p className="tip"><b>Verify your fixes.</b> Film the same room again, slowly, showing each fixed item and where it is attached.</p>
           : <p className="tip">{TIPS[0]} {TIPS[1]} {TIPS[2]}</p>)}
+        {!recording && !busy && (
+          <p className="fine">Please don't film people. Your video is analyzed by Meta AI models and deleted from our server after 7 days.</p>
+        )}
         {(turns.length > 0 || partial) && (
           <p className="narration">
             <span className="tag">Muse Voice Transcribe</span>

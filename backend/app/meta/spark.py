@@ -34,6 +34,7 @@ async def spark_json(api: AsyncOpenAI, content: list[dict], schema: dict, name: 
         max_output_tokens=max_tokens,
         input=[{"role": "user", "content": content}],
         text={"format": {"type": "json_schema", "name": name, "schema": schema, "strict": True}},
+        store=False,                # single call, never chained: room photos are not kept server-side
     )
     usage = response.usage.model_dump() if response.usage else {}
     summary = [part.text for item in response.output if item.type == "reasoning"

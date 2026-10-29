@@ -16,5 +16,7 @@ def meta_client() -> AsyncOpenAI:
 
 
 async def upload_video(api: AsyncOpenAI, path) -> str:
-    uploaded = await api.files.create(file=(path.name, path.read_bytes(), "video/mp4"), purpose="user_data")
+    # Meta deletes the home video after a day; SAM only needs it during the scan (allowed range 1 h - 30 days)
+    uploaded = await api.files.create(file=(path.name, path.read_bytes(), "video/mp4"), purpose="user_data",
+                                      expires_after={"anchor": "created_at", "seconds": 86400})
     return uploaded.id
