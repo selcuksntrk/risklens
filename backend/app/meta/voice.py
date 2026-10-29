@@ -1,7 +1,7 @@
 """Muse Voice Transcribe realtime proxy: browser mic (PCM s16le 24 kHz) -> our server -> Meta, events back.
 
 The key is added server-side in the handshake frame, so it never reaches the browser.
-Protocol: knowledge/raw/meta-docs/docs/api-reference/voice/realtime.md.
+Protocol: Meta Model API reference, realtime voice (muse-voice-transcribe-1.0).
 """
 from __future__ import annotations
 
