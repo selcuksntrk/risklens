@@ -104,3 +104,12 @@ def test_purge_keeps_reports_and_featured_scans(tmp_path, monkeypatch):
     assert guard.purge_old_media(now=1_000_000 + 8 * 86400) == ["old"]
     assert not (tmp_path / "old" / "source.mp4").exists() and not (tmp_path / "old" / "frames").exists()
     assert (tmp_path / "old" / "report.json").exists() and (tmp_path / "feat" / "source.mp4").exists()
+
+
+def test_voice_proxy_rejects_other_origins(client):
+    from starlette.websockets import WebSocketDisconnect
+    for headers in ({}, {"origin": "https://evil.example"}):
+        with pytest.raises(WebSocketDisconnect) as closed:
+            with client.websocket_connect("/api/voice", headers=headers) as ws:
+                ws.receive_text()
+        assert closed.value.code == 1008
