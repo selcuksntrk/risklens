@@ -89,7 +89,12 @@ async def run_verify(scan_root: Path, src: Path, verify_id: str, emit: Emit) -> 
         return concept, result
 
     found = dict(await asyncio.gather(*(track(c) for c in concepts)))
-    overview = [(f, frames[f]) for f in media.pick_keyframes(len(frames), 4)]
+    overview = []                           # copied under after/ because raw frames are never served
+    for f in media.pick_keyframes(len(frames), 4):
+        out = root / "after" / f"overview_{f:05d}.jpg"
+        out.parent.mkdir(parents=True, exist_ok=True)
+        out.write_bytes(frames[f].read_bytes())
+        overview.append((f, out))
 
     async def check(h: dict):
         result = found.get(h["track"].split("#")[0]) if h.get("track") else None
