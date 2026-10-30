@@ -81,6 +81,17 @@ async def verify_scan(scan_id: str, request: Request, video: UploadFile = File(.
     return {"verify_id": verify_id}
 
 
+@app.get("/api/scans/{scan_id}/verify/{verify_id}")
+def get_verification(scan_id: str, verify_id: str) -> dict:
+    root = _scan_dir(scan_id)
+    if not verify_id.isalnum():
+        raise HTTPException(400, "bad verification id")
+    folder = root / "verify" / verify_id
+    if not folder.is_dir():
+        raise HTTPException(404, "verification not found")
+    return jobs.state(verify_id, folder, "verification.json", "verification")
+
+
 @app.post("/api/scans/{scan_id}/hazards/{hazard_id}/fixcard")
 async def make_fix_card(scan_id: str, hazard_id: str) -> dict:
     """Muse Image edit of the evidence frame showing the fix. On demand (costs $0.01) and cached per hazard."""

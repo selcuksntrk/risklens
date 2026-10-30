@@ -9,6 +9,7 @@ from collections.abc import Callable
 from pathlib import Path
 
 from app import config, media
+from app.storage import write_json
 from app.agents import verifier
 from app.hazards import risk_score
 from app.meta.clients import meta_client, upload_video
@@ -129,7 +130,8 @@ async def run_verify(scan_root: Path, src: Path, verify_id: str, emit: Emit) -> 
                        "prompt_sha256": sha256_text(verifier.INSTRUCTIONS),
                        "reasoning_summaries": {hid: m["reasoning_summary"] for hid, _, m in checked}},
     }
-    (scan_root / "verification.json").write_text(json.dumps(verification, indent=2, ensure_ascii=False) + "\n")
+    write_json(root / "verification.json", verification)
+    write_json(scan_root / "verification.json", verification)
     emit("done", {"fixed": verification["fixed"], "of": len(hazards),
                   "risk_score_after": verification["risk_score_after"], "cost_usd": verification["cost_usd"]})
     return verification

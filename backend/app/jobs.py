@@ -10,6 +10,7 @@ from dataclasses import dataclass, field
 from pathlib import Path
 
 from app import config, guard
+from app.storage import write_json
 from app.pipeline import run_scan
 from app.verify import run_verify
 
@@ -50,7 +51,7 @@ def _start(job_id: str, work, error_dir: Path) -> Job:
             message = f"The scan failed ({type(exc).__name__}). Please try again."   # details stay server-side
             job.emit("error", {"message": message})
             error_dir.mkdir(parents=True, exist_ok=True)
-            (error_dir / "error.json").write_text(json.dumps({"message": message, "detail": str(exc)[:2000]}))
+            write_json(error_dir / "error.json", {"message": message, "detail": str(exc)[:2000]})
 
     asyncio.get_running_loop().create_task(run())
     return job
@@ -77,3 +78,16 @@ async def follow(job: Job):
         if job.status != "running":
             return
         await waiter.wait()
+
+
+def state(job_id: str, folder: Path, result_file: str, result_key: str) -> dict:
+    result = folder / result_file
+    if result.exists():
+        return {"status": "done", result_key: json.loads(result.read_text())}
+    error = folder / "error.json"
+    if error.exists():
+        return {"status": "error", "message": json.loads(error.read_text())["message"]}
+    job = JOBS.get(job_id)
+    if job is not None and job.status in ("queued", "running"):
+        return {"status": job.status}
+    return {"status": "interrupted", "message": "This job was interrupted. Please submit a new attempt."}

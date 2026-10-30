@@ -119,3 +119,23 @@ def test_scan_without_a_live_job_reports_interrupted(client, tmp_path):
     (tmp_path / "abc123").mkdir()
     state = client.get("/api/scans/abc123").json()
     assert state["status"] == "error" and "interrupted" in state["message"]
+
+
+def test_verification_state_is_per_attempt(client, tmp_path):
+    root = tmp_path / "abc123"
+    root.mkdir()
+    (root / "report.json").write_text('{"scan_id":"abc123"}')
+    (root / "verification.json").write_text('{"verify_id":"old"}')
+    for name in ("old", "new", "failed", "interrupted"):
+        (root / "verify" / name).mkdir(parents=True)
+    (root / "verify/old/verification.json").write_text('{"verify_id":"old"}')
+    (root / "verify/failed/error.json").write_text('{"message":"failure","detail":"private"}')
+    jobs.JOBS["new"] = jobs.Job("new")
+    try:
+        assert client.get('/api/scans/abc123/verify/old').json()["verification"]["verify_id"] == "old"
+        assert client.get('/api/scans/abc123/verify/new').json() == {"status": "running"}
+        assert client.get('/api/scans/abc123/verify/failed').json() == {"status":"error", "message":"failure"}
+        assert client.get('/api/scans/abc123/verify/interrupted').json()["status"] == "interrupted"
+        assert client.get('/api/scans/abc123/verify/missing').status_code == 404
+    finally:
+        jobs.JOBS.pop("new", None)
