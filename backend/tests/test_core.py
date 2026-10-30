@@ -60,7 +60,7 @@ def test_best_frames_prefers_big_spread_out_boxes():
 
 def test_verify_guard_needs_sam_evidence_for_fixed():
     from app.verify import apply_guard
-    claim = {"verdict": "fixed", "confidence": "high", "what_changed": "panel removed", "boxed_is_same_object": "yes"}
+    claim = {"verdict": "fixed", "confidence": "high", "what_changed": "visible strap added", "boxed_is_same_object": "yes", "visible_change": "yes"}
     assert apply_guard(claim, object_found=False)["verdict"] == "cannot_verify"
     assert apply_guard(claim, object_found=True)["verdict"] == "fixed"
     assert apply_guard({**claim, "boxed_is_same_object": "no"}, object_found=True)["verdict"] == "cannot_verify"
@@ -160,3 +160,14 @@ def test_fema_citations_require_returned_sections(monkeypatch):
         "severity": "high", "rationale": "test"}], {"type": "bedroom"}))
     assert fixes["h1"]["source_status"] == "source_unverified"
     assert fixes["h1"]["actions"] == fixes["h1"]["fema_sections"] == []
+
+
+def test_verify_ties_and_uncertain_changes():
+    from app.verify import best_frames, apply_guard
+    tracks = [Track("cabinet", "0", {0: [0, 0, 10, 10]}), Track("cabinet", "1", {0: [20, 0, 30, 10]})]
+    assert len(best_frames(tracks)) == 1
+    base = {"verdict": "fixed", "boxed_is_same_object": "yes", "visible_change": "yes",
+            "confidence": "high", "what_changed": "strap"}
+    assert apply_guard({**base, "confidence": "low"}, True)["verdict"] == "cannot_verify"
+    assert apply_guard({**base, "visible_change": "no"}, True)["verdict"] == "cannot_verify"
+    assert apply_guard({**base, "visible_change": "unclear"}, True)["verdict"] == "cannot_verify"

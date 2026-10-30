@@ -11,12 +11,12 @@ from openai import AsyncOpenAI
 from app.meta.spark import image_part, spark_json
 
 INSTRUCTIONS = (
-    "You verify earthquake-safety fixes for a home insurer. You get the BEFORE evidence photo of one hazard (the "
+    "You compare visible changes to non-structural home hazards; you do not certify installation safety. You get the BEFORE evidence photo of one hazard (the "
     "object is boxed), the recommended fix, and AFTER photos from a new video of the same room (the same kind of "
     "object is boxed where it was found). Decide: fixed = the recommended fix or an equally effective one is clearly "
-    "visible (anchors, straps, brackets, safety cables, or the object was moved out of the danger zone or removed); "
+    "visible (anchors, straps, brackets, safety cables, or the object was moved out of the danger zone but not removal); "
     "not_fixed = the same object is still there in the same hazardous way; cannot_verify = the object or the "
-    "attachment points are not visible enough to tell. Only claim fixed when you can see it; when in doubt, choose "
+    "attachment points are not visible enough to tell. An attachment already visible in BEFORE is not a new fix. Set visible_change=yes only when a relevant change is visible between BEFORE and AFTER. Mere viewpoint changes, newly revealed existing brackets, or absence from the frame are not fixes. Do not infer wall strength or attachment capacity. Only claim fixed when you can see it; when in doubt, choose "
     "cannot_verify. Also say whether the boxed object in the AFTER photos is the same physical object as in BEFORE "
     "(a different lamp or shelf that was boxed by mistake = no). Say what changed between before and after. Do not "
     "assess the building structure."
@@ -26,8 +26,9 @@ INSTRUCTIONS = (
 def schema(after_frames: list[int]) -> dict:
     return {
         "type": "object", "additionalProperties": False,
-        "required": ["verdict", "confidence", "boxed_is_same_object", "what_changed", "rationale", "best_after_frame"],
+        "required": ["verdict", "confidence", "boxed_is_same_object", "what_changed", "rationale", "best_after_frame", "visible_change"],
         "properties": {
+            "visible_change": {"type": "string", "enum": ["yes", "no", "unclear"]},
             "verdict": {"type": "string", "enum": ["fixed", "not_fixed", "cannot_verify"]},
             "confidence": {"type": "string", "enum": ["high", "medium", "low"]},
             "boxed_is_same_object": {"type": "string", "enum": ["yes", "no", "no_box"]},

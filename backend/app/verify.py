@@ -22,7 +22,8 @@ AFTER_FRAMES = 3
 
 def best_frames(tracks: list[Track], k: int = AFTER_FRAMES) -> list[tuple[int, Track]]:
     """Frames where the object is biggest (closest / most visible), spread out so they are not near-duplicates."""
-    scored = sorted(((b[2] - b[0]) * (b[3] - b[1]), f, t) for t in tracks for f, b in t.boxes.items())
+    scored = sorted((((b[2] - b[0]) * (b[3] - b[1]), f, t) for t in tracks for f, b in t.boxes.items()),
+                    key=lambda item: (item[0], item[1], item[2].key))
     picked: list[tuple[int, Track]] = []
     for _, frame, track in reversed(scored):
         if all(abs(frame - f) >= 5 for f, _ in picked):
@@ -40,10 +41,13 @@ def apply_guard(verdict: dict, object_found: bool) -> dict:
         return {**verdict, "guard": None}
     if not object_found:
         reason = "object not re-found by SAM 3.1; removal cannot be told apart from out-of-frame"
-        hint = "If you removed or moved it, film the empty spot where it stood."
+        hint = "Removal and untracked objects need manual review; this version cannot confirm removal."
     elif verdict.get("boxed_is_same_object") != "yes":
         reason = "SAM 3.1 re-found a different object, so the fix is not tied to this hazard"
         hint = "Film this object up close, including where it is attached."
+    elif verdict.get("confidence") == "low" or verdict.get("visible_change") != "yes":
+        reason = "insufficient evidence of a visible change"
+        hint = "Show the changed item and its attachment or new location clearly."
     else:
         return {**verdict, "guard": None}
     return {**verdict, "verdict": "cannot_verify", "confidence": "low", "guard": reason,
