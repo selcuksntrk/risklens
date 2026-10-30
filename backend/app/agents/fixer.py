@@ -35,7 +35,7 @@ def fema_lookup(section_ids: list[str]) -> dict:
     unknown = [s for s in section_ids if s not in sections]
     found = [{k: sections[s][k] for k in ("id", "title", "pages", "summary", "causes", "mitigation")}
              for s in section_ids[:4] if s in sections]
-    return {"sections": found, "unknown_ids": unknown}
+    return {"sections": found, "unknown_ids": unknown, "deferred_ids": section_ids[4:]}
 
 
 TOOLS = [{
@@ -64,7 +64,8 @@ def instructions() -> str:
         "screw into wall studs, not drywall alone), cite the sections you used, say if it is DIY or needs a "
         "professional, and estimate cost and time. Prefer moving an object out of harm's way when that is the "
         "cheapest fix. Never give structural advice; if a fix needs wall or building assessment, say 'ask a "
-        "professional'."
+        "professional'. Costs and times are estimates. Do not assume a wall material or prescribe hardware counts "
+        "when attachment conditions are unknown; ask for professional assessment."
     )
 
 
@@ -95,12 +96,14 @@ async def plan_fixes(api: AsyncOpenAI, hazards: list[dict], room: dict) -> tuple
                                   instructions=instructions(), tools=tools(), handlers={"fema_lookup": fema_lookup},
                                   effort="low", max_rounds=3)
     sections = fema()["sections"]
-    read = {s for c in meta["tool_calls"] for s in normalize_ids(json.loads(c["arguments"]).get("section_ids", []))}
+    read = {s for c in meta["tool_calls"] if c["tool"] == "fema_lookup"
+            for s in c.get("returned_section_ids", [])}
     fixes = {}
     for fix in out["fixes"]:
         # keep only citations the agent actually read (and that exist), so the report never cites unseen guidance
         cited = [s for s in normalize_ids(fix["fema_sections"]) if s in sections and s in read]
-        fixes[fix["hazard_id"]] = {**fix, "fema_sections": [
+        fixes[fix["hazard_id"]] = {**fix, "actions": fix["actions"] if cited else [],
+                                     "source_status": "verified" if cited else "source_unverified", "fema_sections": [
             {"id": s, "title": sections[s]["title"], "pages": sections[s]["pages"], "url": sections[s]["url"]}
             for s in cited]}
     return fixes, meta

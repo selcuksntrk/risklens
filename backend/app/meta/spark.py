@@ -98,7 +98,9 @@ async def spark_agent(api: AsyncOpenAI, content: list[dict], schema: dict, name:
                 result = handlers[call.name](**json.loads(call.arguments or "{}"))
             except Exception as exc:  # bad tool name/arguments: tell the model instead of crashing the scan
                 result = {"error": str(exc)[:300]}
-            calls.append({"tool": call.name, "arguments": call.arguments})
+            calls.append({"tool": call.name, "arguments": call.arguments,
+                          "returned_section_ids": [s["id"] for s in result.get("sections", [])]
+                          if isinstance(result, dict) and not result.get("error") else []})
             outputs.append({"type": "function_call_output", "call_id": call.call_id, "output": json.dumps(result)})
         response = await chain(api, previous_response_id=response.id, input=outputs, **kwargs)
     meta = {"model": SPARK_MODEL, "seconds": round(time.perf_counter() - started, 1), "usage": usage_total,

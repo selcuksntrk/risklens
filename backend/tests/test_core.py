@@ -141,3 +141,22 @@ def test_sam_does_not_retry_a_bad_request(monkeypatch):
     api = SimpleNamespace(responses=SimpleNamespace(create=create))
     result = asyncio.run(track_concept(api, "file", "lamp"))
     assert len(calls) == 1 and result.status == "error" and result.tracks == []
+
+
+def test_fema_citations_require_returned_sections(monkeypatch):
+    import asyncio
+    import json
+    from app.agents import fixer
+    ids = list(fixer.fema()["sections"])[:5]
+    result = fixer.fema_lookup(ids)
+    assert result["deferred_ids"] == [ids[4]]
+    async def fake(*args, **kwargs):
+        return {"fixes": [{"hazard_id": "h1", "actions": ["Unverified action"],
+                           "fema_sections": [ids[4]]}]}, {"tool_calls": [{"tool": "fema_lookup",
+            "arguments": json.dumps({"section_ids": ids}),
+            "returned_section_ids": [s["id"] for s in result["sections"]]}]}
+    monkeypatch.setattr(fixer, "spark_agent", fake)
+    fixes, _ = asyncio.run(fixer.plan_fixes(None, [{"id": "h1", "object": "shelf", "relation": "tall_tip_over",
+        "severity": "high", "rationale": "test"}], {"type": "bedroom"}))
+    assert fixes["h1"]["source_status"] == "source_unverified"
+    assert fixes["h1"]["actions"] == fixes["h1"]["fema_sections"] == []
