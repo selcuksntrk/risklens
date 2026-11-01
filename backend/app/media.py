@@ -3,13 +3,14 @@ from __future__ import annotations
 
 import json
 import subprocess
+import math
 from pathlib import Path
 
 from app.config import FFMPEG_TIMEOUT_S, MAX_VIDEO_SECONDS, PROXY_FPS, PROXY_HEIGHT
 
 
 def ffmpeg(*args: str) -> None:
-    subprocess.run(["ffmpeg", "-hide_banner", "-loglevel", "error", "-y", *args], check=True, timeout=FFMPEG_TIMEOUT_S)
+    subprocess.run(["ffmpeg", "-hide_banner", "-loglevel", "error", "-xerror", "-y", *args], check=True, timeout=FFMPEG_TIMEOUT_S)
 
 
 def make_proxy(src: Path, out: Path, fps: int = PROXY_FPS, height: int = PROXY_HEIGHT,
@@ -31,14 +32,29 @@ def extract_frames(proxy: Path, out_dir: Path) -> list[Path]:
     return sorted(out_dir.glob("*.jpg"))
 
 
-def probe(path: Path) -> dict:
+def probe(path: Path, allow_unknown_duration: bool = False) -> dict:
     out = subprocess.run(["ffprobe", "-v", "error", "-select_streams", "v:0", "-show_entries",
                           "stream=width,height,nb_frames,codec_name:format=duration", "-of", "json", str(path)],
                          check=True, capture_output=True, text=True, timeout=FFMPEG_TIMEOUT_S).stdout
     data = json.loads(out)
+    if not data.get("streams"):
+        raise ValueError("No decodable video stream.")
     stream = data["streams"][0]
+    duration = float(data.get("format", {}).get("duration", 0))
+    if not math.isfinite(duration) or (duration <= 0 and not allow_unknown_duration) or stream.get("width", 0) <= 0 or stream.get("height", 0) <= 0:
+        raise ValueError("Video has no usable frames or duration.")
+    frame_count = str(stream.get("nb_frames", "0"))
     return {"width": stream["width"], "height": stream["height"], "codec": stream["codec_name"],
-            "frames": int(stream.get("nb_frames", 0) or 0), "duration_s": float(data["format"]["duration"])}
+            "frames": int(frame_count) if frame_count.isdigit() else 0, "duration_s": duration}
+
+
+def validate(path: Path) -> dict:
+    if not path.is_file() or not path.stat().st_size:
+        raise ValueError("The video is empty.")
+    info = probe(path, allow_unknown_duration=True)
+    # Decode a frame before accepting quota or any inference; full proxy decode is checked in the job.
+    ffmpeg("-i", str(path), "-frames:v", "1", "-f", "null", "-")
+    return info
 
 
 def pick_keyframes(n_frames: int, k: int) -> list[int]:

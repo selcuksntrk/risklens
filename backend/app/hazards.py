@@ -12,8 +12,9 @@ RELATIONS = {
 SEVERITIES = {"high": 0.45, "medium": 0.25, "low": 0.10}  # chance-like weights for the room score
 ROOM_TYPES = ["bedroom", "kids_room", "living_room", "kitchen", "hallway", "office", "bathroom", "other"]
 
-DISCLAIMER = ("RiskLens surveys non-structural hazards (furniture, fixtures, contents) only. It does not assess the "
-              "structural safety of the building.")
+DISCLAIMER = ("RiskLens screens sampled views for visible non-structural earthquake hazards. It does not assess "
+              "building safety or certify installation strength. Unseen hazards may remain; a visible change is "
+              "not a safety certificate. Recommendations may require professional assessment.")
 
 
 def risk_score(hazards: list[dict]) -> int:
