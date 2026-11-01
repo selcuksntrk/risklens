@@ -338,3 +338,19 @@ def test_generated_image_has_embedded_label(tmp_path):
     image = Image.open(path)
     assert sum(image.getpixel((2,318))) < 180
     assert image.getpixel((2,2)) == (255,255,255)
+
+
+def test_short_sam_call_keeps_per_call_minimum_charge():
+    from app.meta.sam import track_concept, sam_cost
+    class Stream:
+        async def __aenter__(self): return self
+        async def __aexit__(self, *args): pass
+        def __aiter__(self): return self.events()
+        async def events(self):
+            yield SimpleNamespace(type='response.completed', response=SimpleNamespace(
+                status='completed', error=None, usage=SimpleNamespace(video_frames_processed=10)))
+    async def create(**kwargs): return Stream()
+    api = SimpleNamespace(responses=SimpleNamespace(create=create))
+    result = asyncio.run(track_concept(api, 'file', 'shelf', n_frames=10))
+    assert result.status == 'completed' and result.cost_usd == sam_cost(50)
+    assert guard._load()['usd'] == sam_cost(50)

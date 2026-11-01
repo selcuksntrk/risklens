@@ -1,6 +1,6 @@
 # Implementation and validation status — November 1, 2026
 
-Current deployed release: **v2-99bee4f3f001**. [Live application](https://selcuksntrk--risklens-web.us-east.modal.run) · [health/version](https://selcuksntrk--risklens-web.us-east.modal.run/api/health).
+Current deployed release: **v2-dbfa1e82417a**. [Live application](https://selcuksntrk--risklens-web.us-east.modal.run) · [health/version](https://selcuksntrk--risklens-web.us-east.modal.run/api/health).
 
 This is a tested software prototype and synthetic demo candidate. It is **not** completion of the real-home acceptance tests, an expert safety assessment, a final demo video, or the post-hackathon pilot.
 
@@ -19,14 +19,17 @@ The prior local polling/test work was retained and extended. Legacy reports were
 
 ## Recorded checks
 
-- **62 backend tests passed**, including original tests, failure contracts, ownership, retention, deletion/cancellation, idempotency, queue/reservations, candidate mismatch, same-file targeted verification, exact-frame evidence, WebM without initial duration metadata, source gates, example allowlist and evaluation split/metrics checks.
+- **63 backend tests passed**, including original tests, failure contracts, ownership, retention, deletion/cancellation, idempotency, queue/reservations, per-call minimum SAM billing, candidate mismatch, same-file targeted verification, exact-frame evidence, WebM without initial duration metadata, source gates, example allowlist and evaluation split/metrics checks.
 - **6 frontend tests passed**: job-specific polling after SSE disconnect, terminal interruption, source gating, neutral zero-confirmation display, retained upload Blob/key/name/MIME, and video continuing after microphone denial with single-use stop and resource cleanup.
 - Frontend production build and lint passed. Python compile checks and Git whitespace checks passed.
+- Licensed source downloader completed and verified all 100 preview-frame SHA-256 hashes before encoding the reproducible sample. Downloads resume from verified local frames.
 - Fresh dependency installation in a clean temporary source snapshot: production-only Python dependencies from the lockfile, `npm ci`, matching release build, application startup/health and completed example access passed. The snapshot included only the explicitly licensed generated example, no `.env` or private scans.
 - Actual local Meta run on the approved synthetic clip: **83.8 s**, **$0.206694** recorded model cost, four findings requiring checking, assessment complete. Uploaded provider-file cleanup had no pending records afterward.
 - Same-file local verification: **0/4 visible changes confirmed**, **$0** additional model calls. This is a deterministic control, not evidence of real-room model performance.
 - Deployed sample run: **107.0 s**, **$0.22644** recorded model cost, three findings, assessment complete. Different outputs on the same synthetic clip are not evidence of stable precision/recall; no labelled performance claim is made.
-- Live HTTP acceptance passed: release/asset hashes, completed example, Secure/HttpOnly/SameSite session, private upload idempotency/conflict, deletion, private-route denial from a second cookie jar, target-specific same-file verification, unchecked findings/history, and refusal to replay deleted jobs. Disposable synthetic test scans were removed. See [machine-readable live checks](live-check-2026-11-01.json).
+- Full live HTTP acceptance on `v2-99bee4f3f001` passed: release/asset hashes, completed example, Secure/HttpOnly/SameSite session, private upload idempotency/conflict, deletion, private-route denial from a second cookie jar, target-specific same-file verification, unchecked findings/history, and refusal to replay deleted jobs. Disposable synthetic test scans were removed. See [machine-readable live checks](live-check-2026-11-01.json).
+
+The successor release changes SAM accounting to preserve its per-call minimum charge. Its health, frontend asset hashes and completed example passed fresh checks without repeating paid inference; see [current release checks](release-check-2026-11-01.json).
 
 Costs are the application's recorded usage, not a provider invoice. The successful-run figures exclude separately recorded failed/unknown calls. No real-home precision/recall or successful physical fix is claimed.
 
@@ -46,3 +49,5 @@ Post-hackathon expert evaluation, advanced re-identification/re-grounding/remova
 - [Evaluation protocol](../eval/README.md): frozen manifests, room split and independent adjudication.
 - [SUBMISSION.md](SUBMISSION.md): demo storyboard, submission fields and unsent social draft.
 - [RELEASE.md](RELEASE.md): release identity, clean setup, live checks and rollback without deleting user data.
+
+Implementation is available in [draft PR #1](https://github.com/selcuksntrk/risklens/pull/1), in separate commit groups on `codex/home-test-readiness`. The main branch has not been merged; finish the real-world acceptance gates before treating this as final submission material.

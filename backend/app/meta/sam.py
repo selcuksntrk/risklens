@@ -78,7 +78,7 @@ def result_cost(result: SamResult, n_frames: int) -> float:
     """What SAM billed (usage.video_frames_processed), or the per-frame estimate when usage is missing."""
     if result.cost_usd:
         return result.cost_usd
-    return result.frames_billed * PRICES["sam-3.1-frame"] if result.frames_billed else sam_cost(n_frames)
+    return sam_cost(result.frames_billed) if result.frames_billed else sam_cost(n_frames)
 
 
 def backoff(attempt: int, retry_after: str | None) -> float:
@@ -126,7 +126,7 @@ async def track_concept(api: AsyncOpenAI, file_id: str, concept: str, retries: i
         except Exception as exc:  # stream drop / timeout
             status, error = "error", repr(exc)
         finally:
-            charge.settle(attempt_frames * PRICES["sam-3.1-frame"] if attempt_frames else None)
+            charge.settle(sam_cost(attempt_frames) if attempt_frames else None)
             charged_total += charge.amount
             billed += attempt_frames
             estimated = estimated or not attempt_frames
