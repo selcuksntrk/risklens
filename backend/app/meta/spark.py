@@ -10,6 +10,7 @@ from pathlib import Path
 from openai import AsyncOpenAI, BadRequestError
 
 from app.config import PRICES, SPARK_MODEL
+from app import guard
 
 
 def image_part(path: Path) -> dict:
@@ -24,12 +25,22 @@ def spark_cost(model: str, usage: dict) -> float:
             + usage.get("output_tokens", 0) * price["output"])
 
 
+async def response_call(api, **kwargs):
+    # Conservative reservation includes image tokens and chained context; provider usage settles the bill.
+    estimate = .15 + kwargs.get('max_output_tokens', 8000) * PRICES.get(SPARK_MODEL, PRICES['muse-spark-1.3'])['output']
+    with guard.meter('spark', estimate) as charge:
+        response = await api.responses.create(**kwargs)
+        usage = response.usage.model_dump() if getattr(response, 'usage', None) else {}
+        charge.settle(spark_cost(SPARK_MODEL, usage) if usage else None)
+    return response, charge.amount
+
+
 async def spark_json(api: AsyncOpenAI, content: list[dict], schema: dict, name: str, *,
                      instructions: str, effort: str = "medium", max_tokens: int = 8000) -> tuple[dict, dict]:
     """One strict structured-output Responses call. Returns (parsed JSON, meta with usage/cost/summary)."""
     started, cost = time.perf_counter(), 0.0
     for budget in (max_tokens, max_tokens * 2):  # the cap covers reasoning + answer: retry a cut-off answer once
-        response = await api.responses.create(
+        response, charged = await response_call(api,
             model=SPARK_MODEL,
             instructions=instructions,
             reasoning={"effort": effort, "summary": "auto"},
@@ -39,7 +50,7 @@ async def spark_json(api: AsyncOpenAI, content: list[dict], schema: dict, name: 
             store=False,            # single call, never chained: room photos are not kept server-side
         )
         usage = response.usage.model_dump() if response.usage else {}
-        cost += spark_cost(SPARK_MODEL, usage)
+        cost += charged
         if response.status != "incomplete":
             break
     summary = [part.text for item in response.output if item.type == "reasoning"
@@ -61,7 +72,8 @@ async def chain(api: AsyncOpenAI, **kwargs):
     400 for a few seconds; the docs say to retry once or twice with a short backoff."""
     for delay in (0.5, 1.5, None):
         try:
-            return await api.responses.create(**kwargs)
+            response, _ = await response_call(api, **kwargs)
+            return response
         except BadRequestError:
             if delay is None:
                 raise
@@ -79,7 +91,7 @@ async def spark_agent(api: AsyncOpenAI, content: list[dict], schema: dict, name:
     kwargs = dict(model=SPARK_MODEL, instructions=instructions, tools=tools, max_output_tokens=max_tokens,
                   reasoning={"effort": effort, "summary": "auto"},
                   text={"format": {"type": "json_schema", "name": name, "schema": schema, "strict": True}})
-    response = await api.responses.create(input=[{"role": "user", "content": content}], **kwargs)
+    response, _ = await response_call(api, input=[{"role": "user", "content": content}], **kwargs)
     for round_ in range(max_rounds + 1):
         usage = response.usage.model_dump() if response.usage else {}
         cost += spark_cost(SPARK_MODEL, usage)
