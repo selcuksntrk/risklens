@@ -149,3 +149,30 @@ p { margin: 0 0 .6em; }
 .verdict.fixed { background: color-mix(in srgb, var(--low) 20%, transparent); }
 .verdict.not_fixed { background: color-mix(in srgb, var(--high) 16%, transparent); }
 .verdict.cannot_verify { background: var(--surface-2); }
+
+/* Capture, assessment and private-report controls. */
+button:disabled { cursor: wait; opacity: .6; }
+a { color: var(--accent); }
+.actions { display: flex; flex-wrap: wrap; gap: 10px; margin: 14px 0; }
+.notice { padding: 14px 16px; border: 1px solid var(--line); background: var(--surface-2); border-radius: var(--radius); margin: 14px 0; }
+.assessment-incomplete, .assessment-partial { border-color: var(--medium); }
+.summary-card { border-left-color: var(--accent); }
+.capture-preview { display: block; width: 100%; max-height: 52dvh; min-height: 180px; object-fit: contain; background: #000; border-radius: var(--radius); margin-bottom: 14px; }
+.field { display: grid; gap: 8px; margin: 16px 0; }
+.field textarea { width: 100%; min-height: 96px; resize: vertical; font: inherit; padding: 12px; background: var(--surface); color: var(--text); border: 1px solid var(--line); border-radius: 10px; }
+.checkbox { display: flex; gap: 8px; align-items: center; }
+.file { display: inline-flex; align-items: center; cursor: pointer; }
+.target-image { max-height: 220px; object-fit: contain; }
+.privacy-note { margin-top: 24px; }
+.danger { color: var(--high); margin-top: 22px; }
+.hazard-head { flex-wrap: wrap; }
+.media img { height: auto; object-fit: contain; }
+.media .seg { position: static; flex-wrap: wrap; border-radius: 0; gap: 4px; padding: 8px; }
+.media .show-fixed { position: static; margin: 10px; }
+.media-tag { position: static; display: block; border-radius: 0; }
+.provenance dl { grid-template-columns: minmax(70px, 110px) minmax(0, 1fr); }
+.fix li small { display: block; margin-top: 5px; }
+@media (prefers-reduced-motion: reduce) { * { animation: none !important; transition: none !important; } }
+
+.step.failed::before { background: var(--medium); }
+.step.failed { color: var(--medium); }

@@ -28,40 +28,57 @@ export async function startVoice(stream: MediaStream, h: VoiceHandlers): Promise
   const proto = location.protocol === 'https:' ? 'wss' : 'ws'
   const ws = new WebSocket(`${proto}://${location.host}/api/voice`)
   ws.binaryType = 'arraybuffer'
-  const ctx = new AudioContext({ sampleRate: 24000 })
-  const url = URL.createObjectURL(new Blob([WORKLET], { type: 'application/javascript' }))
-  await ctx.audioWorklet.addModule(url)
-  URL.revokeObjectURL(url)
-  const source = ctx.createMediaStreamSource(new MediaStream(stream.getAudioTracks()))
-  const node = new AudioWorkletNode(ctx, 'pcm-writer')
+  let ctx: AudioContext | null = null
+  let source: MediaStreamAudioSourceNode | null = null
+  let node: AudioWorkletNode | null = null
   let ready = false
-  node.port.onmessage = (e) => { if (ready && ws.readyState === WebSocket.OPEN) ws.send(e.data) }
-  source.connect(node)
-
+  let stopped = false
+  let stopPromise: Promise<void> | null = null
   let closed: () => void = () => {}
   const done = new Promise<void>((resolve) => { closed = resolve })
+  const cleanup = async () => {
+    ready = false
+    source?.disconnect(); node?.disconnect()
+    if (node) node.port.onmessage = null
+    stream.getTracks().forEach((t) => t.stop())
+    if (ctx && ctx.state !== 'closed') await ctx.close().catch(() => {})
+  }
+  ws.onclose = () => { closed(); void cleanup() }
+  ws.onerror = () => { h.onError('Voice connection failed'); ws.close(); void cleanup() }
   ws.onmessage = (e) => {
-    const event = JSON.parse(e.data as string)
-    if (event.type === 'ready') ready = true
-    else if (event.type === 'transcript' && !event.final) h.onPartial(event.transcript)
-    else if (event.type === 'speechComplete') { h.onTurn(event.transcript); h.onPartial('') }
-    else if (event.type === 'error') h.onError(event.message)
+    try {
+      const event = JSON.parse(e.data as string)
+      if (event.type === 'ready') ready = !stopped
+      else if (event.type === 'transcript' && !event.final) h.onPartial(event.transcript)
+      else if (event.type === 'speechComplete') { h.onTurn(event.transcript); h.onPartial('') }
+      else if (event.type === 'error') { h.onError(event.message); ws.close(); void cleanup() }
+    } catch { h.onError('Invalid narration response') }
   }
-  ws.onclose = () => closed()
-  ws.onerror = () => h.onError('Voice connection failed')
-
-  return {
-    async stop() {
-      ready = false
-      source.disconnect()
-      node.disconnect()
-      await ctx.close()
-      if (ws.readyState === WebSocket.OPEN) {
-        ws.send('end')                                  // server sends endStream; final turns still arrive
-        // the server closes the socket once Meta has flushed the last turn; closing first can drop it
-        await Promise.race([done, new Promise((r) => setTimeout(r, 8000))])
-      }
-      ws.close()
-    },
-  }
+  const url = URL.createObjectURL(new Blob([WORKLET], { type: 'application/javascript' }))
+  try {
+    ctx = new AudioContext({ sampleRate: 24000 })
+    await ctx.audioWorklet.addModule(url)
+    if (ws.readyState === WebSocket.CLOSED) throw new Error('Narration connection closed')
+    source = ctx.createMediaStreamSource(new MediaStream(stream.getAudioTracks()))
+    node = new AudioWorkletNode(ctx, 'pcm-writer')
+    node.port.onmessage = (e) => { if (ready && ws.readyState === WebSocket.OPEN) ws.send(e.data) }
+    source.connect(node)
+    await ctx.resume()
+  } catch (e) { await cleanup(); ws.close(); throw e }
+  finally { URL.revokeObjectURL(url) }
+  return { stop() {
+    if (stopPromise) return stopPromise
+    stopped = true
+    stopPromise = (async () => {
+      await cleanup()
+      let timer = 0
+      try {
+        if (ws.readyState === WebSocket.OPEN) {
+          ws.send('end')
+          await Promise.race([done, new Promise<void>((resolve) => { timer = window.setTimeout(resolve, 8000) })])
+        }
+      } finally { window.clearTimeout(timer); ws.close() }
+    })()
+    return stopPromise
+  } }
 }
