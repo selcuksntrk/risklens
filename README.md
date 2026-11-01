@@ -1,60 +1,99 @@
 # RiskLens
 
-**Film a room for a minute. RiskLens finds the earthquake hazards inside it, shows you how to fix them, and verifies the fix, as an insurer-grade survey.**
+Film a room, review visible earthquake-related findings with evidence, read source-linked precautions, and re-film to compare a visible change. **A prototype for screening sampled views, not a building inspection, earthquake prediction, installation certificate or insurance risk score.**
 
-In earthquakes, most indoor injuries come from what's *inside*, not the structure: shelves that tip, frames above beds, TVs that fly, furniture that blocks the exit.
-In New Zealand's 2010–14 earthquakes, 556 of 947 injuries in commercial buildings came from non-structural damage ([Yeow et al., *Earthquake Spectra* 2020](https://doi.org/10.1177/8755293019900775)).
-RiskLens turns a phone video into a non-structural hazard survey with evidence frames, FEMA-grounded fixes, a provenance audit trail (models, prompts, hashes, reasoning summaries), and before/after proof once you fix things.
+Theme: **Build for Your World**. Built in Istanbul for people preparing their homes for earthquakes.
 
-**Try it:** https://selcuksntrk--risklens-web.us-east.modal.run (phone camera, or upload a room video)
+The application distinguishes observed conditions from details that need another view. An unseen attachment is unknown; a visible bracket does not establish adequate installation. Technical failures cannot become a “low risk” result. Assessment completeness describes the analysis stages, not whole-room coverage or safety.
 
-> Theme: **Build for Your World**. Built in Istanbul for homes in earthquake cities everywhere.
-> RiskLens surveys non-structural hazards (furniture, fixtures, contents) only. It does **not** assess the structural safety of a building.
-
-Status: 🚧 in progress (Meta Global AI Developer Hackathon, Oct 26 – Nov 4 2026)
+The existing deployment is [RiskLens on Modal](https://selcuksntrk--risklens-web.us-east.modal.run). Check `/api/health` against the local `VERSION` before treating a deployment as this revision. See [implementation and validation status](docs/STATUS.md) for outstanding release gates.
 
 ## How it works
-| Step | Meta model | Role |
+
+| Component | Model / technology | Actual task |
 |---|---|---|
-| Planner agent | **Muse Spark 1.3** | Looks at the room and decides what to track, with alternate wordings when segmentation finds nothing |
-| Perception | **SAM 3.1** | Tracks every planned object through the video with stable IDs |
-| Surveyor agent | **Muse Spark 1.3** | Reasons over set-of-marks keyframes: what can fall onto the bed, block the exit, tip over or shatter |
-| Voice capture | **Muse Voice Transcribe** | Live Turkish/English narration while filming ("kids sleep here"), streamed through a server-side proxy |
-| Fix planner agent | **Muse Spark 1.3** + FEMA E-74 tool | Looks up FEMA E-74 sections through a function tool, then writes cited, practical fixes (DIY vs professional, cost, time); citations it didn't read are dropped |
-| *(coming)* Auditor | Muse Spark Open (open weights, Baseten) | Independent second opinion with readable reasoning in the audit trail |
-| Fix cards | **Muse Image** | "Show it fixed": edits a crop of *your own* evidence frame (around the SAM box) to show the recommended fix; on demand and cached ($0.01) |
-| Verify-after-fix | **SAM 3.1** + **Muse Spark 1.3** | Re-film after fixing: SAM re-finds each object (with alternate wordings), a verifier agent compares before/after. A deterministic guard only allows "verified fixed" when SAM re-found the object *and* it is the same physical object; risk score before → after |
+| Capture | Browser camera / gallery | Video-only permission, optional microphone, editable context, preview, retry with the same upload key |
+| Planner | Muse Spark 1.3 | Select tracking concepts and alternate wording from sampled frames |
+| Tracking | SAM 3.1 | Track candidate instances within this clip; cross-clip identity is not guaranteed |
+| Surveyor | Muse Spark 1.3 | Describe visible findings and uncertainty in marked keyframes |
+| Recommendations | Muse Spark 1.3 + FEMA E-74 lookup | Cite sections actually returned by the lookup, with per-action references |
+| Optional narration | Muse Voice Transcribe 1.0 | Live transcription through a server-side proxy; gallery audio is not automatically transcribed |
+| Optional illustration | Muse Image 1.0 | Explain a sourced precaution with an image visibly labelled “AI-generated illustration”; never verification evidence |
+| Re-filming | SAM 3.1 + Muse Spark 1.3 + deterministic guards | Compare a selected candidate with original evidence; require same-object identity, a relevant visible change and high confidence |
 
-## Run it
-Requires `ffmpeg`, [uv](https://docs.astral.sh/uv/) and Node 20+. Put `MODEL_API_KEY` in `.env` (see `.env.example`).
-```bash
-# web app: one server for API + PWA at http://localhost:8000
-(cd frontend && npm install && npm run build)
-cd backend && uv run --env-file ../.env uvicorn app.main:app --port 8000
+React/TypeScript frontend → FastAPI → bounded job queue → ffmpeg → Meta models → atomic JSON reports and evidence on a Modal Volume. One container, one active scan/verification, two queued jobs. Restarted jobs are interrupted, never silently restarted with paid calls. SSE shows progress; persistent job endpoints and polling recover state after disconnects.
 
-# frontend dev with hot reload (proxies /api to :8000)
-cd frontend && npm run dev
+`fixed` is an internal compatibility value. The UI says **Visible change confirmed**. It does not mean earthquake safety or adequate mounting has been certified. Reinterpretation of an incorrect original finding is manual review, not a completed precaution. Identical videos, untracked findings, missing objects and uncertain identity cannot automatically close a finding. Similar candidates retain separate IDs and evidence frames.
 
-# CLI: one room video -> scans/<id>/report.json + marked keyframes + evidence images
-cd backend && uv run --env-file ../.env python -m app.cli scan path/to/room.mp4 --narration "bedroom, kids sleep here"
+Recommendations link to source sections; this is **not expert validation of each action**. Unsupported actions are withheld. Costs and times are estimates. Source recommendations and installation conditions still require expert evaluation in the pilot.
 
-# tests (no API calls)
-cd backend && uv run --group dev pytest -q
+## Local setup
+
+Requirements: Python 3.11+, Node 22+, ffmpeg/ffprobe, and uv. Copy `.env.example` to `.env`, then set `MODEL_API_KEY`. Never put keys in frontend variables.
+
+```sh
+cd backend
+uv sync --frozen
+cd ../frontend
+npm ci
+cd ..
+python3 scripts/build_release.py
+cd backend
+uv run --env-file ../.env uvicorn app.main:app --port 8000
 ```
-The phone camera needs HTTPS: open the app through an HTTPS tunnel or the deployed URL.
 
-## Built during the hackathon
-Everything in this repo was written during the event window (Oct 26 – Nov 4 2026); see the commit history.
-`backend/app/meta/sam.py` and `spark.py` started from our own Day-1 feasibility spikes (Oct 26, after kickoff), which
-were throwaway research scripts and are not part of this repo.
+Open `http://localhost:8000`. Phone camera access requires HTTPS. `npm run dev` in `frontend` proxies `/api` to port 8000. Production frontend and backend share one origin. See `scripts/phone.sh` for local phone testing.
 
-## Pre-existing / third-party
-- SAM request shape follows the Meta Model Cookbook `07_sam/01_api_basics` (MIT, © Meta Platforms, Inc.).
-- Frontend scaffold: generated with the Vite `react-ts` template (MIT); everything in `frontend/src` was written for RiskLens.
-- Libraries: openai (Apache-2.0), Pillow (MIT-CMU), FastAPI (MIT), uvicorn (BSD-3), websockets (BSD-3),
-  python-multipart (Apache-2.0), React (MIT), Vite (MIT). Video processing uses the ffmpeg binary (LGPL/GPL), called as an
-  external program.
-- Data: see [`DATA_LICENSES.md`](DATA_LICENSES.md). No raw datasets are committed.
+```sh
+# Tests use temporary storage and mocked model APIs; no paid requests.
+cd backend
+uv run --group dev pytest -q
+cd ../frontend
+npm test
+npm run lint
+npm run build
+```
 
-## License
-MIT. See [LICENSE](LICENSE).
+Offline CLI (reports remain quarantined from web access):
+
+```sh
+cd backend
+uv run --env-file ../.env python -m app.cli scan /path/to/room.mp4 --narration "Bedroom; attachment conditions unknown"
+uv run --env-file ../.env python -m app.cli verify SCAN_ID /path/to/refilmed.mp4 --hazard-id h1
+```
+
+Only the first 90 seconds of an uploaded video are processed; camera recordings stop at 60 seconds. The report records processed duration and media settings. No unmeasured room-coverage percentage is shown.
+
+## Privacy and cost controls
+
+New scans belong to a random browser session stored in an HttpOnly, Secure (production), SameSite=Lax cookie. The scan ID is a locator, not a credential. Ownership is enforced for reports, lists, evidence, events, verification, illustrations and deletion. Clearing cookies removes normal browser access. The admin recovery tool requires filesystem access and an existing owned scan; there is no claim-by-ID endpoint.
+
+Source videos, proxies and extracted frames: **7 days**. Reports and evidence: **30 days**. Expired private content is inaccessible immediately; physical cleanup runs at startup and hourly while the server is active. Verification raw media has its own creation timestamp. Deletion cancels and joins active writers before removing derived data. Explicitly packaged licensed examples have a separate indefinite demo policy. Personal scans are never automatically featured.
+
+Videos are processed by Meta's API. Uploaded provider file IDs are recorded and deletion is requested after use, with retries for failed deletion; one-day provider expiry is the fallback requested at upload. This does not assert deletion guarantees beyond the provider's API behavior. Standard models only; contributor models are rejected for room screening and evaluation.
+
+Each model call reserves budget before dispatch. Actual usage settles reservations; unknown or failed usage conservatively keeps the estimate. Voice and Image use the same ledger. The default daily cap remains **$15**, with daily scan/network limits. Estimates are not an audited provider invoice. Deployment must remain single-process/single-container until the pilot replaces this ledger and queue with shared infrastructure.
+
+## Example and evaluation
+
+The public sample is an explicitly attributed **synthetic Hypersim scene**, licensed CC BY-SA 3.0. It is not someone's home and is not evidence of a physical precaution. The completed report opens without new inference. “Try a live sample” starts a new private pipeline run.
+
+The packaging tool accepts only approved licensed source provenance and schema-2 reports. Source media and generated examples are excluded from Git. See [data licenses](DATA_LICENSES.md), `scripts/fetch_example.py`, `scripts/package_example.py`, and [evaluation protocol](eval/README.md).
+
+There is no claimed real-home precision, recall, safety percentage or successful physical fix yet. A0/B0–B4 and phone tests must be recorded, not inferred from unit tests. Target 3–5 rooms / 10–15 clips; report actual counts, false confirmations with denominators, abstentions, duration and cost. Keep development and evaluation rooms separate. See [acceptance tests](docs/ACCEPTANCE.md).
+
+Context for the problem: a study of New Zealand commercial buildings during the 2010–2014 earthquakes reported 556 of 947 injuries attributable to non-structural damage ([Yeow et al., 2020](https://doi.org/10.1177/8755293019900775)). This specific sample is not a universal estimate for homes or all earthquakes.
+
+## Release and submission
+
+`python3 scripts/build_release.py` derives one release ID from the application sources and lockfiles, builds the frontend with it, and writes `VERSION` and `release.json`. The backend health endpoint returns that version and supported report schema. [Release runbook](docs/RELEASE.md) covers clean installation, deployment, negative access checks and rollback without deleting user data.
+
+[Demo storyboard and submission checklist](docs/SUBMISSION.md) is a preparation artifact. Actual home footage, measured performance and submission links remain to be supplied. The open-weight auditor, expert labels, advanced re-identification, revocable sharing and volunteer pilot are **future work**, gated by evidence in [pilot protocol](docs/PILOT.md).
+
+## Event work and third-party material
+
+Application development began during the Oct 26–Nov 4, 2026 event window. Commit history records the implemented changes. Initial SAM/Spark integration grew out of feasibility spikes written after kickoff. Contributor API models are not used for real-room data.
+
+The SAM request grammar follows Meta's Model Cookbook (MIT, © Meta Platforms, Inc.). The frontend started from the Vite React/TypeScript template. Dependencies include React/Vite (MIT), openai (Apache-2.0), Pillow (MIT-CMU), FastAPI (MIT), uvicorn/websockets (BSD), and python-multipart (Apache-2.0). ffmpeg is an external program; its build has its own LGPL/GPL licensing. FEMA source excerpts and Hypersim-derived assets have separate notices in [DATA_LICENSES.md](DATA_LICENSES.md).
+
+Application code: MIT, see [LICENSE](LICENSE). Hypersim-derived assets are CC BY-SA 3.0, not relicensed under the application license.

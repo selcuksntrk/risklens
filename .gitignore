@@ -15,3 +15,7 @@ eval/data/
 *.mov
 *.webm
 .DS_Store
+examples/generated/
+eval/private/
+eval/results/
+release.json
