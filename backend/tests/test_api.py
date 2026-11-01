@@ -1,5 +1,7 @@
 import asyncio
 import json
+import hashlib
+import uuid
 
 import pytest
 from fastapi.testclient import TestClient
@@ -10,6 +12,8 @@ from app import config, jobs
 @pytest.fixture
 def client(tmp_path, monkeypatch):
     monkeypatch.setattr(config, "SCANS_DIR", tmp_path)
+    from app import media
+    monkeypatch.setattr(media, "validate", lambda _: {"duration_s": 1})
 
     async def fake_run_scan(src, narration, emit, scan_id):
         emit("ingest", {"scan_id": scan_id})
@@ -26,6 +30,13 @@ def client(tmp_path, monkeypatch):
     from app import main
     from app.main import app
     with TestClient(app) as c:
+        c.post('/api/session')
+        original = c.post
+        def post(url, **kwargs):
+            headers = kwargs.pop('headers', {})
+            headers.setdefault('Idempotency-Key', uuid.uuid4().hex)
+            return original(url, headers=headers, **kwargs)
+        c.post = post
         yield c
 
 
@@ -36,8 +47,8 @@ def test_upload_streams_timeline_then_serves_report(client):
 
     with client.stream("GET", f"/api/scans/{scan_id}/events") as stream:
         events = [json.loads(line[6:]) for line in stream.iter_lines() if line.startswith("data: {\"")]
-    assert [e["step"] for e in events] == ["ingest", "planner.done", "done"]
-    assert events[1]["narration"] == "kids sleep here"
+    assert [e["step"] for e in events] == ["queued", "ingest", "planner.done", "done"]
+    assert events[2]["narration"] == "kids sleep here"
 
     assert client.get(f"/api/scans/{scan_id}").json()["report"]["room"]["risk_score"] == 25
     assert client.get(f"/api/scans/{scan_id}/files/evidence/h1.jpg").content == b"jpg"
@@ -86,7 +97,7 @@ def test_only_evidence_images_are_served(client, tmp_path):
 
 
 def test_fixcard_needs_a_report(client, tmp_path):
-    (tmp_path / "abc123").mkdir()
+    owned_root(client, tmp_path, "abc123")
     assert client.post("/api/scans/abc123/hazards/h1/fixcard").status_code == 409
 
 
@@ -116,14 +127,13 @@ def test_voice_proxy_rejects_other_origins(client):
 
 
 def test_scan_without_a_live_job_reports_interrupted(client, tmp_path):
-    (tmp_path / "abc123").mkdir()
+    owned_root(client, tmp_path, "abc123")
     state = client.get("/api/scans/abc123").json()
-    assert state["status"] == "error" and "interrupted" in state["message"]
+    assert state["status"] == "interrupted" and "interrupted" in state["message"]
 
 
 def test_verification_state_is_per_attempt(client, tmp_path):
-    root = tmp_path / "abc123"
-    root.mkdir()
+    root = owned_root(client, tmp_path, "abc123")
     (root / "report.json").write_text('{"scan_id":"abc123"}')
     (root / "verification.json").write_text('{"verify_id":"old"}')
     for name in ("old", "new", "failed", "interrupted"):
@@ -139,3 +149,12 @@ def test_verification_state_is_per_attempt(client, tmp_path):
         assert client.get('/api/scans/abc123/verify/missing').status_code == 404
     finally:
         jobs.JOBS.pop("new", None)
+
+
+def owned_root(client, tmp_path, scan_id):
+    from app import access
+    root = tmp_path / scan_id
+    root.mkdir()
+    owner = hashlib.sha256(client.cookies[access.COOKIE].encode()).hexdigest()
+    access.new_metadata(root, owner)
+    return root
