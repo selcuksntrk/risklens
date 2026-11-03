@@ -12,11 +12,11 @@ I’m Selçuk, building in Istanbul. Earthquake preparation includes the things 
 
 **Record:** Open the completed report and show one clearly supported finding and its evidence image. Keep “Precomputed synthetic example” visible. Do not describe unknown anchorage as missing anchorage.
 
-## 02 · 00:15–00:35 · A private-home-free demonstration
+## 02 · 00:15–00:35 · Your room first, or the sample
 
-You do not need to share your home to try it. Open the completed example instantly, or run the sample through Meta’s models again. I built this prototype for people preparing their living spaces, under the Build for Your World theme.
+I built this for people preparing their own homes, under the Build for Your World theme. You start by recording or uploading a short video of one room. If you'd rather not share your home, the sample report opens instantly, or you can run the sample through Meta's models again, as I do here.
 
-**Record:** Homepage, both example buttons, then start a genuinely new sample run. Capture the whole run separately so timing and outcome can be checked.
+**Record:** Homepage with “Record a room” and “Upload a video” first, scroll to “Try it without filming your home”, then start a genuinely new sample run. Capture the whole run separately so timing and outcome can be checked.
 
 ## 03 · 00:35–01:15 · Why these models work together
 

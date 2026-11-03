@@ -4,7 +4,7 @@ Film a room, review visible earthquake-related findings with evidence, read sour
 
 Theme: **Build for Your World**. Built in Istanbul for people preparing their homes for earthquakes.
 
-**Explore without recording your home:** [open RiskLens](https://selcuksntrk--risklens-web.us-east.modal.run), then choose **Open completed report**. It opens a previously computed, licensed synthetic example without new model calls. **Run sample with Meta AI** starts a new analysis; outcomes and latency can vary.
+**Try it:** [open RiskLens](https://selcuksntrk--risklens-web.us-east.modal.run) and **Record a room** or **Upload a video**. To explore without filming your home, choose **View sample report** (top right) or **Open sample report**: a previously computed, licensed synthetic example that opens without new model calls. **Run the sample analysis** starts a new Meta model run; outcomes and latency can vary.
 
 **Hackathon delivery:** [measured synthetic regression](docs/EVALUATION.md) · [submission package](docs/submission/README.md) · [source on main](https://github.com/selcuksntrk/risklens). Actual screen footage is recorded; final voiceover, iPhone review and platform submission are tracked in the [handoff](docs/submission/HANDOFF.md). Real-world physical-change validation has not been completed.
 

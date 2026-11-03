@@ -17,27 +17,28 @@ its evidence and a practical next step.
 This room is synthetic, from Hypersim.
 
 5
-00:00:15,000 --> 00:00:20,366
-You do not need to
-share your home to try it.
+00:00:15,000 --> 00:00:19,200
+I built this for people preparing their own homes,
+under the Build for Your World theme.
 
 6
-00:00:20,366 --> 00:00:26,220
-Open the completed example instantly, or
-run the sample through Meta’s models
+00:00:19,200 --> 00:00:23,400
+You start by recording or uploading
+a short video of one room.
 
 7
-00:00:26,220 --> 00:00:26,707
-again.
+00:00:23,400 --> 00:00:27,600
+If you'd rather not share your home,
+the sample report opens instantly,
 
 8
-00:00:26,707 --> 00:00:32,561
-I built this prototype for people
-preparing their living spaces, under the
+00:00:27,600 --> 00:00:31,400
+or you can run the sample
+through Meta's models again,
 
 9
-00:00:32,561 --> 00:00:35,000
-Build for Your World theme.
+00:00:31,400 --> 00:00:35,000
+as I do here.
 
 10
 00:00:35,000 --> 00:00:39,179

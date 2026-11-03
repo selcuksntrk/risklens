@@ -15,9 +15,9 @@ Toplam hedef: 3–5 saat. Kendi evini veya yüzünü çekmen gerekmiyor.
 
 Kullanılacak dosya: `docs/submission/private/phone-sample.mp4` (lisanslı sentetik örnek). AirDrop veya kendi dosya aktarım yönteminle iPhone'da Dosyalar'a kaydet.
 
-1. Safari'de canlı ürünü aç. iPhone modeli, iOS sürümü, tarih ve sayfadaki release kimliğini not al.
-2. “Open completed report”: rapor ve kanıt kareleri açılıyor mu? Yatay taşma veya okunamayan yazı var mı?
-3. “Use your own video” üzerinden Dosyalar'daki örneği seç. Kamera/mikrofon izni vermen gerekmez. Önizleme ve yön doğru mu?
+1. Safari'de canlı ürünü aç (beyaz sayfa görürsen bir kez yenile; eski önbellek sorunu düzeltildi). İlk ekranda “Record a room” ve “Upload a video” görünmeli. iPhone modeli, iOS sürümü, tarih ve sayfadaki release kimliğini not al.
+2. Sağ üstteki “View sample report”: rapor ve kanıt kareleri açılıyor mu? Yatay taşma veya okunamayan yazı var mı?
+3. Ana ekrana dön, “Upload a video” ile Dosyalar'daki örneği seç. Doğrudan önizleme ekranı açılmalı. Kamera/mikrofon izni vermen gerekmez. Önizleme ve yön doğru mu?
 4. Bağlam: “Synthetic interior. Attachment conditions are unknown.” Yükle; süreç ve bitmiş/kısmi durum anlaşılır mı?
 5. Kaynak bağlantısını açıp geri dön. Aynı rapor kalıyor mu?
 6. Aynı dosyayla karşılaştırma yap. Yeni fiziksel değişiklik onayı çıkmamalı. Bunun dosya eşitliği kontrolü olduğunu kaydet.
