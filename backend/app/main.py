@@ -70,6 +70,15 @@ app.add_middleware(UploadLimits, max_bytes=MAX_UPLOAD_BYTES + 1024*1024)
 config.SCANS_DIR.mkdir(parents=True, exist_ok=True)
 
 
+def _public_example_path(path: str) -> bool:
+    """Example media, recorded runs and evidence of packaged examples. Never a private scan."""
+    parts = path.strip('/').split('/')
+    if parts[:2] == ['api', 'examples'] and len(parts) >= 4 and parts[3] in ('media', 'events'):
+        return True
+    return (len(parts) >= 5 and parts[:2] == ['api', 'scans'] and parts[3] == 'files'
+            and examples.by_scan(parts[2]) is not None)
+
+
 @app.middleware('http')
 async def protect_requests(request, call_next):
     if request.method in ('POST', 'PUT', 'PATCH', 'DELETE'):
@@ -85,7 +94,10 @@ async def protect_requests(request, call_next):
         from fastapi.responses import JSONResponse
         return JSONResponse({'detail': 'Video is too large.'}, status_code=413)
     response = await call_next(request)
-    if request.url.path.startswith('/api/'):
+    if request.method == 'GET' and response.status_code == 200 and _public_example_path(request.url.path):
+        # Packaged examples are fixed, public and hash-registered: let browsers keep them for a day.
+        response.headers['Cache-Control'] = 'public, max-age=86400'
+    elif request.url.path.startswith('/api/'):
         response.headers['Cache-Control'] = 'no-store'
     elif request.url.path.startswith('/assets/') and response.status_code == 200:
         # Content-hashed build output: safe to cache forever.

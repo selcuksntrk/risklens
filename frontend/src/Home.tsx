@@ -37,7 +37,7 @@ export default function Home() {
       <p className="fine">Takes 2–3 minutes. No account. Your video stays private to this browser.</p>
     </div>
       {real?.has_poster && <a className="intro-photo" href={`#/scan/${real.scan_id}`}>
-        <img src={exampleMedia(real.id, 'poster.jpg')} alt="A frame from a real scan: a wardrobe with suitcases on top, boxed by SAM 3.1" />
+        <img src={exampleMedia(real.id, 'poster.jpg')} alt="A frame from a real scan: a wardrobe with suitcases on top, boxed by SAM 3.1" fetchPriority="high" />
         <span>From a real scan in Istanbul: {real.top_finding ? cap(real.top_finding.object) : 'see the report'}{real.top_finding ? `, ${PRIORITY[real.top_finding.severity].toLowerCase()}` : ''} →</span>
       </a>}
     </section>
@@ -53,7 +53,7 @@ export default function Home() {
 
     {examples.length > 0 && <section className="section" id="examples" aria-labelledby="examples-title">
       <div className="section-title"><h2 id="examples-title">Not ready to film? See an example</h2></div>
-      <ul className="examples">{examples.map((e) => <li key={e.id}><ExampleCard example={e} /></li>)}</ul>
+      <ul className="examples">{examples.map((e, i) => <li key={e.id}><ExampleCard example={e} eager={i < 2} /></li>)}</ul>
       <p className="fine">The first is a real flat in Istanbul. The other three are test rooms we made with Muse Image, with hazards placed on purpose so we know what should be found. <a href="#/about#examples">More about the examples</a></p>
     </section>}
 
@@ -66,13 +66,13 @@ export default function Home() {
   </main>
 }
 
-function ExampleCard({ example }: { example: Example }) {
+function ExampleCard({ example, eager }: { example: Example; eager: boolean }) {
   const key = example.answer_key
   const name = example.kind === 'real' ? 'Real home, Istanbul' : ROOM_LABELS[example.room ?? ''] ?? example.title
   const line = key ? `${key.matched} of ${key.designed} planted hazards found` : `${example.findings ?? 0} things to check`
   return <a className="example" href={`#/scan/${example.scan_id}`}>
     <div className="example-photo">
-      {example.has_poster && <img src={exampleMedia(example.id, 'poster.jpg')} alt="" loading="lazy" />}
+      {example.has_poster && <img src={exampleMedia(example.id, 'poster.jpg')} alt="" loading={eager ? 'eager' : 'lazy'} decoding="async" />}
     </div>
     <b>{name}</b><span>{line}</span>
   </a>
