@@ -435,7 +435,7 @@ details > summary { cursor: pointer; font-weight: 650; min-height: 44px; display
 
 /* Portrait phone evidence: image beside text on wide screens, height-capped on phones */
 .sample-media img, .sample-media video { position: absolute; inset: 0; }
-.sample-card.featured .sample-media { min-height: 360px; }
+@media (min-width: 720px) { .sample-card.featured .sample-media { min-height: 360px; } }
 .media img { aspect-ratio: auto; max-height: 62vh; margin: 0 auto; width: auto; max-width: 100%; }
 @media (min-width: 760px) {
   .hazard { display: grid; grid-template-columns: minmax(0, 300px) minmax(0, 1fr); }

@@ -40,13 +40,17 @@ def answer_key(row: dict, report: dict) -> dict | None:
     match = json.loads(match_path.read_text()) if match_path.exists() else {'matches': {}, 'note': 'Not yet matched.'}
     if match.get('source_sha256') not in (None, report['provenance']['source_sha256']):
         raise SystemExit(f'{match_path} was written for a different run.')
-    found = {h: f for f, h in match['matches'].items() if h}
-    hazards = [{**h, 'matched_finding': found.get(h['id'])} for h in bible['answer_key']]
+    found: dict[str, list[str]] = {}
+    for finding, hazard in match['matches'].items():
+        if hazard:
+            found.setdefault(hazard, []).append(finding)
+    hazards = [{**h, 'matched_finding': (found.get(h['id']) or [None])[0], 'matched_findings': found.get(h['id'], [])}
+               for h in bible['answer_key']]
     finding_ids = {h['id'] for h in report['hazards']}
     extras = sorted(finding_ids - set(match['matches']))
     unmatched_listed = sorted(f for f, h in match['matches'].items() if not h)
     return {'designed': len(hazards), 'matched': sum(1 for h in hazards if h['matched_finding']),
-            'hazards': hazards, 'controls': bible.get('controls', []),
+            'hazards': hazards, 'controls': [{**c, 'flagged': match.get('controls_flagged', {}).get(c['object'])} for c in bible.get('controls', [])],
             'other_findings': extras + unmatched_listed, 'method': match.get('method', 'author-matched'),
             'note': match.get('note', '')}
 

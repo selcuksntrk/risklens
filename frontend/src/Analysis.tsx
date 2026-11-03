@@ -9,10 +9,12 @@ interface StageProps {
   title?: string
   banner?: ReactNode
   partial?: PartialReport | null
+  subtitle?: string
 }
 
 /** Dark "lens" stage: the Meta pipeline made visible, live or replayed from a recorded run. */
-export default function Stage({ events, scanId, elapsed, title = 'Analysing your room', banner, partial }: StageProps) {
+export default function Stage({ events, scanId, elapsed, title = 'Analysing your room', banner, partial,
+  subtitle = 'Typically 2–3 minutes. You can leave this page; the analysis keeps running.' }: StageProps) {
   const find = (step: string) => events.find((e) => e.step === step)
   const ingest = find('ingest.done'), planner = find('planner.done'), marks = find('marks.done')
   const surveyor = find('surveyor.done'), ready = find('findings.ready'), fixer = find('fixer.done')
@@ -31,7 +33,7 @@ export default function Stage({ events, scanId, elapsed, title = 'Analysing your
 
   return <section className="stage" aria-live="polite" aria-busy={!fixer}>
     <div className="stage-head">
-      <div><h1>{title}</h1><p>Typically 2–3 minutes. You can leave this page; the analysis keeps running.</p></div>
+      <div><h1>{title}</h1><p>{subtitle}</p></div>
       <span className="timer" aria-label={`Elapsed ${Math.round(shown)} seconds`}>{Math.floor(shown / 60)}:{String(Math.floor(shown % 60)).padStart(2, '0')}</span>
     </div>
     {banner}

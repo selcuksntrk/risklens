@@ -25,6 +25,7 @@ export default function Replay({ exampleId }: { exampleId: string }) {
     {error && <p className="error" role="alert">{error}</p>}
     {example && <Stage events={visible} scanId={example.scan_id} elapsed={clock}
       title={finished ? 'Analysis complete' : 'Replaying the analysis'}
+      subtitle="The same events the Meta models produced during the recorded run, in their original order."
       banner={<div className="replay-banner" role="note">
         <span><b>Replay of a recorded run</b> · {Math.round(total)} s shown at {speed}× · no new model calls{example.synthetic ? ' · AI-generated scene' : ' · real home, photos blurred'}</span>
         <button className={finished ? 'primary' : 'ghost'} onClick={report}>{finished ? 'Open the report' : 'Skip to report'}</button>

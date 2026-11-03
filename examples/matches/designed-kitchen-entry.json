@@ -1,0 +1,15 @@
+{
+  "source_sha256": "bdf8ae70b321583bc3b0e13d1c237faf7f3fcee3ba8044a75a0ec01905095bbd",
+  "method": "author-matched (finding object and evidence box compared with the scene design)",
+  "matches": {
+    "h1": "C2",
+    "h2": "C3",
+    "h3": null,
+    "h4": "C1",
+    "h5": "C4"
+  },
+  "controls_flagged": {
+    "bottle_rack": false
+  },
+  "note": "Matched by the author on Nov 4 2026 from each finding’s object name and evidence frame; pending a second human check."
+}
