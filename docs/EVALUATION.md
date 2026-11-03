@@ -2,7 +2,7 @@
 
 Release: `v2-5f574344803c`. Manifest: `05a548f6086f3750632d56fb513f41df7d65f2c7577eeb393e8539693e5d5489`.
 
-The submitted release differs from the evaluated one only in frontend wording and layout (`frontend/src`); `backend/app`, prompts, schemas and deployment code are unchanged, so these measurements apply to the deployed pipeline. Release IDs hash the full source set, which is why the ID changed.
+The submitted release differs from the evaluated one only in frontend wording and layout (`frontend/src`); `backend/app`, prompts, schemas and deployment code are unchanged, so these measurements apply to the deployed pipeline. Release IDs hash the full source set, which is why the ID changed. On November 3 the keyframe count became duration-based (max(6, min(12, ceil(duration/4 s)))). All five Hypersim clips are about 16.7 s, so they still receive exactly 6 keyframes; the measured setting is unchanged for these inputs. Longer real-room clips are not covered by these measurements.
 
 **Five previously used synthetic scenes. Human adjudication is pending. These are operational measurements, not safety accuracy.**
 

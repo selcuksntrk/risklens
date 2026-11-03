@@ -21,7 +21,9 @@ MAX_VIDEO_SECONDS = 90  # longer uploads are trimmed: caps SAM frames (and cost)
 FFMPEG_TIMEOUT_S = 180  # a broken or hostile file must not hang the worker
 PROXY_HEIGHT = 720
 MAX_CONCEPTS = 8
-KEYFRAMES = 6           # frames the planner/surveyor see
+KEYFRAMES = 6           # minimum frames the planner/surveyor see
+KEYFRAME_SECONDS = 4    # longer clips get ~1 keyframe per 4 s so items are not skipped between samples
+MAX_KEYFRAMES = 12      # caps image tokens per Spark call
 SAM_CONCURRENCY = 8      # all planned concepts at once; SAM allows 3,000 RPM
 
 SCANS_DIR = Path(os.environ.get("RISKLENS_SCANS", Path(__file__).resolve().parents[2] / "scans"))

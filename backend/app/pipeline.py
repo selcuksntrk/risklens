@@ -85,7 +85,8 @@ async def _run(api, src: Path, narration: str | None, emit: Emit, scan_id: str, 
     if not frames:
         raise ValueError('No decodable video frames.')
     info = await blocking(media.probe, proxy)
-    keyframes = media.pick_keyframes(len(frames), config.KEYFRAMES)
+    keyframes = media.pick_keyframes(len(frames), media.keyframe_count(
+        info['duration_s'], config.KEYFRAMES, config.KEYFRAME_SECONDS, config.MAX_KEYFRAMES))
     lap('ingest')
     emit('ingest.done', {'frames': len(frames), 'duration_s': round(info['duration_s'], 1),
                         'keyframes': keyframes, 'trimmed': original['duration_s'] > info['duration_s'] + .5})
@@ -179,7 +180,7 @@ async def _run(api, src: Path, narration: str | None, emit: Emit, scan_id: str, 
         'provenance': {'source_sha256': sha256_file(src), 'app_version': config.APP_VERSION,
             'keyframes': keyframes, 'proxy': {'fps': config.PROXY_FPS, **info},
             'original_duration_s': original['duration_s'], 'tracking_enabled': tracking,
-            'settings': {'keyframes': config.KEYFRAMES, 'max_concepts': config.MAX_CONCEPTS,
+            'settings': {'keyframes': len(keyframes), 'keyframe_rule': f'max({config.KEYFRAMES}, min({config.MAX_KEYFRAMES}, ceil(duration/{config.KEYFRAME_SECONDS}s)))', 'max_concepts': config.MAX_CONCEPTS,
                          'max_video_seconds': config.MAX_VIDEO_SECONDS, 'proxy_height': config.PROXY_HEIGHT,
                          'planner_effort': 'low', 'surveyor_effort': 'medium', 'fixer_effort': 'low'},
             'models': {'planner': plan_meta['model'], 'surveyor': survey_meta['model'],

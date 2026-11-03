@@ -57,6 +57,11 @@ def validate(path: Path) -> dict:
     return info
 
 
+def keyframe_count(duration_s: float, minimum: int, every_s: float, maximum: int) -> int:
+    """About one keyframe per `every_s` seconds, clamped to [minimum, maximum]."""
+    return max(minimum, min(maximum, math.ceil(duration_s / every_s)))
+
+
 def pick_keyframes(n_frames: int, k: int) -> list[int]:
     """k evenly spaced frame indices, avoiding the very first/last frames (often motion-blurred)."""
     if n_frames <= k:

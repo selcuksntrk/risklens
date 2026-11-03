@@ -171,3 +171,11 @@ def test_verify_ties_and_uncertain_changes():
     assert apply_guard({**base, "confidence": "low"}, True)["verdict"] == "cannot_verify"
     assert apply_guard({**base, "visible_change": "no"}, True)["verdict"] == "cannot_verify"
     assert apply_guard({**base, "visible_change": "unclear"}, True)["verdict"] == "cannot_verify"
+
+
+def test_keyframe_count_scales_with_duration_within_bounds():
+    from app.media import keyframe_count
+    assert keyframe_count(16.6, 6, 4, 12) == 6     # short synthetic eval clips keep the measured setting
+    assert keyframe_count(24, 6, 4, 12) == 6
+    assert keyframe_count(36.7, 6, 4, 12) == 10    # a 37 s walkthrough is sampled about every 3.7 s
+    assert keyframe_count(90, 6, 4, 12) == 12      # capped

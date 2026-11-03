@@ -1,6 +1,6 @@
 # Implementation and validation status — November 3, 2026
 
-Submitted release candidate: **v2-aa81598cfef3**. [Live application](https://selcuksntrk--risklens-web.us-east.modal.run) · [health/version](https://selcuksntrk--risklens-web.us-east.modal.run/api/health). The homepage footer shows the same release ID.
+Submitted release candidate: **v2-32d643efff70**. [Live application](https://selcuksntrk--risklens-web.us-east.modal.run) · [health/version](https://selcuksntrk--risklens-web.us-east.modal.run/api/health). The homepage footer shows the same release ID.
 
 This is a tested software prototype demonstrated on licensed synthetic scenes. It is **not** an expert safety assessment, a real-home accuracy result or a demonstration of a successful physical precaution.
 
