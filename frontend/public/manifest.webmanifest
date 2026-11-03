@@ -4,7 +4,7 @@
   "description": "Film a room; find the earthquake hazards inside it, fix them, verify the fix.",
   "start_url": "/",
   "display": "standalone",
-  "background_color": "#0f1720",
-  "theme_color": "#0f1720",
+  "background_color": "#fbfaf7",
+  "theme_color": "#fbfaf7",
   "icons": [{ "src": "/favicon.svg", "sizes": "any", "type": "image/svg+xml" }]
 }
