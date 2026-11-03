@@ -15,6 +15,7 @@ def main():
     scan = sub.add_parser('scan')
     scan.add_argument('video', type=Path); scan.add_argument('--narration', default=None)
     scan.add_argument('--id'); scan.add_argument('--spark-only', action='store_true')
+    scan.add_argument('--events-out', type=Path, help='Write the timeline events (as streamed to the browser) for sample replay')
     verify = sub.add_parser('verify')
     verify.add_argument('scan_id'); verify.add_argument('video', type=Path); verify.add_argument('--hazard-id')
     claim = sub.add_parser('claim-legacy', help='Administrator only: copy ownership from an existing browser-owned scan')
@@ -48,7 +49,14 @@ def main():
     if root.exists(): parser.error('Scan ID already exists; no report was overwritten')
     root.mkdir(parents=True)
     access.new_metadata(root, '', origin='offline')
-    report = asyncio.run(run_scan(args.video, args.narration, scan_id=scan_id, tracking=not args.spark_only))
+    events, started = [], time.perf_counter()
+    def emit(step: str, data: dict):
+        # Same shape as jobs.Job.emit, so a packaged sample can replay exactly what a live browser saw.
+        events.append({'step': step, 't': round(time.perf_counter() - started, 1), **data})
+        print(f'[{step}]', flush=True)
+    report = asyncio.run(run_scan(args.video, args.narration, emit=emit, scan_id=scan_id, tracking=not args.spark_only))
+    if args.events_out:
+        write_json(args.events_out, events)
     print(f"{scan_id} · {report['assessment']['status']} · {len(report['hazards'])} findings · ${report['cost_usd']['total']:.3f} · {report['seconds']} s")
 
 if __name__ == '__main__':

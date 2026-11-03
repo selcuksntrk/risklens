@@ -40,7 +40,13 @@ export interface Verification {
 }
 export interface Counts { high: number; medium: number; low: number; needs_check: number }
 export interface ScanRow { scan_id: string; created_at: string; room: string; hazards: number; counts: Counts; assessment_status: string }
-export interface Example { id: string; scan_id: string; title: string; description: string; license: string; source_url: string; synthetic: boolean; context?: string }
+export interface AnswerKeyHazard { id: string; object: string; label: string; relation: string; matched_finding: string | null }
+export interface AnswerKey { designed: number; matched: number; hazards: AnswerKeyHazard[]; controls: { object: string; label: string }[]; other_findings: string[]; method: string; note: string }
+export interface Example {
+  id: string; scan_id: string; title: string; description: string; license: string; source_url: string | null; synthetic: boolean; context?: string
+  kind?: 'real' | 'synthetic'; room?: string; findings?: number; counts?: Counts; duration_s?: number | null; seconds?: number; cost_usd?: number
+  has_video?: boolean; has_poster?: boolean; top_finding?: Pick<Hazard, 'id' | 'object' | 'severity' | 'relation' | 'evidence_status'> | null; has_replay?: boolean; answer_key?: AnswerKey | null; modifications?: string
+}
 export interface Attempt { verify_id: string; status: string; created_at: string | null; fixed: number; hazard_id?: string }
 export interface TimelineEvent { step: string; t: number; [key: string]: unknown }
 export type PartialReport = Pick<Report, 'scan_id' | 'room' | 'hazards' | 'assessment'>
@@ -86,6 +92,8 @@ export async function getScan(id: string): Promise<ScanState> { return json(`/ap
 export async function getVerification(scan: string, id: string): Promise<VerifyState> { return json(`/api/scans/${scan}/verify/${id}`) }
 export async function getAttempts(scan: string): Promise<Attempt[]> { return json(`/api/scans/${scan}/verifications`) }
 export async function listExamples(): Promise<Example[]> { return json('/api/examples') }
+export async function getExampleEvents(id: string): Promise<TimelineEvent[]> { return json(`/api/examples/${id}/events`) }
+export const exampleMedia = (id: string, name: 'source.mp4' | 'poster.jpg') => `/api/examples/${id}/media/${name}`
 export async function runExample(id: string, key: string): Promise<string> {
   await ensureSession()
   const result = await json<{ scan_id: string }>(`/api/examples/${id}/runs`, { method: 'POST', headers: { 'Idempotency-Key': key } })

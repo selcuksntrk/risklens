@@ -172,3 +172,39 @@ def test_cache_headers_keep_safari_from_pinning_a_stale_index(client):
     gone = client.get('/assets/index-deleted.js')
     assert gone.status_code == 404 and 'immutable' not in gone.headers.get('cache-control', '')
     assert client.get('/api/health').headers['cache-control'] == 'no-store'
+
+
+def _example(tmp_path, with_events=True):
+    root = tmp_path / '_examples'
+    folder = root / 'samplehome'
+    (folder / 'evidence').mkdir(parents=True)
+    (folder / 'report.json').write_text(json.dumps({'scan_id': 'samplehome', 'room': {'type': 'bedroom'}, 'hazards': []}))
+    (folder / 'source.mp4').write_bytes(b'video')
+    (folder / 'poster.jpg').write_bytes(b'poster')
+    (folder / 'secret.txt').write_bytes(b'no')
+    if with_events:
+        (folder / 'events.json').write_text(json.dumps([{'step': 'ingest.done', 't': 1.0}, {'step': 'planner.done', 't': 9.5}]))
+    (root / 'catalog.json').write_text(json.dumps([{'id': 'sample-home', 'scan_id': 'samplehome', 'kind': 'real'}]))
+
+
+def test_example_media_and_replay_are_public_but_bounded(client, tmp_path):
+    _example(tmp_path)
+    assert client.get('/api/examples').json()[0]['kind'] == 'real'
+    assert client.get('/api/examples/sample-home/media/source.mp4').content == b'video'
+    assert client.get('/api/examples/sample-home/media/poster.jpg').content == b'poster'
+    assert client.get('/api/examples/sample-home/media/secret.txt').status_code == 404
+    assert client.get('/api/examples/sample-home/media/report.json').status_code == 404
+    assert client.get('/api/examples/missing/media/source.mp4').status_code == 404
+    assert [e['step'] for e in client.get('/api/examples/sample-home/events').json()] == ['ingest.done', 'planner.done']
+
+
+def test_example_without_recorded_run_has_no_replay(client, tmp_path):
+    _example(tmp_path, with_events=False)
+    assert client.get('/api/examples/sample-home/events').status_code == 404
+
+
+def test_private_scan_source_video_is_never_served(client, tmp_path):
+    r = client.post("/api/scans", files={"video": ("room.mp4", b"\x00" * 10, "video/mp4")})
+    scan_id = r.json()["scan_id"]
+    assert client.get(f"/api/scans/{scan_id}/files/source.mp4").status_code == 404
+    assert client.get(f"/api/examples/{scan_id}/media/source.mp4").status_code == 404

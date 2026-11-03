@@ -20,7 +20,7 @@ it('withholds unsupported instructions, DIY and image generation, and never disp
   expect(screen.queryByText('AI fix illustration')).toBeNull()
   expect(screen.queryByText(/\/100|Low risk/)).toBeNull()
   expect(screen.getByText('Tracking failed')).toBeDefined()
-  fireEvent.click(screen.getByText('Show this detail'))
+  fireEvent.click(screen.getByText('Re-film this item'))
   expect(location.hash).toBe('#/verify/room/h1')
 })
 it('shows zero confirmations neutrally and explicitly identifies unchecked findings', () => {
@@ -98,4 +98,18 @@ it('hides placeholder requested views such as "none"', async () => {
   expect(hasRequest(' None. ')).toBe(false)
   expect(hasRequest('N/A')).toBe(false)
   expect(hasRequest('Film the wardrobe top')).toBe(true)
+})
+
+it('shows the designed-scene answer key with misses, and labels it as one designed scene', () => {
+  const example = { id: 'd', scan_id: 'room', title: 'Designed', description: '', license: 'Muse Image', source_url: null, synthetic: true, kind: 'synthetic',
+    answer_key: { designed: 2, matched: 1, method: 'author-matched', note: '', controls: [{ object: 'dresser', label: 'Strapped dresser' }], other_findings: [],
+      hazards: [{ id: 'L1', object: 'vitrin', label: 'Glass cabinet', relation: 'tall_tip_over', matched_finding: 'h1' },
+                { id: 'L2', object: 'tv', label: 'Unstrapped TV', relation: 'tall_tip_over', matched_finding: null }] } } as api.Example
+  render(<ReportView report={report} fixcards={[]} verification={null} readOnly example={example} />)
+  expect(screen.getByText('1/2')).toBeDefined()
+  expect(screen.getByText('Found as “Cabinet”')).toBeDefined()
+  expect(screen.getByText('Not reported by RiskLens')).toBeDefined()
+  expect(screen.getByText(/not an accuracy measurement for real homes/)).toBeDefined()
+  expect(screen.getByText('AI-generated scene')).toBeDefined()
+  expect(screen.queryByText('Re-film this item')).toBeNull()
 })

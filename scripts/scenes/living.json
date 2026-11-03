@@ -1,0 +1,32 @@
+{
+  "id": "istanbul-living",
+  "title": "Living room, Istanbul apartment",
+  "room_type": "living_room",
+  "description": "A lived-in living room (salon) of a 1990s Istanbul apartment, about 4.5 x 5 m, ceiling 2.7 m. Beige walls, light oak laminate parquet, a red-and-cream kilim-style rug, white PVC double windows with sheer white tulle curtains and grey side drapes, a white steel panel radiator under the window. A three-seat grey fabric sofa with two patterned cushions faces the TV wall. A low walnut coffee table holds a tray with tea glasses and a bowl of fruit.",
+  "window_side": "left",
+  "objects": {
+    "vitrin": "a tall freestanding glass-front display cabinet (vitrin), dark walnut wood, 190 cm tall and 110 cm wide, two glass doors and glass shelves crowded with tulip-shaped tea glasses, porcelain plates and crystal bowls, standing free against the right wall with a visible gap behind it and no wall bracket or strap",
+    "tv": "a 65-inch black flat-screen TV standing on its pedestal feet on top of a low white TV console, no wall mount, no strap, the screen turned off and dark",
+    "bookcase": "a tall narrow white bookcase, 200 cm tall, next to the TV console, packed with books, with two heavy ceramic vases and a stack of large books placed on its very top",
+    "mirror": "a large heavy mirror in an ornate gilded frame, about 120 x 80 cm, hanging on a single wire from one nail high on the wall directly above the sofa",
+    "chandelier": "a multi-arm brass chandelier with glass shades hanging on a chain from the ceiling directly above the coffee table",
+    "dresser": "a low oak dresser near the window with a clearly visible white nylon anti-tip strap screwed from its back edge into the wall",
+    "door": "the open white interior door to the hallway, the doorway clear"
+  },
+  "answer_key": [
+    {"id": "L1", "object": "vitrin", "label": "Glass display cabinet full of glassware, not anchored", "relation": "tall_tip_over"},
+    {"id": "L2", "object": "tv", "label": "Large TV on a low console, not strapped", "relation": "tall_tip_over"},
+    {"id": "L3", "object": "bookcase", "label": "Tall bookcase with heavy vases and books on top", "relation": "heavy_falling_object"},
+    {"id": "L4", "object": "mirror", "label": "Heavy framed mirror hung above the sofa", "relation": "heavy_falling_object"},
+    {"id": "L5", "object": "chandelier", "label": "Chandelier with glass shades over the seating area", "relation": "glass_breakage"}
+  ],
+  "controls": [{"object": "dresser", "label": "Low dresser with a visible anti-tip strap (secured control)"}],
+  "shots": [
+    {"id": 0, "camera": "standing in the hallway doorway, looking into the room, wide view", "visible": ["sofa", "mirror", "chandelier", "tv", "bookcase", "vitrin"], "expected": ["L1", "L2", "L4", "L5"], "pan": "lr"},
+    {"id": 1, "camera": "two steps into the room, turned toward the right wall", "visible": ["vitrin"], "expected": ["L1"], "pan": "rl"},
+    {"id": 2, "camera": "turned further left, facing the TV wall from the middle of the room", "visible": ["tv", "bookcase"], "expected": ["L2", "L3"], "pan": "lr"},
+    {"id": 3, "camera": "turned around toward the sofa wall, slightly tilted up", "visible": ["sofa", "mirror", "chandelier"], "expected": ["L4", "L5"], "pan": "rl"},
+    {"id": 4, "camera": "turned toward the window wall", "visible": ["dresser", "window", "radiator"], "expected": [], "pan": "lr"},
+    {"id": 5, "camera": "back near the window, looking toward the open hallway door", "visible": ["door", "coffee table", "vitrin"], "expected": ["L1"], "pan": "rl"}
+  ]
+}

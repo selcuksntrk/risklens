@@ -25,7 +25,7 @@ PROBE = '''(() => {
   return {scrollWidth: document.documentElement.scrollWidth, viewport: vw, overflowing: wide, small_text: small, small_targets: tiny};
 })()'''
 
-PAGES = [('home', '#/'), ('report', '#/scan/hypersimbedroom'), ('capture', '#/capture')]
+PAGES = [('home', '#/'), ('report', '#/scan/realhomeistanbul'), ('designed', '#/scan/designedliving'), ('replay', '#/replay/real-home-istanbul'), ('capture', '#/capture')]
 VIEWPORTS = [('desktop', dict(width=1440, height=900, scale=1)),
              ('phone-390', dict(width=390, height=844, scale=3, mobile=True)),
              ('phone-360', dict(width=360, height=740, scale=3, mobile=True))]

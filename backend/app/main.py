@@ -387,6 +387,29 @@ def list_examples():
     return examples.catalog()
 
 
+EXAMPLE_MEDIA = {'source.mp4': 'video/mp4', 'poster.jpg': 'image/jpeg'}
+
+
+@app.get('/api/examples/{example_id}/media/{name}')
+def example_media(example_id: str, name: str):
+    # Public on purpose, and only for packaged examples: private scans never expose their source video.
+    row = examples.find(example_id)
+    target = examples.root(row) / name if row and name in EXAMPLE_MEDIA else None
+    if not target or not target.is_file():
+        raise HTTPException(404)
+    return FileResponse(target, media_type=EXAMPLE_MEDIA[name])
+
+
+@app.get('/api/examples/{example_id}/events')
+def example_events(example_id: str):
+    # Recorded timeline of the packaged run; the browser replays it with a visible "replay" label.
+    row = examples.find(example_id)
+    path = examples.root(row) / 'events.json' if row else None
+    if not path or not path.is_file():
+        raise HTTPException(404, 'No recorded run for this example.')
+    return json.loads(path.read_text())
+
+
 @app.post('/api/examples/{example_id}/runs')
 async def run_example(example_id: str, request: Request):
     owner_id = access.require_owner(request)

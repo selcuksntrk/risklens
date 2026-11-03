@@ -1,0 +1,32 @@
+{
+  "id": "istanbul-kitchen-entry",
+  "title": "Kitchen and entrance, Istanbul apartment",
+  "room_type": "kitchen",
+  "description": "A lived-in galley kitchen of an Istanbul apartment, about 2.5 x 4 m, opening onto the narrow entrance hallway to the front door. White glossy lower cabinets, a grey stone-look worktop, white square wall tiles, a small white PVC window with a short tulle curtain at the far end, a gas hob with a kettle and a double teapot (caydanlik), a dish rack by the sink. Light grey floor tiles.",
+  "window_side": "far end",
+  "objects": {
+    "boiler": "a white wall-hung gas combi boiler mounted on the kitchen wall above the worktop, with copper pipes and a yellow gas pipe running down from it",
+    "glass_cabinets": "a row of upper wall cabinets with framed glass doors and no latches, showing stacked plates and drinking glasses inside",
+    "microwave": "a microwave oven sitting loose on top of a tall white fridge-freezer, near its front edge",
+    "jar_shelf": "an open wooden wall shelf above the worktop holding a row of large glass jars filled with lentils, rice and pasta",
+    "shoe_cabinet": "in the entrance hallway beside the front door, a tall shoe cabinet with a coat rack, plus three stacked cardboard moving boxes on the floor that narrow the path to the front door to about half its width",
+    "bottle_rack": "a water bottle rack with a visible strap holding a large water jug in place",
+    "front_door": "the grey steel apartment front door at the end of the short entrance hallway"
+  },
+  "answer_key": [
+    {"id": "C1", "object": "boiler", "label": "Wall-hung gas combi boiler: bracing and gas connection unknown", "relation": "other"},
+    {"id": "C2", "object": "glass_cabinets", "label": "Upper glass-door cabinets without latches", "relation": "glass_breakage"},
+    {"id": "C3", "object": "microwave", "label": "Microwave loose on top of the fridge", "relation": "heavy_falling_object"},
+    {"id": "C4", "object": "jar_shelf", "label": "Open shelf of glass jars above the worktop", "relation": "heavy_falling_object"},
+    {"id": "C5", "object": "shoe_cabinet", "label": "Boxes and shoe cabinet narrowing the path to the front door", "relation": "blocks_exit"}
+  ],
+  "controls": [{"object": "bottle_rack", "label": "Strapped water jug rack (secured control)"}],
+  "shots": [
+    {"id": 0, "camera": "standing at the kitchen entrance, looking down the galley kitchen toward the window, wide view", "visible": ["boiler", "glass_cabinets", "jar_shelf", "window"], "expected": ["C1", "C2", "C4"], "pan": "lr"},
+    {"id": 1, "camera": "turned toward the wall with the combi boiler, slightly tilted up", "visible": ["boiler", "jar_shelf"], "expected": ["C1", "C4"], "pan": "rl"},
+    {"id": 2, "camera": "turned toward the upper glass-door cabinets", "visible": ["glass_cabinets", "worktop"], "expected": ["C2"], "pan": "lr"},
+    {"id": 3, "camera": "turned toward the tall fridge-freezer at the end of the counter", "visible": ["microwave", "fridge", "bottle_rack"], "expected": ["C3"], "pan": "rl"},
+    {"id": 4, "camera": "stepped out of the kitchen into the entrance hallway, looking toward the front door", "visible": ["front_door", "shoe_cabinet"], "expected": ["C5"], "pan": "lr"},
+    {"id": 5, "camera": "standing at the front door, looking back into the hallway and kitchen opening", "visible": ["shoe_cabinet", "kitchen opening"], "expected": ["C5"], "pan": "rl"}
+  ]
+}

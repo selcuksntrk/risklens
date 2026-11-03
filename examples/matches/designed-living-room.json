@@ -1,0 +1,16 @@
+{
+  "source_sha256": "65d5fa47fdc6e314b7e1a8f080cb7799cd324b4e6fed09d504dab14e7959af6d",
+  "method": "author-matched (finding object and evidence box compared with the scene design)",
+  "matches": {
+    "h1": "L5",
+    "h2": "L4",
+    "h3": "L3",
+    "h4": "L3",
+    "h5": "L2",
+    "h6": "L1"
+  },
+  "controls_flagged": {
+    "dresser": false
+  },
+  "note": "Matched by the author on Nov 4 2026 from each finding’s object name and evidence frame; pending a second human check."
+}
