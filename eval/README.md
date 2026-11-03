@@ -1,5 +1,26 @@
 # Evaluation protocol
 
+## November 3 synthetic-only delivery
+
+Five existing Hypersim scenes are **development regression**. All were previously used, including the public example. `synthetic-sources.json` records source URLs, licenses and clip hashes. `synthetic-observations.json` records AI visual observations made before new runs; it is not human/expert ground truth. Selçuk's adjudication remains pending.
+
+```sh
+backend/.venv/bin/python scripts/fetch_synthetic_eval.py
+python eval/prepare_synthetic.py --source-root eval/data/regression
+backend/.venv/bin/python eval/run.py eval/private/synthetic/manifest.json --output eval/results/synthetic-2026-11-03-run1
+python eval/summarize_synthetic.py eval/results/synthetic-2026-11-03-run1/runs.private.json
+```
+
+The original implementation run used existing `../spikes/data/r` clips. The public downloader above recovers the same original frames using `synthetic-frame-manifest.json`; ffmpeg-version differences can change encoded video bytes. A fresh encoding gets a new frozen manifest and must not be described as byte-identical to the historical run. The legacy `gt.json` filename in reproduced inputs contains source metadata only, not asserted hazard labels.
+
+Preparation freezes video and observation hashes and creates ignored copies and control variants. Use new destination/output directories for later runs. The runner checks all hashes before paid work, preserves started/failed attempts and unknown charges, and stops on service/auth/rate/budget failures. It uses the existing persisted $15/day ledger without increasing the cap. Reconcile an interrupted `running` attempt against saved report/billing before another paid attempt; never count it as successful automatically.
+
+The primary comparison is five clips × two variants. The demo scene has two extra full runs, reported separately. Full-pipeline controls: B0 original bytes, B1 re-encoding, B3 crop, B4 different bedroom. These are synthetic proxies, not physical re-filming. No positive physical-change test exists. Spark-only automatic abstention is not evidence of verifier superiority.
+
+`summarize_synthetic.py` exports operational counts/time/cost and keeps accuracy explicitly unmeasured. Failed calls are included in accounting. To publish correctness metrics, review each finding against frozen observations and images, record uncertainty/exclusions, and use `metrics.py`; never set `independently_reviewed` based only on model output.
+
+## Future real-room validation
+
 No real-home performance result has been claimed. Synthetic examples exercise the software; they do not validate household safety or demonstrate a physical fix.
 
 1. Copy `manifest.example.json` to ignored `eval/private/manifest.json`. Put private clips below that directory. Assign an anonymous room ID and freeze each room's development/evaluation split. No room may cross splits.

@@ -15,10 +15,11 @@ URL = 'https://docs-assets.developer.apple.com/ml-research/datasets/hypersim/v1/
 
 class RangeFile(io.RawIOBase):
     BLOCK = 1024*1024
-    def __init__(self):
+    def __init__(self, url=URL):
+        self.url = url
         self.pos, self.cache = 0, {}
         self.client = httpx.Client(transport=httpx.HTTPTransport(local_address='0.0.0.0', retries=2), timeout=30)
-        response = self.client.head(URL)
+        response = self.client.head(self.url)
         response.raise_for_status()
         self.size = int(response.headers['Content-Length'])
     def close(self):
@@ -37,7 +38,7 @@ class RangeFile(io.RawIOBase):
             index, offset = divmod(self.pos, self.BLOCK)
             if index not in self.cache:
                 start = index*self.BLOCK; end = min(start+self.BLOCK, self.size)-1
-                with self.client.stream('GET', URL, headers={'Range': f'bytes={start}-{end}'}) as response:
+                with self.client.stream('GET', self.url, headers={'Range': f'bytes={start}-{end}'}) as response:
                     if response.status_code != 206: raise RuntimeError('Server does not support bounded range downloads')
                     chunks = bytearray()
                     for chunk in response.iter_bytes():

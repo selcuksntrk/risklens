@@ -1,0 +1,137 @@
+{
+  "release": "v2-5f574344803c",
+  "manifest_sha256": "05a548f6086f3750632d56fb513f41df7d65f2c7577eeb393e8539693e5d5489",
+  "data_type": "synthetic",
+  "evaluation_kind": "development_regression",
+  "human_review": "pending",
+  "physical_positive_cases": 0,
+  "physical_change_success_rate": "not measured",
+  "comparisons": {
+    "spark_only": {
+      "attempts": 5,
+      "returned_reports": 5,
+      "complete_assessments": 5,
+      "reported_findings": 16,
+      "tracked_findings": 0,
+      "seconds_successful": {
+        "n": 5,
+        "median": 93.0,
+        "min": 86.8,
+        "max": 95.0
+      },
+      "cost_usd_successful": {
+        "n": 5,
+        "median": 0.055031,
+        "min": 0.050858,
+        "max": 0.058293
+      },
+      "finding_precision_recall": "not measured; human adjudication pending"
+    },
+    "full": {
+      "attempts": 5,
+      "returned_reports": 5,
+      "complete_assessments": 5,
+      "reported_findings": 20,
+      "tracked_findings": 16,
+      "seconds_successful": {
+        "n": 5,
+        "median": 117.2,
+        "min": 111.6,
+        "max": 126.5
+      },
+      "cost_usd_successful": {
+        "n": 5,
+        "median": 0.192267,
+        "min": 0.184264,
+        "max": 0.231004
+      },
+      "finding_precision_recall": "not measured; human adjudication pending"
+    }
+  },
+  "negative_controls": [
+    {
+      "case": "B0",
+      "status": "done",
+      "description": "Exact original file; deterministic hash guard, not model perception.",
+      "checked_findings": 4,
+      "confirmed": 0,
+      "abstentions": 4,
+      "model_called_findings": 0,
+      "model_false_confirmations": 0,
+      "seconds": 0.7,
+      "cost_usd": 0
+    },
+    {
+      "case": "B1",
+      "status": "done",
+      "description": "Same rendered sequence re-encoded; no physical change or new camera recording.",
+      "checked_findings": 4,
+      "confirmed": 0,
+      "abstentions": 1,
+      "model_called_findings": 4,
+      "model_false_confirmations": 0,
+      "seconds": 43.6,
+      "cost_usd": 0.123156
+    },
+    {
+      "case": "B3",
+      "status": "done",
+      "description": "Central crop of the unchanged sequence; tests evidence loss, not a new camera recording.",
+      "checked_findings": 4,
+      "confirmed": 0,
+      "abstentions": 1,
+      "model_called_findings": 4,
+      "model_false_confirmations": 0,
+      "seconds": 39.2,
+      "cost_usd": 0.117946
+    },
+    {
+      "case": "B4",
+      "status": "done",
+      "description": "Different synthetic bedroom and different objects; not a physical change.",
+      "checked_findings": 4,
+      "confirmed": 0,
+      "abstentions": 4,
+      "model_called_findings": 3,
+      "model_false_confirmations": 0,
+      "seconds": 47.1,
+      "cost_usd": 0.177776
+    }
+  ],
+  "demo_repetitions": [
+    {
+      "repetition": 1,
+      "assessment": "complete",
+      "findings": 4,
+      "seconds": 111.6,
+      "cost_usd": 0.206426
+    },
+    {
+      "repetition": 2,
+      "assessment": "complete",
+      "findings": 5,
+      "seconds": 106.1,
+      "cost_usd": 0.182293
+    },
+    {
+      "repetition": 3,
+      "assessment": "complete",
+      "findings": 5,
+      "seconds": 120.6,
+      "cost_usd": 0.203345
+    }
+  ],
+  "attempts": 16,
+  "failed_attempts": 0,
+  "running_attempts": 0,
+  "recorded_total_usd": 2.076743,
+  "unknown_usage_usd": 0,
+  "stopped_reason": null,
+  "limitations": [
+    "Five synthetic scenes reused from development; not an independent benchmark.",
+    "Reported findings and exact-frame boxes are not correctness scores.",
+    "Re-encoding and cropping do not simulate a new real-camera recording.",
+    "No successful physical precaution or real-home performance has been demonstrated.",
+    "Costs are application accounting, including unknown reservations, not a provider invoice."
+  ]
+}

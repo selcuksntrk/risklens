@@ -1,0 +1,336 @@
+{
+  "release": "v2-5f574344803c",
+  "manifest_sha256": "05a548f6086f3750632d56fb513f41df7d65f2c7577eeb393e8539693e5d5489",
+  "attempts": [
+    {
+      "clip_id": "ai_018_005_cam_00",
+      "variant": "spark_only",
+      "case": "A0",
+      "repetition": 1,
+      "status": "done",
+      "assessment": "complete",
+      "seconds": 94.9,
+      "cost_usd": 0.05613,
+      "recorded_call_cost_usd": 0.05613,
+      "unknown_usage_usd": 0,
+      "source_sha256": "2cc36cc43b3138a9e527b0bc2d0118cf82eb8ad63a355922c6b3b2f02be493d1",
+      "reported_findings": 2,
+      "tracked_findings": 0
+    },
+    {
+      "clip_id": "ai_036_006_cam_00",
+      "variant": "spark_only",
+      "case": "A0",
+      "repetition": 1,
+      "status": "done",
+      "assessment": "complete",
+      "seconds": 88.7,
+      "cost_usd": 0.055031,
+      "recorded_call_cost_usd": 0.055031,
+      "unknown_usage_usd": 0,
+      "source_sha256": "a89f49e111b1c1746e763c9f6f83a16f052d4fc1bbf8cbcb5d310767ca386f6f",
+      "reported_findings": 3,
+      "tracked_findings": 0
+    },
+    {
+      "clip_id": "ai_048_004_cam_00",
+      "variant": "spark_only",
+      "case": "A0",
+      "repetition": 1,
+      "status": "done",
+      "assessment": "complete",
+      "seconds": 95.0,
+      "cost_usd": 0.058293,
+      "recorded_call_cost_usd": 0.058293,
+      "unknown_usage_usd": 0,
+      "source_sha256": "7c8b51a659cb7614b5a05156d5e6569d013c2d3abd102469e7c0932ddbaaf54c",
+      "reported_findings": 3,
+      "tracked_findings": 0
+    },
+    {
+      "clip_id": "ai_048_005_cam_01",
+      "variant": "spark_only",
+      "case": "A0",
+      "repetition": 1,
+      "status": "done",
+      "assessment": "complete",
+      "seconds": 86.8,
+      "cost_usd": 0.052432,
+      "recorded_call_cost_usd": 0.052432,
+      "unknown_usage_usd": 0,
+      "source_sha256": "c7f06cc53c95d0fbe62e276f531e478179e5a41db5f98d98a62d8a399cad8c08",
+      "reported_findings": 4,
+      "tracked_findings": 0
+    },
+    {
+      "clip_id": "ai_051_002_cam_03",
+      "variant": "spark_only",
+      "case": "A0",
+      "repetition": 1,
+      "status": "done",
+      "assessment": "complete",
+      "seconds": 93.0,
+      "cost_usd": 0.050858,
+      "recorded_call_cost_usd": 0.050858,
+      "unknown_usage_usd": 0,
+      "source_sha256": "e5658f9ff4358824f27b30c7db9c4a442b877c9ad786f7b573be1eeb9786eb66",
+      "reported_findings": 4,
+      "tracked_findings": 0
+    },
+    {
+      "clip_id": "ai_018_005_cam_00",
+      "variant": "full",
+      "case": "A0",
+      "repetition": 1,
+      "status": "done",
+      "assessment": "complete",
+      "seconds": 114.2,
+      "cost_usd": 0.185522,
+      "recorded_call_cost_usd": 0.185522,
+      "unknown_usage_usd": 0,
+      "source_sha256": "2cc36cc43b3138a9e527b0bc2d0118cf82eb8ad63a355922c6b3b2f02be493d1",
+      "reported_findings": 4,
+      "tracked_findings": 3
+    },
+    {
+      "clip_id": "ai_036_006_cam_00",
+      "variant": "full",
+      "case": "A0",
+      "repetition": 1,
+      "status": "done",
+      "assessment": "complete",
+      "seconds": 118.1,
+      "cost_usd": 0.192267,
+      "recorded_call_cost_usd": 0.192267,
+      "unknown_usage_usd": 0,
+      "source_sha256": "a89f49e111b1c1746e763c9f6f83a16f052d4fc1bbf8cbcb5d310767ca386f6f",
+      "reported_findings": 4,
+      "tracked_findings": 3
+    },
+    {
+      "clip_id": "ai_048_004_cam_00",
+      "variant": "full",
+      "case": "A0",
+      "repetition": 1,
+      "status": "done",
+      "assessment": "complete",
+      "seconds": 111.6,
+      "cost_usd": 0.206426,
+      "recorded_call_cost_usd": 0.206426,
+      "unknown_usage_usd": 0,
+      "source_sha256": "7c8b51a659cb7614b5a05156d5e6569d013c2d3abd102469e7c0932ddbaaf54c",
+      "reported_findings": 4,
+      "tracked_findings": 4
+    },
+    {
+      "clip_id": "ai_048_004_cam_00",
+      "variant": "full",
+      "case": "A0",
+      "repetition": 2,
+      "status": "done",
+      "assessment": "complete",
+      "seconds": 106.1,
+      "cost_usd": 0.182293,
+      "recorded_call_cost_usd": 0.182293,
+      "unknown_usage_usd": 0,
+      "source_sha256": "7c8b51a659cb7614b5a05156d5e6569d013c2d3abd102469e7c0932ddbaaf54c",
+      "reported_findings": 5,
+      "tracked_findings": 5
+    },
+    {
+      "clip_id": "ai_048_004_cam_00",
+      "variant": "full",
+      "case": "A0",
+      "repetition": 3,
+      "status": "done",
+      "assessment": "complete",
+      "seconds": 120.6,
+      "cost_usd": 0.203345,
+      "recorded_call_cost_usd": 0.203345,
+      "unknown_usage_usd": 0,
+      "source_sha256": "7c8b51a659cb7614b5a05156d5e6569d013c2d3abd102469e7c0932ddbaaf54c",
+      "reported_findings": 5,
+      "tracked_findings": 4
+    },
+    {
+      "clip_id": "ai_048_005_cam_01",
+      "variant": "full",
+      "case": "A0",
+      "repetition": 1,
+      "status": "done",
+      "assessment": "complete",
+      "seconds": 117.2,
+      "cost_usd": 0.184264,
+      "recorded_call_cost_usd": 0.184264,
+      "unknown_usage_usd": 0,
+      "source_sha256": "c7f06cc53c95d0fbe62e276f531e478179e5a41db5f98d98a62d8a399cad8c08",
+      "reported_findings": 3,
+      "tracked_findings": 3
+    },
+    {
+      "clip_id": "ai_051_002_cam_03",
+      "variant": "full",
+      "case": "A0",
+      "repetition": 1,
+      "status": "done",
+      "assessment": "complete",
+      "seconds": 126.5,
+      "cost_usd": 0.231004,
+      "recorded_call_cost_usd": 0.231004,
+      "unknown_usage_usd": 0,
+      "source_sha256": "e5658f9ff4358824f27b30c7db9c4a442b877c9ad786f7b573be1eeb9786eb66",
+      "reported_findings": 5,
+      "tracked_findings": 3
+    },
+    {
+      "clip_id": "control-b0",
+      "variant": "full",
+      "case": "B0",
+      "repetition": 1,
+      "status": "done",
+      "seconds": 0.7,
+      "cost_usd": 0,
+      "source_sha256": "7c8b51a659cb7614b5a05156d5e6569d013c2d3abd102469e7c0932ddbaaf54c",
+      "verdicts": [
+        {
+          "finding_id": "h1",
+          "model_called": false,
+          "model_verdict": null,
+          "guarded_verdict": "cannot_verify"
+        },
+        {
+          "finding_id": "h2",
+          "model_called": false,
+          "model_verdict": null,
+          "guarded_verdict": "cannot_verify"
+        },
+        {
+          "finding_id": "h3",
+          "model_called": false,
+          "model_verdict": null,
+          "guarded_verdict": "cannot_verify"
+        },
+        {
+          "finding_id": "h4",
+          "model_called": false,
+          "model_verdict": null,
+          "guarded_verdict": "cannot_verify"
+        }
+      ]
+    },
+    {
+      "clip_id": "control-b1",
+      "variant": "full",
+      "case": "B1",
+      "repetition": 1,
+      "status": "done",
+      "seconds": 43.6,
+      "cost_usd": 0.123156,
+      "recorded_call_cost_usd": 0.123156,
+      "unknown_usage_usd": 0,
+      "source_sha256": "b815711c5d4b4a630b98bcb44a7bceb8949fc0d81b626b70145473946d579ae8",
+      "verdicts": [
+        {
+          "finding_id": "h1",
+          "model_called": true,
+          "model_verdict": "cannot_verify",
+          "guarded_verdict": "cannot_verify"
+        },
+        {
+          "finding_id": "h2",
+          "model_called": true,
+          "model_verdict": "not_fixed",
+          "guarded_verdict": "not_fixed"
+        },
+        {
+          "finding_id": "h3",
+          "model_called": true,
+          "model_verdict": "not_fixed",
+          "guarded_verdict": "not_fixed"
+        },
+        {
+          "finding_id": "h4",
+          "model_called": true,
+          "model_verdict": "not_fixed",
+          "guarded_verdict": "not_fixed"
+        }
+      ]
+    },
+    {
+      "clip_id": "control-b3",
+      "variant": "full",
+      "case": "B3",
+      "repetition": 1,
+      "status": "done",
+      "seconds": 39.2,
+      "cost_usd": 0.117946,
+      "recorded_call_cost_usd": 0.117946,
+      "unknown_usage_usd": 0,
+      "source_sha256": "db1f3b05e655195a5c9cc3b207f37fae3e9a8739b8e6105a3a904addc1d5fe20",
+      "verdicts": [
+        {
+          "finding_id": "h1",
+          "model_called": true,
+          "model_verdict": "cannot_verify",
+          "guarded_verdict": "cannot_verify"
+        },
+        {
+          "finding_id": "h2",
+          "model_called": true,
+          "model_verdict": "not_fixed",
+          "guarded_verdict": "not_fixed"
+        },
+        {
+          "finding_id": "h3",
+          "model_called": true,
+          "model_verdict": "not_fixed",
+          "guarded_verdict": "not_fixed"
+        },
+        {
+          "finding_id": "h4",
+          "model_called": true,
+          "model_verdict": "not_fixed",
+          "guarded_verdict": "not_fixed"
+        }
+      ]
+    },
+    {
+      "clip_id": "control-b4",
+      "variant": "full",
+      "case": "B4",
+      "repetition": 1,
+      "status": "done",
+      "seconds": 47.1,
+      "cost_usd": 0.177776,
+      "recorded_call_cost_usd": 0.177776,
+      "unknown_usage_usd": 0,
+      "source_sha256": "c7f06cc53c95d0fbe62e276f531e478179e5a41db5f98d98a62d8a399cad8c08",
+      "verdicts": [
+        {
+          "finding_id": "h1",
+          "model_called": true,
+          "model_verdict": "cannot_verify",
+          "guarded_verdict": "cannot_verify"
+        },
+        {
+          "finding_id": "h2",
+          "model_called": true,
+          "model_verdict": "cannot_verify",
+          "guarded_verdict": "cannot_verify"
+        },
+        {
+          "finding_id": "h3",
+          "model_called": false,
+          "model_verdict": null,
+          "guarded_verdict": "cannot_verify"
+        },
+        {
+          "finding_id": "h4",
+          "model_called": true,
+          "model_verdict": "cannot_verify",
+          "guarded_verdict": "cannot_verify"
+        }
+      ]
+    }
+  ]
+}
