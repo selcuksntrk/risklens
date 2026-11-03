@@ -24,19 +24,23 @@ export default function Home() {
   return <main className="page">
     <header className="brand"><img src="/favicon.svg" alt="" width={36} height={36} /><h1>RiskLens</h1></header>
     <section className="hero">
-      <h2>Find visible earthquake hazards. Take action. Document the change.</h2>
-      <p>Film one room to screen for objects that could fall, tip or obstruct an exit. Get source-linked precautions and re-film to compare visible changes.</p>
-      <button className="primary big" onClick={() => go('capture')}>Scan your room</button>
-      <p className="fine">Visual screening of sampled views, not a building inspection or installation safety certificate.</p>
-      <p className="fine">In a study of New Zealand commercial buildings during 2010–2014 earthquakes, 556 of 947 injuries were attributed to non-structural damage. <a href="https://doi.org/10.1177/8755293019900775" target="_blank" rel="noreferrer">Yeow et al., 2020</a>.</p>
+      <span className="eyebrow">Earthquake preparedness · Build for Your World</span>
+      <h2>A visible finding. The evidence. A practical next step.</h2>
+      <p>RiskLens connects sampled room views to tracked objects and source-linked precautions. When a detail is unclear, it asks for better evidence.</p>
+      <p className="fine">Visual screening prototype, not a building inspection or installation certificate. Real-world physical-change validation is still pending.</p>
     </section>
     {error && <p className="error" role="alert">{error}</p>}
     {examples.map((e) => <section className="hero" key={e.id}>
+      <span className="eyebrow">Explore without recording your home</span>
       <h3>{e.title}</h3><p>{e.description}</p>
-      <div className="actions"><button className="ghost" onClick={() => go(`scan/${e.scan_id}`)}>View a completed example</button>
-        <button className="primary" disabled={busy} onClick={() => void tryExample(e.id)}>{busy ? 'Starting…' : 'Try a live sample'}</button></div>
-      <p className="fine">Completed example: previously computed. Live sample: a new Meta model run. {e.synthetic && 'Synthetic scene, not a real household or a physical fix.'} <a href={e.source_url} target="_blank" rel="noreferrer">{e.license}</a></p>
+      <div className="actions"><button className="primary" onClick={() => go(`scan/${e.scan_id}`)}>Open completed report</button>
+        <button className="ghost" disabled={busy} onClick={() => void tryExample(e.id)}>{busy ? 'Starting…' : 'Run sample with Meta AI'}</button></div>
+      <p className="fine">Completed report: opens immediately, no model calls. Run sample: starts a new analysis; findings and waiting time can vary.</p>
+      <p className="fine">{e.synthetic && 'Synthetic scene, not a real household or a physical fix. '}<a href={e.source_url} target="_blank" rel="noreferrer">{e.license}</a></p>
     </section>)}
+    <section className="notice"><h3>How the evidence is built</h3><p>Muse Spark selects objects and reviews their visible relationships. SAM 3.1 tracks them through the clip. Recommendations link to FEMA E-74 sections actually read by the model.</p>
+      <button className="ghost" onClick={() => go('capture')}>Use your own video</button>
+      <p className="fine privacy-note">Your own recording is optional. The public demo uses licensed synthetic footage.</p></section>
     {scans.length > 0 && <section><h3>Your scans in this browser</h3><ul className="scan-list">
       {scans.map((s) => <li key={s.scan_id}><button className="row" onClick={() => go(`scan/${s.scan_id}`)}>
         <span className="grow"><strong>{ROOM_LABELS[s.room] ?? s.room}</strong>

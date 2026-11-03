@@ -13,8 +13,8 @@ export default function Scan({ scanId, verifyId }: { scanId: string; verifyId?: 
     try { await deleteScan(scanId); go('') } catch (e) { setDeleteError((e as Error).message); setDeleting(false) }
   }
   return <main className="page">
-    <header className="bar"><button className="ghost" onClick={() => go('')}>‹ Scans</button><span className="muted">Scan {scanId.slice(0, 6)}</span></header>
-    {readOnly && <p className="notice">Precomputed synthetic example · opening this report makes no model calls. Hypersim © Apple Inc., <a href="https://creativecommons.org/licenses/by-sa/3.0/">CC BY-SA 3.0</a>. Sampled/marked views are not evidence of a physical fix.</p>}
+    <header className="bar"><button className="ghost" onClick={() => go('')}>‹ Scans</button><span className="muted">{readOnly ? 'Synthetic example' : `Scan ${scanId.slice(0, 6)}`}</span></header>
+    {readOnly && <p className="sample-label">Precomputed synthetic example · no new model calls · Hypersim © Apple Inc., <a href="https://creativecommons.org/licenses/by-sa/3.0/">CC BY-SA 3.0</a>. Not a physical-fix demonstration.</p>}
     {error && <p className="error" role="alert">{error} <button onClick={retryStatus}>Retry status</button></p>}
     {!report && !error && <Timeline events={events} scanId={scanId} />}
     {!report && partial && <section className="notice"><h2>Partial findings · analysis is not complete</h2><p>{partial.room.summary}</p>
@@ -105,8 +105,9 @@ export function ReportView({ report, fixcards, verification, readOnly = false }:
   return <article className="report">
     <section className="summary-card"><div><h2>{ROOM_LABELS[report.room.type] ?? 'Room'} · visible findings</h2><p>{report.room.summary}</p>
       <p>{counts.high} high · {counts.medium} medium · {counts.low} low priority · {counts.needs_check} need checking</p></div></section>
+    <p className="fine">Model-generated findings, not expert-reviewed. Check each statement against the image; hidden attachments remain unknown.</p>
     <section className={`notice assessment-${assessment.status}`}><b>Assessment: {assessment.status.replace('_', ' ')}</b>
-      <p>Complete means the planned analysis stages finished. It does not mean the whole room was inspected or is safe.</p>
+      <p className="fine">Stage completion is not room safety or full-room coverage.</p>
       {assessment.warnings.map((w, i) => <p key={i}>{w}</p>)}</section>
     {report.context?.occupant_narration && <details><summary>Room context supplied by the user</summary><p>{report.context.occupant_narration}</p><small>This is user context, not a visual observation.</small></details>}
     {verification && <section className={verification.fixed > 0 && verification.schema_version === 2 ? 'verified-card' : 'notice'}>
@@ -117,7 +118,7 @@ export function ReportView({ report, fixcards, verification, readOnly = false }:
     </section>}
     <h3>{hazards.length ? `${hazards.length} findings` : 'No visible hazards identified in the sampled views.'}</h3>
     <ul className="hazards">{hazards.map((h) => <HazardCard key={`${h.id}/${verification?.verify_id ?? ''}`} hazard={h} scanId={report.scan_id} hasCard={fixcards.includes(h.id)} check={verification?.results[h.id]} legacy={legacyVerification} readOnly={readOnly} />)}</ul>
-    {!!hazards.length && !readOnly && <button className="primary big" onClick={() => go(`verify/${report.scan_id}`)}>Re-film to compare visible changes</button>}
+    {!!hazards.length && !readOnly && <><button className="primary big" onClick={() => go(`verify/${report.scan_id}`)}>Re-film to compare visible changes</button><p className="fine">Experimental comparison: real-world physical-change validation is still pending.</p></>}
     <p className="fine">{report.disclaimer}</p>
     <details className="provenance"><summary>Audit trail</summary><dl>
       <dt>Schema / release</dt><dd>{report.schema_version ?? 1} / {report.provenance?.app_version ?? 'legacy/unknown'}</dd>
@@ -154,7 +155,7 @@ function HazardCard({ hazard, scanId, hasCard, check, readOnly, legacy = false }
     {view === 'illustration' && <span className="media-tag">AI-generated illustration · not installation guidance or verification</span>}
     {views.length > 1 && <div className="seg" role="tablist" aria-label="Evidence type">{views.map((v) => <button key={v} role="tab" aria-selected={view === v} className={view === v ? 'on' : ''} onClick={() => setView(v)}>{label[v]}</button>)}</div>}
     {!card && supported && !readOnly && <button className="show-fixed" disabled={busy} onClick={() => void illustrate()}>{busy ? 'Creating illustration…' : 'Illustrate recommendation'}</button>}
-  </div><div className="hazard-body"><div className="hazard-head"><span className={`badge ${hazard.severity}`}>{hazard.severity} priority</span><span>{hazard.evidence_status === 'observed' ? 'Observed' : hazard.evidence_status === 'needs_check' ? 'Needs checking' : 'Legacy / unknown'}</span></div>
+  </div><div className="hazard-body"><div className="hazard-head"><span className={`badge ${hazard.severity}`}>{hazard.severity} priority</span><span>{hazard.evidence_status === 'observed' ? 'Reported visible' : hazard.evidence_status === 'needs_check' ? 'Needs checking' : 'Legacy / unknown'}</span></div>
     <h4>{hazard.object}</h4><span className="relation">{RELATION_LABELS[hazard.relation] ?? hazard.relation}</span>
     <p>{hazard.evidence_observation}</p><p>{hazard.rationale}</p>
     <small className="muted">{hazard.tracking_supported ? `Exact-frame tracking support · frame ${hazard.evidence_frame}` : hazard.tracking_note || 'No exact-frame tracking support recorded.'}</small>
