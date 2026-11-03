@@ -41,7 +41,7 @@ export interface Verification {
 export interface Counts { high: number; medium: number; low: number; needs_check: number }
 export interface ScanRow { scan_id: string; created_at: string; room: string; hazards: number; counts: Counts; assessment_status: string }
 export interface AnswerKeyHazard { id: string; object: string; label: string; relation: string; matched_finding: string | null }
-export interface AnswerKey { designed: number; matched: number; hazards: AnswerKeyHazard[]; controls: { object: string; label: string }[]; other_findings: string[]; method: string; note: string }
+export interface AnswerKey { designed: number; matched: number; hazards: AnswerKeyHazard[]; controls: { object: string; label: string; flagged?: boolean | null }[]; other_findings: string[]; method: string; note: string }
 export interface Example {
   id: string; scan_id: string; title: string; description: string; license: string; source_url: string | null; synthetic: boolean; context?: string
   kind?: 'real' | 'synthetic'; room?: string; findings?: number; counts?: Counts; duration_s?: number | null; seconds?: number; cost_usd?: number
@@ -128,12 +128,12 @@ export function findingCounts(hazards: Hazard[]): Counts {
     needs_check: hazards.filter((h) => h.evidence_status !== 'observed').length }
 }
 export const RELATION_LABELS: Record<string, string> = {
-  above_sleeping_area: 'Potential fall onto a sleeping area', blocks_exit: 'Potential obstruction of the exit',
-  tall_tip_over: 'Potential tip-over', glass_breakage: 'Glass requires assessment',
-  heavy_falling_object: 'Potential falling object', other: 'Other finding',
+  above_sleeping_area: 'could fall onto the bed', blocks_exit: 'could block your way out',
+  tall_tip_over: 'could tip over', glass_breakage: 'glass could break',
+  heavy_falling_object: 'could fall', other: 'worth a look',
 }
 export const ROOM_LABELS: Record<string, string> = {
-  bedroom: 'Bedroom', kids_room: "Kids’ room", living_room: 'Living room', kitchen: 'Kitchen',
+  bedroom: 'Bedroom', kids_room: 'Children’s room', living_room: 'Living room', kitchen: 'Kitchen',
   hallway: 'Hallway', office: 'Office', bathroom: 'Bathroom', other: 'Room',
 }
 
