@@ -91,3 +91,11 @@ it('shows a same-file guard reason once, not as both change and rationale', () =
   const { container } = render(<ReportView report={report} fixcards={[]} verification={verification} />)
   expect(container.querySelector('.verdict')!.textContent!.split(reason).length - 1).toBe(1)
 })
+
+it('hides placeholder requested views such as "none"', async () => {
+  const { hasRequest } = await import('./api')
+  expect(hasRequest('none')).toBe(false)
+  expect(hasRequest(' None. ')).toBe(false)
+  expect(hasRequest('N/A')).toBe(false)
+  expect(hasRequest('Film the wardrobe top')).toBe(true)
+})

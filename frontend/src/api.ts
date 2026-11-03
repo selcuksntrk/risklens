@@ -128,3 +128,6 @@ export const ROOM_LABELS: Record<string, string> = {
   bedroom: 'Bedroom', kids_room: "Kids’ room", living_room: 'Living room', kitchen: 'Kitchen',
   hallway: 'Hallway', office: 'Office', bathroom: 'Bathroom', other: 'Room',
 }
+
+// Models sometimes fill an optional field with a placeholder; never show it as an instruction.
+export const hasRequest = (v?: string | null) => !!v && !/^(none|n\/a|na|null|-)\.?$/i.test(v.trim())
