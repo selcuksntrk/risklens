@@ -19,3 +19,16 @@ The three full runs of the main scene reported four, five and five findings with
 - Show identical-file rejection as a file-hash control. It does not measure model perception.
 - Exact-frame boxes can still be mislocalized or attached to a flawed interpretation; inspect them rather than treating tracking support as correctness.
 - Use the operational evaluation table without a precision/recall headline while human adjudication is pending.
+
+## Real-home demonstration (November 3) — not an evaluation
+
+Selçuk recorded a 37 s walkthrough of the apartment (living room, hallway, kitchen, bedroom). Audio was removed and fridge photos blurred before upload. Four runs of essentially the same clip, kept as recorded:
+
+| Run | Keyframes | Findings | Notes |
+|---|---:|---|---|
+| Local CLI, unblurred copy | 6 (fixed) | 2: bedroom wardrobe (tip-over), “mirrored wardrobe doors” | Suitcases on the wardrobe fell between keyframes and were missed. The “mirror” is not supported by the blurry evidence frame; treat it as an observation error. |
+| Local CLI, unblurred copy | 10 (duration-based) | 4: wardrobe, grey suitcase, blue suitcase, pedestal fan | Suitcases found with tracked evidence. The wardrobe text says “doors closed” while a door is visibly ajar. |
+| Live app, blurred copy | 10 | 4: blue suitcase, bedroom wardrobe, hallway wardrobe, fan | Footage discarded because the UI printed “Requested view: none” (fixed). |
+| Live app, blurred copy (**used in the video**) | 10 | 3: bedroom wardrobe, blue suitcase, hallway wardrobe | Wardrobe text: anchoring “not visible and unknown, not assumed absent”. |
+
+Lessons: a multi-room walkthrough dilutes a single-room planner, and fixed sampling can skip short views; keyframes now scale with duration (6–12). Finding sets differ between runs. No expert reviewed these findings and no physical change was made or verified.

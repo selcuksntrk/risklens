@@ -62,8 +62,8 @@ def cards():
 <h1>RiskLens</h1><div class=muted style="font-size:26px;margin-bottom:26px">Find the evidence. Understand the uncertainty. Decide what needs a closer look.</div>
 <div class=big>Try it: <a>{URL.replace('https://', '')}</a></div><div class=big>Code: <a>github.com/selcuksntrk/risklens</a></div>
 <div class=note style="margin-top:30px">Built during the Meta Global AI Developer Hackathon · Indie Developer · Build for Your World.<br>
-Visual screening prototype, not a building inspection or safety certificate. Demo scenes are synthetic: Hypersim © Apple Inc. / Roberts et al., ICCV 2021,
-CC BY-SA 3.0, frames assembled into video and marked by RiskLens. No music.</div></main>''')
+Visual screening prototype, not a building inspection or safety certificate. Real recording: Selçuk's home, Istanbul (personal photos blurred).<br>
+Sample and evaluation scenes are synthetic: Hypersim © Apple Inc. / Roberts et al., ICCV 2021, CC BY-SA 3.0, frames assembled into video and marked by RiskLens. No music.</div></main>''')
     return d
 
 

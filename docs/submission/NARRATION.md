@@ -2,51 +2,55 @@
 
 Target: 2:55. No face camera or music. Record two complete voice takes. Read naturally; do not rush technical names. Pronounce SAM as “Sam” and FEMA as “fee-muh”.
 
-Footage for every segment is already recorded from the live app (`private/footage/01–07.mp4`; see `recording-log.json`). The segment 03 run took 184 s from click to report; the footage shows it at 5.8× with a label. Segment 06 shows the generated evaluation and model-role cards.
+Footage is recorded from the live app (`private/footage-final/01–07.mp4`):
 
-This script avoids unmeasured accuracy claims. The final reviewer must check every sentence against the selected actual footage and the evaluation report.
+- **01–04: real recording of Selçuk's home in Istanbul**, uploaded through “Upload a video” on release `v2-60d4a67b448d` (scan `b3adc4b6c841`, 3 findings, 184 s click-to-report, $0.345; see `private/footage/real/recording-log.json`). Personal photos on the fridge are blurred; audio was removed before upload. Every frame carries the label “Real recording · Selçuk's home, Istanbul · personal photos blurred”. The wait in 03 is shown at 6× with a label stating the actual duration.
+- **05–06: public synthetic sample and measured results.** 05 is the same-file guard on a sample run; 06 shows cards generated from `eval/synthetic-results.json`.
+- **07:** the “Try it without filming your home” section and the end card.
 
-## 01 · 00:00–00:15 · The evidence first
+This script avoids unmeasured accuracy claims. The real-home run is a demonstration, not an evaluation result. Check every sentence against the selected footage before export.
 
-I’m Selçuk, building in Istanbul. Earthquake preparation includes the things inside a room. RiskLens connects a visible finding to its evidence and a practical next step. This room is synthetic, from Hypersim.
+## 01 · 00:00–00:15 · A real finding in my home
 
-**Record:** Open the completed report and show one clearly supported finding and its evidence image. Keep “Precomputed synthetic example” visible. Do not describe unknown anchorage as missing anchorage.
+This is my bedroom in Istanbul. RiskLens flagged the wardrobe with two suitcases stacked on top. And it says what it cannot see: whether the wardrobe is anchored to the wall is unknown, not assumed.
 
-## 02 · 00:15–00:35 · Your room first, or the sample
+**Footage:** the wardrobe finding with its tracked evidence frame and the “not assumed absent” wording.
 
-I built this for people preparing their own homes, under the Build for Your World theme. You start by recording or uploading a short video of one room. If you'd rather not share your home, the sample report opens instantly, or you can run the sample through Meta's models again, as I do here.
+## 02 · 00:15–00:35 · Your own room first
 
-**Record:** Homepage with “Record a room” and “Upload a video” first, scroll to “Try it without filming your home”, then start a genuinely new sample run. Capture the whole run separately so timing and outcome can be checked.
+In Istanbul, earthquake preparation includes what is inside our homes. I built RiskLens for people like me, under the Build for Your World theme. You record or upload a short video of one room and add optional context.
+
+**Footage:** home screen (Record a room / Upload a video), upload, video preview, typed context, “Use video”.
 
 ## 03 · 00:35–01:15 · Why these models work together
 
-Muse Spark first selects objects worth examining. SAM tracks candidate objects through the video. Spark then reviews sampled frames with those objects marked, connecting findings to specific visual evidence. The report separates observations from details that need checking. A connection hidden behind furniture is unknown, not proof that the furniture is unsecured. Waiting is shortened here; the audit trail records the actual processing time and model cost.
+Here is the real run, with the waiting shortened. Muse Spark looks at sampled frames and decides which objects are worth examining. SAM 3.1 tracks each of those objects through the whole video, so every finding is tied to an exact frame and box. Spark then reviews the marked frames and separates what is visible from what needs checking. Here it found the bedroom wardrobe, the suitcases on top, and a second wardrobe in the hallway. The actual time and model cost are kept in the audit trail.
 
-**Record:** Actual planner, tracking and surveyor stages, followed by corresponding evidence. Show “Recorded run · waiting shortened” when compressing waits. Never animate fabricated model results.
+**Footage:** planner, SAM tracking chips and keyframe strip, surveyor and fix planner, then the report.
 
 ## 04 · 01:15–01:45 · Source-linked next steps
 
-For a finding, RiskLens looks up relevant FEMA guidance. Suggestions link to sections actually returned by that lookup. If the source check fails, actionable instructions are withheld. These links show what the model read; they are not expert approval. Installation conditions still need appropriate assessment. The aim is to make the next question and the supporting evidence easy to understand.
+Each next step links to the FEMA E-74 section the model actually read. Here: film where the wardrobe meets the wall, keep the top clear in the meantime, and ask a professional if anchoring cannot be confirmed. If a source check fails, RiskLens withholds actionable instructions. The links show what was read; they are not expert approval.
 
-**Record:** A source-supported suggestion and its linked section. Show the exact corresponding finding. Open the source page only if reachable; otherwise show the stored citation without claiming the external page opened.
+**Footage:** the wardrobe finding's suggestions and FEMA links (stored citations; the PDF is not opened).
 
-## 05 · 01:45–02:10 · Do not mistake repetition for progress
+## 05 · 01:45–02:10 · A change needs new evidence
 
-Comparison also needs evidence. Uploading the original video cannot demonstrate a new physical change. That check uses the file hash, not model perception. We also test unchanged rendered footage and a different synthetic room. Those are limited regression controls, not real-world before-and-after validation.
+You can re-film after making a change. But uploading the original video again cannot prove anything changed. That check is a file hash, not model perception, shown here on the public synthetic sample. Real before-and-after validation is still future work.
 
-**Record:** Actual identical-file verification and its refusal to confirm a change. Label “Same-file guard · no verifier model call”. Only show additional controls whose saved results have been checked.
+**Footage:** same-file comparison on a synthetic sample run, labelled “Same-file guard · SHA-256 match · no verifier model call”.
 
 ## 06 · 02:10–02:35 · What we measured
 
-The evaluation compares Spark-only and the full pipeline on five synthetic scenes previously used in development. We record failures, completion, time and cost, and repeat the main scene to expose variation. More findings do not automatically mean better accuracy. Human correctness review and positive physical-change validation remain unfinished.
+We measured the pipeline on five synthetic scenes previously used in development: Spark only versus Spark with SAM, repeated runs, and negative controls with zero false confirmations. We record failures, time and cost. More findings do not automatically mean better accuracy, and human correctness review is still pending.
 
-**Record:** Actual evaluation table, repeat-run counts, and the model-role card (generated from committed results). Do not label completion as accuracy or choose only successful runs.
+**Footage:** generated evaluation card, then the model-role card.
 
 ## 07 · 02:35–02:55 · Close
 
-RiskLens is a visual screening prototype, not a building inspection or safety certificate. The public example is ready to explore, and the code documents what was built during the hackathon. Find the evidence, understand the uncertainty, and decide what needs a closer look.
+RiskLens is a visual screening tool, not a building inspection. If you would rather not film your home, the sample report is one tap away. Find the evidence, understand what is unknown, and decide what needs a closer look.
 
-**Record:** Completed report and final card with live URL and public source branch. Keep the synthetic-data and prototype labels readable.
+**Footage:** “Try it without filming your home”, then the end card with live URL and repository.
 
 ## End-card links
 
@@ -56,6 +60,8 @@ RiskLens is a visual screening prototype, not a building inspection or safety ce
 
 ## Video description / credits
 
-RiskLens — built during the Meta Global AI Developer Hackathon, Indie Developer / Build for Your World. Working prototype using Muse Spark 1.3 and SAM 3.1 for evidence-linked visual screening and source-linked precautions. Demonstration inputs are synthetic; no real home or successful physical precaution is shown. Waiting may be shortened and is labeled. Human correctness adjudication and real-world physical-change validation remain pending.
+RiskLens — built during the Meta Global AI Developer Hackathon, Indie Developer / Build for Your World. Working prototype using Muse Spark 1.3 and SAM 3.1 for evidence-linked visual screening and source-linked precautions.
+
+The opening shows a real recording of the author's home in Istanbul, analysed live by the deployed app; personal photos are blurred and no physical change is shown. Findings are model-generated and were not expert-reviewed. Waiting is shortened and labelled. The comparison and measurement sections use synthetic scenes; human correctness review and real-world physical-change validation remain pending.
 
 Hypersim © Apple Inc. / Roberts et al., ICCV 2021. Source: https://github.com/apple-aiml-research/ml-hypersim. Licensed under CC BY-SA 3.0: https://creativecommons.org/licenses/by-sa/3.0/. Modifications: preview frames assembled into video, resized/re-encoded, sampled and marked with object boxes. Derived Hypersim imagery retains CC BY-SA 3.0; the application code is MIT. FEMA E-74 references identify guidance read by the model and imply no endorsement. No music.

@@ -26,7 +26,7 @@ Kullanılacak dosya: `docs/submission/private/phone-sample.mp4` (lisanslı sente
 
 ## 3. Ses kaydı ve video — 60–90 dakika
 
-Uygulama ekran kayıtları ajan tarafından **canlı üründen** alındı (headless Chrome, 1920×1080): `docs/submission/private/footage/01.mp4`–`07.mp4`, kesintisiz ham kayıt `raw-run.mp4`, ayrıntılar `recording-log.json`. Bekleme kısaltılan yerlerde ekranda gerçek süreyi yazan etiket var.
+Uygulama ekran kayıtları ajan tarafından **canlı üründen** alındı (headless Chrome, 1920×1080). Seçilmiş set: `docs/submission/private/footage-final/01.mp4`–`07.mp4`. 01–04 ve 07 senin evinin gerçek kaydı (buzdolabı fotoğrafları bulanık, ses kaldırıldı, her karede “Real recording · Selçuk's home” etiketi); 05–06 sentetik örnek. Ham kayıtlar ve ayrıntılar `private/footage/` altında. Bekleme kısaltılan yerlerde ekranda gerçek süreyi yazan etiket var.
 
 1. Önce prova videosunu izle: `docs/submission/output/preview/SILENT-PREVIEW-not-for-submission.mp4` (sessiz, taslak altyazılı). Görüntü ile `NARRATION.md` metninin uyuştuğunu kontrol et; uymayan cümle varsa not al.
 2. `NARRATION.md` metnini iki kez oku; `private/voice-take-1.m4a` ve `voice-take-2.m4a` olarak kaydet (150–175 sn). Müzik yok. Videoyu açıp üzerine okumak zamanlamayı kolaylaştırır.

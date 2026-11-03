@@ -2,7 +2,8 @@
 
 | Question | Answer and evidence |
 |---|---|
-| Is this a real home? | No. The demo uses Hypersim synthetic interiors, explicitly attributed under CC BY-SA 3.0. |
+| Is this a real home? | The opening is: Selçuk's own home in Istanbul, uploaded through the live app (personal photos blurred, audio removed). It is a demonstration, not an evaluation. The comparison, measurements and public sample use Hypersim synthetic interiors (CC BY-SA 3.0). |
+| Did the real run go perfectly? | No. An earlier run of the same clip with a fixed 6 keyframes missed the suitcases between samples and reported a mirror that is not visible; sampling now scales with clip length. Repeated runs return different finding sets (3–4). See [quality notes](../QUALITY_NOTES.md). |
 | Why not a single image prompt? | We combine concept planning, temporal object tracking, exact-frame evidence, source lookup and comparison safeguards. The same-input comparison measures tradeoffs; it does not automatically establish superiority. |
 | What does SAM contribute? | Candidate tracks and object-linked evidence. See measured tracking support and inspect the boxes. A box alone does not prove a finding correct. |
 | What happens with hidden anchors? | They are unknown. The report requests checking instead of treating an unseen connection as absent. |

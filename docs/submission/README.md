@@ -1,6 +1,6 @@
 # Submission workspace
 
-The delivery uses licensed synthetic footage only. No personal room recording is needed.
+The video opens with a real recording of Selçuk's home (personal photos blurred, audio removed); comparison, measurement and the public sample use licensed synthetic footage.
 
 ## Start here
 
@@ -9,7 +9,7 @@ The delivery uses licensed synthetic footage only. No personal room recording is
 3. [Form-ready copy](FORM.md), [judge answers](JUDGE-QA.md), and [rights record](RIGHTS.md).
 4. [Measured evaluation](../EVALUATION.md): current operational results; human correctness review remains separate.
 
-Screen footage is recorded from the live application by `scripts/record_demo.py` (headless Google Chrome, 1920×1080) into the ignored `docs/submission/private/footage/`: `01.mp4`–`07.mp4`, the uncut `raw-run.mp4` and `recording-log.json` (release, scan ID, actual duration and cost). Segment 03 is sped up with an on-screen label that states the factor and the actual duration. Segment 06 shows cards generated from `eval/synthetic-results.json`, not hand-typed numbers. Put voice takes in `docs/submission/private/` as `voice-take-1.m4a` and `voice-take-2.m4a`.
+Screen footage is recorded from the live application (headless Google Chrome, 1920×1080): `scripts/record_own_video.py` for the real-home upload path (01–04, 07) and `scripts/record_demo.py` for the synthetic sample (05–06). The selected set is in the ignored `docs/submission/private/footage-final/`; uncut recordings and `recording-log.json` files (release, scan ID, actual duration and cost) are under `private/footage/`. Segment 03 is sped up with an on-screen label that states the factor and the actual duration. Segment 06 shows cards generated from `eval/synthetic-results.json`, not hand-typed numbers. Put voice takes in `docs/submission/private/` as `voice-take-1.m4a` and `voice-take-2.m4a`.
 
 Rehearse with `python3 scripts/assemble_demo.py --silent-preview --captions docs/submission/captions-draft.srt --output docs/submission/output/preview` (silent, never a submission file). Visual QA used emulated desktop/phone viewports (`scripts/visual_qa.py`); a physical iPhone check is still Selçuk's.
 

@@ -1,6 +1,6 @@
-# Synthetic-only hackathon submission
+# Hackathon submission
 
-The November 3 plan replaces the earlier real-home storyboard. Entry materials use existing licensed Hypersim footage, real application behavior, English voiceover and English captions. No personal-home or other-location capture is required.
+The demo opens with a real recording of Selçuk's home in Istanbul (added November 3, personal photos blurred, audio removed), analysed by the live app. Comparison, measurement and the public sample use licensed Hypersim footage. Entry materials use real application behavior, English voiceover and English captions.
 
 Internal target: **November 4, 2026, 22:00 Istanbul / 14:00 ET**. Published deadline: **November 4, 21:00 ET / November 5, 05:00 Istanbul**. Verify the authenticated form and announcements before submission.
 

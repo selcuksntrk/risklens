@@ -7,7 +7,7 @@
 - Kickoff slides: October 26 user-provided transcription confirms submission materials and judging weights (Impact 30%, Meta tooling 25%, Technical depth 20%, Demo 25%).
 - Official Rules/Event Waiver: local excerpts record ownership warranties and organizer reuse terms. The authenticated current form and full terms still require Selçuk's final review.
 
-The personal-home test, 3–5 real-room target and positive physical-fix footage were internal validation targets, not published entry requirements in the reviewed text. This synthetic submission must not present them as completed.
+The personal-home test, 3–5 real-room target and positive physical-fix footage were internal validation targets, not published entry requirements in the reviewed text. This submission must not present them as completed. One real recording of Selçuk's own home is used as a demonstration only.
 
 ## Third-party materials
 
@@ -15,6 +15,7 @@ The personal-home test, 3–5 real-room target and positive physical-fix footage
 |---|---|
 | RiskLens code | MIT; event contribution documented in README and commit history |
 | Meta cookbook patterns / dependencies | Preserve attribution and applicable MIT/Apache/BSD notices; do not claim authorship |
+| Real home recording | Selçuk's own home and footage; personal photos blurred, audio removed; raw and processed video stay outside Git; shown in the video only |
 | Hypersim synthetic imagery | CC BY-SA 3.0; name Apple/Roberts et al., link source/license, describe modifications; derived imagery retains its license |
 | FEMA E-74 | Attribute the source; avoid separately credited third-party illustrations unless their rights are established |
 | Voiceover | Selçuk's own recording; no music or unlicensed third-party voice |
