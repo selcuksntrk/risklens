@@ -115,7 +115,7 @@ def _scan_dir(scan_id: str, request: Request, write=False) -> Path:
     example = examples.by_scan(scan_id)
     if example:
         if write:
-            raise HTTPException(403, 'Completed examples are read-only. Run the live sample to create your own scan.')
+            raise HTTPException(403, 'The sample report is read-only. Run the sample analysis or upload your own video to create a scan.')
         return examples.root(example)
     root = config.SCANS_DIR / scan_id
     access.check_private(root, request)
