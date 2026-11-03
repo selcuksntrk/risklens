@@ -1,6 +1,6 @@
 # Submission workspace
 
-The video opens with a real recording of Selçuk's home (personal photos blurred, audio removed); comparison, measurement and the public sample use licensed synthetic footage.
+The video opens with a real recording of Selçuk's home (personal photos blurred, audio removed); the app's samples add three Muse Image designed scenes (labelled AI-generated); development regression uses licensed Hypersim scenes.
 
 ## Start here
 
@@ -9,7 +9,7 @@ The video opens with a real recording of Selçuk's home (personal photos blurred
 3. [Form-ready copy](FORM.md), [judge answers](JUDGE-QA.md), and [rights record](RIGHTS.md).
 4. [Measured evaluation](../EVALUATION.md): current operational results; human correctness review remains separate.
 
-Screen footage is recorded from the live application (headless Google Chrome, 1920×1080): `scripts/record_own_video.py` for the real-home upload path (01–04, 07) and `scripts/record_demo.py` for the synthetic sample (05–06). The selected set is in the ignored `docs/submission/private/footage-final/`; uncut recordings and `recording-log.json` files (release, scan ID, actual duration and cost) are under `private/footage/`. Segment 03 is sped up with an on-screen label that states the factor and the actual duration. Segment 06 shows cards generated from `eval/synthetic-results.json`, not hand-typed numbers. Put voice takes in `docs/submission/private/` as `voice-take-1.m4a` and `voice-take-2.m4a`.
+Screen footage is recorded from the live application (headless Google Chrome, 1920×1080) by `scripts/record_demo.py` (Nov 4 storyboard): 01 real-home sample report, 02 home and samples, 03 a new live run of the designed children's bedroom (wait shortened, labelled with the factor and actual duration), 04 evidence, FEMA next steps and a labelled Muse Image illustration, 05 same-file guard, 06 designed-scenes card (from `examples/generated/catalog.json`) and answer key, 07 real-home analysis replay and end card. Output: ignored `docs/submission/private/footage-v2/` with `recording-log.json`. Captions draft: `python3 scripts/draft_captions.py`. Put voice takes in `docs/submission/private/` as `voice-take-1.m4a` and `voice-take-2.m4a`.
 
 Rehearse with `python3 scripts/assemble_demo.py --silent-preview --captions docs/submission/captions-draft.srt --output docs/submission/output/preview` (silent, never a submission file). Visual QA used emulated desktop/phone viewports (`scripts/visual_qa.py`); a physical iPhone check is still Selçuk's.
 

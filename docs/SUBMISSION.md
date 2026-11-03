@@ -1,6 +1,6 @@
 # Hackathon submission
 
-The demo opens with a real recording of Selçuk's home in Istanbul (added November 3, personal photos blurred, audio removed), analysed by the live app. Comparison, measurement and the public sample use licensed Hypersim footage. Entry materials use real application behavior, English voiceover and English captions.
+The demo opens with a real recording of Selçuk's home in Istanbul (added November 3, personal photos blurred, audio removed), analysed by the live app. The app offers four samples: that real recording and three Muse Image designed scenes with answer keys. Development regression uses licensed Hypersim scenes. Entry materials use real application behavior, English voiceover and English captions.
 
 Internal target: **November 4, 2026, 22:00 Istanbul / 14:00 ET**. Published deadline: **November 4, 21:00 ET / November 5, 05:00 Istanbul**. Verify the authenticated form and announcements before submission.
 
