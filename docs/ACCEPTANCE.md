@@ -1,6 +1,6 @@
 # Acceptance record — synthetic delivery and future real tests
 
-**November 3 delivery decision:** the hackathon demo uses licensed synthetic footage only. The real-room table below is a future validation protocol, not a claim of completed work or an official entry requirement. Phone testing for this delivery is **iPhone/Safari with a supplied synthetic file**; see [Selçuk's checklist](submission/SELCUK.md). Camera recording, microphone behavior and Android hardware remain untested unless separately recorded. Actual desktop/mobile visual QA remains pending because computer-control access was unavailable.
+**November 3 delivery decision:** the hackathon demo uses licensed synthetic footage only. The real-room table below is a future validation protocol, not a claim of completed work or an official entry requirement. Phone testing for this delivery is **iPhone/Safari with a supplied synthetic file**; see [Selçuk's checklist](submission/SELCUK.md). Camera recording, microphone behavior and Android hardware remain untested unless separately recorded. Desktop/phone-size visual QA was run in headless-Chrome emulation on November 3 (see [status](STATUS.md)); emulation is not a physical-device result.
 
 Synthetic negative controls are recorded in [evaluation results](EVALUATION.md): B0 same file, B1 re-encoding, B3 crop and B4 different rendered room. They do not replace real-camera tests. No synthetic B2 physical success is permitted.
 

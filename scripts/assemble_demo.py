@@ -1,6 +1,7 @@
 """Assemble seven REAL application recordings and Selçuk's selected voice take.
 No generated UI or placeholder footage. Produces a REVIEW export with soft subtitles
 and a separate SRT. Human visual/audio review is required before renaming/uploading.
+Rehearsal: python scripts/assemble_demo.py --silent-preview --captions docs/submission/captions-draft.srt --output docs/submission/output/preview
 Usage: python scripts/assemble_demo.py --voice docs/submission/private/voice-take-1.m4a
        --captions docs/submission/private/captions-aligned.srt
 """
@@ -58,8 +59,33 @@ def assemble(folder, voice, captions, out):
     print(exported)
 
 
+def silent_preview(folder, captions, out):
+    """Rehearsal cut: the 175 s picture with draft captions as a soft track and NO audio. Never a submission file."""
+    clips=[folder/f'{i:02d}.mp4' for i in range(1,8)]
+    for clip,seconds in zip(clips,DURATIONS):
+        if not clip.is_file() or duration(clip)<seconds: raise ValueError(f'{clip.name} missing or shorter than {seconds}s')
+    out.mkdir(parents=True,exist_ok=True); parts=[]
+    for i,(clip,seconds) in enumerate(zip(clips,DURATIONS),1):
+        part=out/f'preview-part-{i:02d}.mp4';parts.append(part)
+        subprocess.run(['ffmpeg','-y','-hide_banner','-loglevel','error','-i',str(clip),'-t',str(seconds),'-an',
+                        '-vf','scale=1920:1080:force_original_aspect_ratio=decrease,pad=1920:1080:(ow-iw)/2:(oh-ih)/2,fps=30',
+                        '-c:v','libx264','-crf','20','-pix_fmt','yuv420p',str(part)],check=True)
+    listing=out/'preview-concat.txt';listing.write_text(''.join(f"file '{p.name}'\n" for p in parts))
+    joined=out/'preview-picture.mp4'
+    subprocess.run(['ffmpeg','-y','-hide_banner','-loglevel','error','-f','concat','-safe','1','-i',str(listing),'-c','copy',str(joined)],check=True)
+    final=out/'SILENT-PREVIEW-not-for-submission.mp4'
+    subprocess.run(['ffmpeg','-y','-hide_banner','-loglevel','error','-i',str(joined),'-i',str(captions),'-map','0:v:0','-map','1:0',
+                    '-c:v','copy','-c:s','mov_text','-metadata:s:s:0','language=eng','-movflags','+faststart',str(final)],check=True)
+    for p in [*parts,joined]: p.unlink()
+    print(final, round(duration(final),1),'s')
+
+
 if __name__=='__main__':
-    p=argparse.ArgumentParser();p.add_argument('--voice',type=Path,required=True);p.add_argument('--captions',type=Path,required=True)
-    p.add_argument('--clips',type=Path,default=ROOT/'docs/submission/private')
+    p=argparse.ArgumentParser();p.add_argument('--voice',type=Path);p.add_argument('--captions',type=Path,required=True)
+    p.add_argument('--clips',type=Path,default=ROOT/'docs/submission/private/footage')
     p.add_argument('--output',type=Path,default=ROOT/'docs/submission/output/review-1')
-    args=p.parse_args();assemble(args.clips,args.voice,args.captions,args.output)
+    p.add_argument('--silent-preview',action='store_true',help='rehearsal cut without voice; draft captions allowed')
+    args=p.parse_args()
+    if args.silent_preview: silent_preview(args.clips,args.captions,args.output)
+    elif not args.voice: p.error('--voice is required for a review export')
+    else: assemble(args.clips,args.voice,args.captions,args.output)

@@ -9,9 +9,9 @@ The delivery uses licensed synthetic footage only. No personal room recording is
 3. [Form-ready copy](FORM.md), [judge answers](JUDGE-QA.md), and [rights record](RIGHTS.md).
 4. [Measured evaluation](../EVALUATION.md): current operational results; human correctness review remains separate.
 
-Put voice takes and actual application screen recordings under `docs/submission/private/` (ignored by Git). Use filenames `voice-take-1.m4a`, `voice-take-2.m4a`, and `01.mp4` through `07.mp4`. Do not record private tabs, API keys or personal information.
+Screen footage is recorded from the live application by `scripts/record_demo.py` (headless Google Chrome, 1920×1080) into the ignored `docs/submission/private/footage/`: `01.mp4`–`07.mp4`, the uncut `raw-run.mp4` and `recording-log.json` (release, scan ID, actual duration and cost). Segment 03 is sped up with an on-screen label that states the factor and the actual duration. Segment 06 shows cards generated from `eval/synthetic-results.json`, not hand-typed numbers. Put voice takes in `docs/submission/private/` as `voice-take-1.m4a` and `voice-take-2.m4a`.
 
-The final MP4 must contain actual recorded application behavior. No synthetic UI recording or narrated still-image slideshow is a substitute. Computer-control permission was unavailable in the implementation session, so screen recording and visual QA are not claimed complete.
+Rehearse with `python3 scripts/assemble_demo.py --silent-preview --captions docs/submission/captions-draft.srt --output docs/submission/output/preview` (silent, never a submission file). Visual QA used emulated desktop/phone viewports (`scripts/visual_qa.py`); a physical iPhone check is still Selçuk's.
 
 The narration is written for 175 seconds. `captions-draft.srt` is a timing guide, not an aligned transcript. Adjust it against the selected voice take before export. The assembly tool checks duration and inputs but cannot certify that the footage matches the narration or that captions are synchronized.
 

@@ -2,6 +2,8 @@
 
 Release: `v2-5f574344803c`. Manifest: `05a548f6086f3750632d56fb513f41df7d65f2c7577eeb393e8539693e5d5489`.
 
+The submitted release differs from the evaluated one only in frontend wording and layout (`frontend/src`); `backend/app`, prompts, schemas and deployment code are unchanged, so these measurements apply to the deployed pipeline. Release IDs hash the full source set, which is why the ID changed.
+
 **Five previously used synthetic scenes. Human adjudication is pending. These are operational measurements, not safety accuracy.**
 
 | Variant | Reports / attempts | Complete assessments | Findings reported | Median seconds | Median recorded USD |
@@ -48,5 +50,7 @@ Finding precision/recall and positive physical-change verification are **not mea
 - Costs are application accounting, including unknown reservations, not a provider invoice.
 
 See [qualitative review notes](QUALITY_NOTES.md) for an observed model overstatement and the limits of the UI wording. These notes are not human accuracy labels.
+
+Selected evidence frames: open the [completed example](https://selcuksntrk--risklens-web.us-east.modal.run/#/scan/hypersimbedroom) (first full run of the demo scene, no new model calls). Each finding shows its exact marked frame and tracking note. Derived images are not committed to Git.
 
 Reproduce using `scripts/fetch_synthetic_eval.py`, `eval/prepare_synthetic.py`, `eval/run.py`, and `eval/summarize_synthetic.py`; see `eval/README.md`. Source media is excluded from Git.

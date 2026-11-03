@@ -6,7 +6,7 @@ Theme: **Build for Your World**. Built in Istanbul for people preparing their ho
 
 **Explore without recording your home:** [open RiskLens](https://selcuksntrk--risklens-web.us-east.modal.run), then choose **Open completed report**. It opens a previously computed, licensed synthetic example without new model calls. **Run sample with Meta AI** starts a new analysis; outcomes and latency can vary.
 
-**Hackathon delivery:** [measured synthetic regression](docs/EVALUATION.md) · [submission package](docs/submission/README.md) · [tested source branch](https://github.com/selcuksntrk/risklens/tree/codex/home-test-readiness). Final voiceover, actual screen recording, iPhone review and platform submission remain separately tracked. Real-world physical-change validation has not been completed.
+**Hackathon delivery:** [measured synthetic regression](docs/EVALUATION.md) · [submission package](docs/submission/README.md) · [source on main](https://github.com/selcuksntrk/risklens). Actual screen footage is recorded; final voiceover, iPhone review and platform submission are tracked in the [handoff](docs/submission/HANDOFF.md). Real-world physical-change validation has not been completed.
 
 The application distinguishes observed conditions from details that need another view. An unseen attachment is unknown; a visible bracket does not establish adequate installation. Technical failures cannot become a “low risk” result. Assessment completeness describes the analysis stages, not whole-room coverage or safety.
 
@@ -97,6 +97,15 @@ Context for the problem: a study of New Zealand commercial buildings during the 
 ## Event work and third-party material
 
 Application development began during the Oct 26–Nov 4, 2026 event window. Commit history records the implemented changes. Initial SAM/Spark integration grew out of feasibility spikes written after kickoff. Contributor API models are not used for real-room data.
+
+Built during the hackathon (all of `backend/`, `frontend/src/`, `deploy/`, `eval/`, `scripts/`):
+
+- Video ingestion, proxy encoding and live progress timeline (SSE with polling fallback).
+- Spark planner → SAM 3.1 tracking → Spark surveyor on marked frames; observed vs. needs-check report contract with exact-frame evidence.
+- FEMA E-74 lookup tool and source-checked suggestions; unsupported actions withheld.
+- Re-filming comparison with SHA-256 same-file guard, same-object/relevant-change/confidence requirements and attempt history.
+- Browser-session ownership, deletion, retention, idempotent uploads, bounded queue, per-call budget reservations, Modal deployment and content-derived release IDs.
+- Licensed synthetic example packaging, synthetic development-regression runner/summary (Nov 3), and headless-Chrome visual QA and demo-footage recorder (`scripts/cdp.py`, `scripts/visual_qa.py`, `scripts/record_demo.py`, using the locally installed Google Chrome).
 
 The SAM request grammar follows Meta's Model Cookbook (MIT, © Meta Platforms, Inc.). The frontend started from the Vite React/TypeScript template. Dependencies include React/Vite (MIT), openai (Apache-2.0), Pillow (MIT-CMU), FastAPI (MIT), uvicorn/websockets (BSD), and python-multipart (Apache-2.0). ffmpeg is an external program; its build has its own LGPL/GPL licensing. FEMA source excerpts and Hypersim-derived assets have separate notices in [DATA_LICENSES.md](DATA_LICENSES.md).
 

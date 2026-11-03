@@ -24,13 +24,15 @@ Kullanılacak dosya: `docs/submission/private/phone-sample.mp4` (lisanslı sente
 7. Başka özel Safari oturumunda özel rapor linkini aç: rapor erişilebilir olmamalı; public örnek açılmalı.
 8. Sonucu `HANDOFF.md` alanlarına yaz. Kamera kaydı, mikrofon veya Android testlerini yapılmış sayma.
 
-## 3. Ses ve uygulama görüntüsü — 60–90 dakika
+## 3. Ses kaydı ve video — 60–90 dakika
 
-`NARRATION.md` metnini iki kez oku; `private/voice-take-1.m4a` ve `voice-take-2.m4a` olarak kaydet. Arka plan müziği kullanma.
+Uygulama ekran kayıtları ajan tarafından **canlı üründen** alındı (headless Chrome, 1920×1080): `docs/submission/private/footage/01.mp4`–`07.mp4`, kesintisiz ham kayıt `raw-run.mp4`, ayrıntılar `recording-log.json`. Bekleme kısaltılan yerlerde ekranda gerçek süreyi yazan etiket var.
 
-Bilgisayar kontrolüne erişim verilmediği için uygulama ekran kaydı ajan tarafından alınamadı. Metindeki yedi sahneyi gerçek uygulamadan kaydet; her sahneyi hedef süresinden biraz uzun tut. `private/01.mp4`–`07.mp4` adlarını kullan. Modelin tüm çalışmasını kesintisiz bir ham kayıt olarak da sakla. Gizli anahtarlar veya başka uygulamalar görünmesin.
-
-Altyazı taslağını seçilen ses kaydıyla eşleştir. Nihai montajdan sonra telefonunda sesli ve sessiz izle. Okunamayan kanıt görüntüsü veya hızlı kaynak kartı varsa düzelt.
+1. Önce prova videosunu izle: `docs/submission/output/preview/SILENT-PREVIEW-not-for-submission.mp4` (sessiz, taslak altyazılı). Görüntü ile `NARRATION.md` metninin uyuştuğunu kontrol et; uymayan cümle varsa not al.
+2. `NARRATION.md` metnini iki kez oku; `private/voice-take-1.m4a` ve `voice-take-2.m4a` olarak kaydet (150–175 sn). Müzik yok. Videoyu açıp üzerine okumak zamanlamayı kolaylaştırır.
+3. Seçtiğin kayda göre `captions-draft.srt` zamanlarını düzelt → `private/captions-aligned.srt` (istersen ajana ses dosyasını verip hizalatabilirsin).
+4. Birleştir: `python3 scripts/assemble_demo.py --voice docs/submission/private/voice-take-1.m4a --captions docs/submission/private/captions-aligned.srt`
+5. Çıktıyı (`docs/submission/output/review-1/risklens-review.mp4`) telefonda sesli ve sessiz izle; okunamayan yer veya fazla iddia varsa düzelt.
 
 ## 4. Son teslim — 30–45 dakika
 

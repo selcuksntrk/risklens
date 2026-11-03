@@ -111,13 +111,13 @@ class Recorder:
     def _on(self, msg):
         if msg.get('method') != 'Page.screencastFrame': return
         p = msg['params']; path = self.dir / f'{len(self.frames):06d}.jpg'
-        path.write_bytes(base64.b64decode(p['data'])); self.frames.append((p['metadata']['timestamp'], path))
+        path.write_bytes(base64.b64decode(p['data'])); self.frames.append((time.time(), path))  # receipt time: same clock as `ended`
         asyncio.ensure_future(self.b.send('Page.screencastFrameAck', sessionId=p['sessionId']))
 
     async def __aenter__(self):
         self.b._handlers.append(self._on)
         await self.b.send('Page.startScreencast', format='jpeg', quality=92,
-                          maxWidth=self.b.width * self.b.scale, maxHeight=self.b.height * self.b.scale, everyNthFrame=1)
+                          maxWidth=round(self.b.width * self.b.scale), maxHeight=round(self.b.height * self.b.scale), everyNthFrame=1)
         self.started = time.time(); return self
 
     async def __aexit__(self, *exc):
@@ -127,11 +127,11 @@ class Recorder:
         lines = []
         for i, (ts, path) in enumerate(self.frames):
             nxt = self.frames[i + 1][0] if i + 1 < len(self.frames) else ended
-            lines += [f"file '{path}'", f'duration {max(nxt - ts, 1/30):.4f}']
+            lines += [f"file '{path}'", f'duration {max(nxt - ts, 0.001):.4f}']  # real intervals; fps=30 resamples
         lines.append(f"file '{self.frames[-1][1]}'")
         listing = self.dir / 'list.txt'; listing.write_text('\n'.join(lines) + '\n')
         self.out.parent.mkdir(parents=True, exist_ok=True)
         subprocess.run(['ffmpeg', '-y', '-hide_banner', '-loglevel', 'error', '-f', 'concat', '-safe', '0', '-i', str(listing),
-                        '-vf', f'scale={self.b.width}:{self.b.height}:flags=lanczos,fps=30,format=yuv420p',
+                        '-vf', f'scale={round(self.b.width*self.b.scale)}:{round(self.b.height*self.b.scale)}:flags=lanczos,fps=30,format=yuv420p',
                         '-c:v', 'libx264', '-crf', '16', '-preset', 'medium', '-movflags', '+faststart', str(self.out)], check=True)
         shutil.rmtree(self.dir, ignore_errors=True)

@@ -2,6 +2,8 @@
 
 Target: 2:55. No face camera or music. Record two complete voice takes. Read naturally; do not rush technical names. Pronounce SAM as “Sam” and FEMA as “fee-muh”.
 
+Footage for every segment is already recorded from the live app (`private/footage/01–07.mp4`; see `recording-log.json`). The segment 03 run took 184 s from click to report; the footage shows it at 5.8× with a label. Segment 06 shows the generated evaluation and model-role cards.
+
 This script avoids unmeasured accuracy claims. The final reviewer must check every sentence against the selected actual footage and the evaluation report.
 
 ## 01 · 00:00–00:15 · The evidence first
@@ -38,7 +40,7 @@ Comparison also needs evidence. Uploading the original video cannot demonstrate 
 
 The evaluation compares Spark-only and the full pipeline on five synthetic scenes previously used in development. We record failures, completion, time and cost, and repeat the main scene to expose variation. More findings do not automatically mean better accuracy. Human correctness review and positive physical-change validation remain unfinished.
 
-**Record:** Actual evaluation table, repeat-run counts, and the model-role table in README. Do not label completion as accuracy or choose only successful runs.
+**Record:** Actual evaluation table, repeat-run counts, and the model-role card (generated from committed results). Do not label completion as accuracy or choose only successful runs.
 
 ## 07 · 02:35–02:55 · Close
 
@@ -49,7 +51,7 @@ RiskLens is a visual screening prototype, not a building inspection or safety ce
 ## End-card links
 
 - Product: https://selcuksntrk--risklens-web.us-east.modal.run
-- Source: https://github.com/selcuksntrk/risklens/tree/codex/home-test-readiness
+- Source: https://github.com/selcuksntrk/risklens
 - Hypersim: https://github.com/apple-aiml-research/ml-hypersim
 
 ## Video description / credits

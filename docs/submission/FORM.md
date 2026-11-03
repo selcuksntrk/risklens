@@ -27,8 +27,8 @@ Use the current platform's actual field lengths. This document is not a complete
 **Links:**
 
 - Live product: https://selcuksntrk--risklens-web.us-east.modal.run
-- Public source: https://github.com/selcuksntrk/risklens/tree/codex/home-test-readiness
-- Evaluation: https://github.com/selcuksntrk/risklens/blob/codex/home-test-readiness/docs/EVALUATION.md
+- Public source: https://github.com/selcuksntrk/risklens
+- Evaluation: https://github.com/selcuksntrk/risklens/blob/main/docs/EVALUATION.md
 - Demo video: **pending actual screen recording, Selçuk's voice, review and upload**
 - Team: Selçuk; confirm the platform's participant identity rather than inventing profile details.
 
