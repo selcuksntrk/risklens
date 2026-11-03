@@ -2,7 +2,7 @@
 
 Spends model budget: one live run of the designed children's-bedroom sample (~$0.3), one Muse Image illustration
 ($0.01), one same-file comparison (hash guard, no verifier model call).
-Outputs (git-ignored) under docs/submission/private/footage-v2/:
+Outputs (git-ignored) under docs/submission/private/footage-v3/:
   01 real-home report · 02 home + samples · 03 live run (wait shortened, labelled) · 04 evidence, next steps, illustration
   05 same-file guard · 06 designed scenes + answer key · 07 real-home replay + end card
   cards/*.html and recording-log.json (timings, scan IDs, release, outcomes)

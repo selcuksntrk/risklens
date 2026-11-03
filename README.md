@@ -4,9 +4,9 @@ Film a room, review visible earthquake-related findings with evidence, read sour
 
 Theme: **Build for Your World**. Built in Istanbul for people preparing their homes for earthquakes.
 
-**Try it:** [open RiskLens](https://selcuksntrk--risklens-web.us-east.modal.run) and **Record a room** or **Upload a video**. To explore without filming your home, choose **View sample report** (top right) or **Open sample report**: a previously computed, licensed synthetic example that opens without new model calls. **Run the sample analysis** starts a new Meta model run; outcomes and latency can vary.
+**Try it:** [open RiskLens](https://selcuksntrk--risklens-web.us-east.modal.run) and **Record a room** or **Upload a video**. To explore without filming your home, open one of the four examples on the home page: the author's real flat in Istanbul or one of three test rooms made with Muse Image. Each report opens instantly without new model calls; **Replay the analysis** plays back the recorded run, and **Run it again live** starts a new Meta model run (outcomes and latency vary). **How it works** explains each model, the limits and privacy.
 
-**Hackathon delivery:** [measured synthetic regression](docs/EVALUATION.md) · [submission package](docs/submission/README.md) · [source on main](https://github.com/selcuksntrk/risklens). The demo video opens with a real recording of the author's home in Istanbul (a demonstration, not an evaluation; see [quality notes](docs/QUALITY_NOTES.md)); comparison and measurement use synthetic scenes. Final voiceover, iPhone review and platform submission are tracked in the [handoff](docs/submission/HANDOFF.md). Real-world physical-change validation has not been completed.
+**Hackathon delivery:** [measured synthetic regression](docs/EVALUATION.md) · [submission package](docs/submission/README.md) · [source on main](https://github.com/selcuksntrk/risklens). The demo video opens with a real recording of the author's home in Istanbul (a demonstration, not an evaluation; see [quality notes](docs/QUALITY_NOTES.md)); the three Muse Image test rooms carry answer keys, and development regression uses Hypersim scenes. Final voiceover, iPhone review and platform submission are tracked in the [handoff](docs/submission/HANDOFF.md). Real-world physical-change validation has not been completed.
 
 The application distinguishes observed conditions from details that need another view. An unseen attachment is unknown; a visible bracket does not establish adequate installation. Technical failures cannot become a “low risk” result. Assessment completeness describes the analysis stages, not whole-room coverage or safety.
 
@@ -111,7 +111,7 @@ Application development began during the Oct 26–Nov 4, 2026 event window. Comm
 Built during the hackathon (all of `backend/`, `frontend/src/`, `deploy/`, `eval/`, `scripts/`):
 
 - Video ingestion, proxy encoding and live progress timeline (SSE with polling fallback).
-- Nov 4 “evidence lens” interface: sample gallery, dark live/replay analysis stage showing each Meta model's step, image-led report with seen vs. unknown, next-step checklist, answer key and print/PDF.
+- Nov 4 interface: plain-language, light, mobile-first “surveyor's notebook” design. Home explains each Meta model with the real run's data; report is a numbered list with one finding per screen (photo, what couldn't be seen, FEMA-linked steps); analysis and replay show the boxed SAM frames; an About page holds models, limits, privacy, examples and licences.
 - Designed sample scenes: Muse Image generation gated by Muse Spark QA, phone-style walkthrough renderer, hash-checked sample registry and recorded-run replay.
 - Spark planner → SAM 3.1 tracking → Spark surveyor on marked frames; observed vs. needs-check report contract with exact-frame evidence.
 - FEMA E-74 lookup tool and source-checked suggestions; unsupported actions withheld.

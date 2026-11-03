@@ -51,6 +51,6 @@ Finding precision/recall and positive physical-change verification are **not mea
 
 See [qualitative review notes](QUALITY_NOTES.md) for an observed model overstatement and the limits of the UI wording. These notes are not human accuracy labels.
 
-Selected evidence frames: open the [completed example](https://selcuksntrk--risklens-web.us-east.modal.run/#/scan/hypersimbedroom) (first full run of the demo scene, no new model calls). Each finding shows its exact marked frame and tracking note. Derived images are not committed to Git.
+Selected evidence frames: the Hypersim demo scene was the public example until Nov 4; it is no longer served in the app (the app now shows the author's real home and three Muse Image test rooms with answer keys, see README). Each recorded finding keeps its exact marked frame and tracking note. Derived images are not committed to Git.
 
 Reproduce using `scripts/fetch_synthetic_eval.py`, `eval/prepare_synthetic.py`, `eval/run.py`, and `eval/summarize_synthetic.py`; see `eval/README.md`. Source media is excluded from Git.

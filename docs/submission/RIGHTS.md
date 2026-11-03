@@ -15,8 +15,9 @@ The personal-home test, 3–5 real-room target and positive physical-fix footage
 |---|---|
 | RiskLens code | MIT; event contribution documented in README and commit history |
 | Meta cookbook patterns / dependencies | Preserve attribution and applicable MIT/Apache/BSD notices; do not claim authorship |
-| Real home recording | Selçuk's own home and footage; personal photos blurred, audio removed; raw and processed video stay outside Git; shown in the video only |
-| Hypersim synthetic imagery | CC BY-SA 3.0; name Apple/Roberts et al., link source/license, describe modifications; derived imagery retains its license |
+| Real home recording | Selçuk's own home and footage; personal photos blurred, audio removed; raw and processed video stay outside Git; shown in the demo video and, since Nov 4, as a public example in the app with Selçuk's permission (no reuse licence granted) |
+| Muse Image test rooms | Generated during the event with Meta's Muse Image from the committed scene descriptions (`scripts/scenes/`); generated media is allowed under the event rules; labelled as AI-made in the app, the videos and the demo |
+| Hypersim synthetic imagery | Development regression only (no longer a public example since Nov 4); CC BY-SA 3.0; name Apple/Roberts et al., link source/license, describe modifications; derived imagery retains its license |
 | FEMA E-74 | Attribute the source; avoid separately credited third-party illustrations unless their rights are established |
 | Voiceover | Selçuk's own recording; no music or unlicensed third-party voice |
 

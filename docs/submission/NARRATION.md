@@ -1,8 +1,8 @@
-# English narration and screen-recording sequence (Nov 4, "evidence lens" release)
+# English narration and screen-recording sequence (Nov 4, simplified light release)
 
 Target: 2:55. No face camera or music. Record two complete voice takes. Read naturally; do not rush technical names. Pronounce SAM as “Sam”, FEMA as “fee-muh”, Muse as “mews”.
 
-Footage is recorded from the live app by `scripts/record_demo.py` into `private/footage-v2/01–07.mp4` (segment lengths 15/20/40/30/25/25/20 s, as `scripts/assemble_demo.py` expects). See `private/footage-v2/recording-log.json` for scan IDs, times and costs.
+Footage is recorded from the live app by `scripts/record_demo.py` into `private/footage-v3/01–07.mp4` (segment lengths 15/20/40/30/25/25/20 s, as `scripts/assemble_demo.py` expects). See `private/footage-v3/recording-log.json` for scan IDs, times and costs.
 
 - **01:** the packaged report of Selçuk's real home recording (blurred, no audio), labelled on every frame.
 - **03:** a genuinely new live run of the designed children's-bedroom sample. The wait is shortened, with a label stating the actual duration.
