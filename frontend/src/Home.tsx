@@ -73,7 +73,6 @@ function ExampleCard({ example }: { example: Example }) {
   return <a className="example" href={`#/scan/${example.scan_id}`}>
     <div className="example-photo">
       {example.has_poster && <img src={exampleMedia(example.id, 'poster.jpg')} alt="" loading="lazy" />}
-      <span className="tag">{example.synthetic ? 'AI-made test room' : 'Real video'}</span>
     </div>
     <b>{name}</b><span>{line}</span>
   </a>
@@ -116,6 +115,5 @@ function Process({ real, events }: { real?: Example; events: TimelineEvent[] }) 
           <p>It can show what a fix might look like, always labelled as AI-made. We also used it to build the three test rooms above.</p></div>
       </li>
     </ol>
-    {real && real.seconds && <p className="fine">The real example took {Math.round(real.seconds)} seconds and about ${real.cost_usd?.toFixed(2)} of model use. Built with React, FastAPI and ffmpeg, running on Modal. <a href="#/about">Full details</a></p>}
   </section>
 }

@@ -16,13 +16,12 @@ vi.mock('./api', async (original) => ({ ...await original<typeof api>(),
     { step: 'marks.done', t: 30, objects: { 1: 'wardrobe', 2: 'suitcase' }, images: ['marked/1.jpg'] }]),
   runExample: vi.fn(), uploadScan: vi.fn().mockResolvedValue('newscan'), ensureSession: vi.fn().mockResolvedValue(undefined) }))
 
-it('leads with filming your own room; examples follow, labelled real or AI-made', async () => {
+it('leads with filming your own room; examples follow, with the test rooms explained once', async () => {
   render(<Home />)
   const record = screen.getByText('Record a room')
   const example = await screen.findByText('Real home, Istanbul')
   expect(record.compareDocumentPosition(example) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy()
-  expect(screen.getByText('Real video')).toBeDefined()
-  expect(screen.getByText('AI-made test room')).toBeDefined()
+  expect(screen.getByText(/The other three are test rooms we made with Muse Image/)).toBeDefined()
   expect(screen.getByText('4 of 5 planted hazards found')).toBeDefined()
   expect(example.closest('a')!.getAttribute('href')).toBe('#/scan/realhome')
 })
