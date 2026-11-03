@@ -27,12 +27,12 @@ FONT = '/System/Library/Fonts/Supplemental/Arial Bold.ttf'
 URL = (sys.argv[1] if len(sys.argv) > 1 else 'https://selcuksntrk--risklens-web.us-east.modal.run').rstrip('/')
 LIVE_SAMPLE = 'designed-kids-bedroom'
 
-CARD_CSS = '''*{box-sizing:border-box}body{margin:0;background:#0a0e13;color:#e7eef5;font:22px/1.45 -apple-system,"Helvetica Neue",Arial,sans-serif;
-height:100vh;display:flex;align-items:center;justify-content:center}main{width:1180px}h1{font-size:46px;margin:0 0 6px;letter-spacing:-.02em}h2{font-size:32px;margin:0 0 18px;letter-spacing:-.01em}
+CARD_CSS = '''*{box-sizing:border-box}body{margin:0;background:#0a0e13;color:#e7eef5;font:20px/1.4 -apple-system,"Helvetica Neue",Arial,sans-serif;
+height:100vh;display:flex;align-items:center;justify-content:center}main{width:1180px}h1{font-size:46px;margin:0 0 6px;letter-spacing:-.02em}h2{font-size:30px;margin:0 0 12px;letter-spacing:-.01em}
 .muted{color:#9fb0c2}.tag{display:inline-block;color:#38d9f0;font-size:16px;letter-spacing:.08em;font-weight:700;margin-bottom:10px}
-table{width:100%;border-collapse:collapse;margin:10px 0 14px}th,td{text-align:left;padding:9px 12px;border-bottom:1px solid #223040}th{color:#9fb0c2;font-weight:600;font-size:17px}
-td.n{font-weight:800;font-size:26px;color:#38d9f0;font-variant-numeric:tabular-nums}
-.flow{display:flex;gap:12px;align-items:stretch;margin:14px 0}.box{flex:1;background:#121922;border:1px solid #223040;border-radius:14px;padding:14px;font-size:18px}
+table{width:100%;border-collapse:collapse;margin:10px 0 14px}th,td{text-align:left;padding:6px 12px;border-bottom:1px solid #223040}th{color:#9fb0c2;font-weight:600;font-size:17px}
+td.n{font-weight:800;font-size:22px;color:#38d9f0;font-variant-numeric:tabular-nums}
+.flow{display:flex;gap:12px;align-items:stretch;margin:10px 0}.box{flex:1;background:#121922;border:1px solid #223040;border-radius:14px;padding:14px;font-size:18px}
 .box b{display:block;color:#38d9f0;font-size:19px;margin-bottom:4px}.arrow{align-self:center;color:#9fb0c2;font-size:26px}.note{font-size:17px;color:#9fb0c2;margin-top:12px}
 img{width:100%;border-radius:12px;border:1px solid #223040}a{color:#38d9f0}.big{font-size:30px;margin:8px 0}'''
 
@@ -45,14 +45,14 @@ def cards():
         f"<td>{', '.join(h['label'] for h in r['answer_key']['hazards'] if not h['matched_finding']) or '—'}</td>"
         f"<td>{'none' if not any(c.get('flagged') for c in r['answer_key']['controls']) else 'flagged'}</td></tr>"
         for r in catalog if r.get('answer_key'))
-    sheet = (ROOT / 'examples/build/istanbul-kitchen-entry/contact.jpg').as_uri()
+    sheet = (ROOT / 'examples/build/strip.jpg').as_uri()
     (d / 'designed.html').write_text(f'''<!doctype html><meta charset=utf-8><style>{CARD_CSS}</style><main>
 <span class=tag>TESTING ON KNOWN CONTENT · DESIGNED SCENES</span><h2>We designed three Istanbul rooms with hazards placed on purpose</h2>
 <div class=flow><div class=box><b>Scene design</b>Room, objects and an answer key, written before any analysis</div><div class=arrow>→</div>
 <div class=box><b>Muse Image 1.0</b>Six views per room, each anchored to the first shot</div><div class=arrow>→</div>
 <div class=box><b>Muse Spark 1.3</b>QA gate: same room? designed hazards visible? 18/18 passed</div><div class=arrow>→</div>
 <div class=box><b>Phone-style video</b>Handheld walkthrough, labelled AI-generated</div></div>
-<img src="{sheet}" style="max-height:300px;object-fit:cover">
+<img src="{sheet}" style="width:100%;height:auto;border:0">
 <table><tr><th>Scene</th><th>Matched</th><th>Missed</th><th>Secured control flagged</th></tr>{rows}</table>
 <div class=note>One recorded run per scene; author-matched from each finding's object and evidence box; second human check pending.
 These are designed scenes, not real homes: this is not an accuracy measurement.</div></main>''')
