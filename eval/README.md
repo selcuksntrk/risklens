@@ -1,6 +1,6 @@
 # Evaluation protocol
 
-## November 3 synthetic-only delivery
+## November 3 synthetic development regression
 
 Five existing Hypersim scenes are **development regression**. All were previously used, including the public example. `synthetic-sources.json` records source URLs, licenses and clip hashes. `synthetic-observations.json` records AI visual observations made before new runs; it is not human/expert ground truth. Selçuk's adjudication remains pending.
 

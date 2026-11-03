@@ -1,6 +1,6 @@
-# Selçuk: ev çekmeden son kontroller
+# Selçuk: son kontroller
 
-Toplam hedef: 3–5 saat. Kendi evini veya yüzünü çekmen gerekmiyor.
+Toplam hedef: 3–5 saat. Ev videon çekildi ve demoya alındı (fotoğraflar bulanık, ses yok); yüzünü çekmen gerekmiyor.
 
 ## 1. Görsel gözlem ve sonuç incelemesi — 60–90 dakika
 

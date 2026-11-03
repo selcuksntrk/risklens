@@ -6,7 +6,7 @@ Theme: **Build for Your World**. Built in Istanbul for people preparing their ho
 
 **Try it:** [open RiskLens](https://selcuksntrk--risklens-web.us-east.modal.run) and **Record a room** or **Upload a video**. To explore without filming your home, choose **View sample report** (top right) or **Open sample report**: a previously computed, licensed synthetic example that opens without new model calls. **Run the sample analysis** starts a new Meta model run; outcomes and latency can vary.
 
-**Hackathon delivery:** [measured synthetic regression](docs/EVALUATION.md) · [submission package](docs/submission/README.md) · [source on main](https://github.com/selcuksntrk/risklens). Actual screen footage is recorded; final voiceover, iPhone review and platform submission are tracked in the [handoff](docs/submission/HANDOFF.md). Real-world physical-change validation has not been completed.
+**Hackathon delivery:** [measured synthetic regression](docs/EVALUATION.md) · [submission package](docs/submission/README.md) · [source on main](https://github.com/selcuksntrk/risklens). The demo video opens with a real recording of the author's home in Istanbul (a demonstration, not an evaluation; see [quality notes](docs/QUALITY_NOTES.md)); comparison and measurement use synthetic scenes. Final voiceover, iPhone review and platform submission are tracked in the [handoff](docs/submission/HANDOFF.md). Real-world physical-change validation has not been completed.
 
 The application distinguishes observed conditions from details that need another view. An unseen attachment is unknown; a visible bracket does not establish adequate installation. Technical failures cannot become a “low risk” result. Assessment completeness describes the analysis stages, not whole-room coverage or safety.
 
@@ -17,7 +17,7 @@ The existing deployment is [RiskLens on Modal](https://selcuksntrk--risklens-web
 | Component | Model / technology | Actual task |
 |---|---|---|
 | Capture | Browser camera / gallery | Video-only permission, optional microphone, editable context, preview, retry with the same upload key |
-| Planner | Muse Spark 1.3 | Select tracking concepts and alternate wording from sampled frames |
+| Planner | Muse Spark 1.3 | Select tracking concepts and alternate wording from sampled keyframes (about one per 4 s, 6–12 per clip) |
 | Tracking | SAM 3.1 | Track candidate instances within this clip; cross-clip identity is not guaranteed |
 | Surveyor | Muse Spark 1.3 | Describe visible findings and uncertainty in marked keyframes |
 | Recommendations | Muse Spark 1.3 + FEMA E-74 lookup | Cite sections actually returned by the lookup, with per-action references |
@@ -80,7 +80,7 @@ Each model call reserves budget before dispatch. Actual usage settles reservatio
 
 ## Example and evaluation
 
-The public sample is an explicitly attributed **synthetic Hypersim scene**, licensed CC BY-SA 3.0. It is not someone's home and is not evidence of a physical precaution. The completed report opens without new inference. “Try a live sample” starts a new private pipeline run.
+The public sample is an explicitly attributed **synthetic Hypersim scene**, licensed CC BY-SA 3.0. It is not someone's home and is not evidence of a physical precaution. The sample report opens without new inference. “Run the sample analysis” starts a new private pipeline run.
 
 The packaging tool accepts only approved licensed source provenance and schema-2 reports. Source media and generated examples are excluded from Git. See [data licenses](DATA_LICENSES.md), `scripts/fetch_example.py`, `scripts/package_example.py`, and [evaluation protocol](eval/README.md).
 
@@ -92,7 +92,7 @@ Context for the problem: a study of New Zealand commercial buildings during the 
 
 `python3 scripts/build_release.py` derives one release ID from the application sources and lockfiles, builds the frontend with it, and writes `VERSION` and `release.json`. The backend health endpoint returns that version and supported report schema. [Release runbook](docs/RELEASE.md) covers clean installation, deployment, negative access checks and rollback without deleting user data.
 
-[Demo storyboard and submission checklist](docs/SUBMISSION.md) routes to the synthetic-only delivery package. No personal-home footage is required for this delivery. Final media, actual phone/visual review and submission confirmation remain pending. The open-weight auditor, expert labels, advanced re-identification, revocable sharing and volunteer pilot are **future work**, gated by evidence in [pilot protocol](docs/PILOT.md).
+[Demo storyboard and submission checklist](docs/SUBMISSION.md) routes to the delivery package: a real recording of the author's home (personal photos blurred, audio removed, never committed) opens the video; the synthetic sample covers comparison and measurement. Voiceover, physical-phone review and submission confirmation remain pending. The open-weight auditor, expert labels, advanced re-identification, revocable sharing and volunteer pilot are **future work**, gated by evidence in [pilot protocol](docs/PILOT.md).
 
 ## Event work and third-party material
 
@@ -105,7 +105,8 @@ Built during the hackathon (all of `backend/`, `frontend/src/`, `deploy/`, `eval
 - FEMA E-74 lookup tool and source-checked suggestions; unsupported actions withheld.
 - Re-filming comparison with SHA-256 same-file guard, same-object/relevant-change/confidence requirements and attempt history.
 - Browser-session ownership, deletion, retention, idempotent uploads, bounded queue, per-call budget reservations, Modal deployment and content-derived release IDs.
-- Licensed synthetic example packaging, synthetic development-regression runner/summary (Nov 3), and headless-Chrome visual QA and demo-footage recorder (`scripts/cdp.py`, `scripts/visual_qa.py`, `scripts/record_demo.py`, using the locally installed Google Chrome).
+- Licensed synthetic example packaging, synthetic development-regression runner/summary (Nov 3), and headless-Chrome visual QA and demo-footage recorders (`scripts/cdp.py`, `scripts/visual_qa.py`, `scripts/record_demo.py`, `scripts/record_own_video.py`, using the locally installed Google Chrome).
+- User-first interface (Nov 3): record/upload on the home screen, sample one tap away, token-based light/dark design system; duration-based keyframe sampling; cache headers that keep Safari from loading stale builds.
 
 The SAM request grammar follows Meta's Model Cookbook (MIT, © Meta Platforms, Inc.). The frontend started from the Vite React/TypeScript template. Dependencies include React/Vite (MIT), openai (Apache-2.0), Pillow (MIT-CMU), FastAPI (MIT), uvicorn/websockets (BSD), and python-multipart (Apache-2.0). ffmpeg is an external program; its build has its own LGPL/GPL licensing. FEMA source excerpts and Hypersim-derived assets have separate notices in [DATA_LICENSES.md](DATA_LICENSES.md).
 
