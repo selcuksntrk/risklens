@@ -13,7 +13,7 @@ export default function Scan({ scanId, verifyId }: { scanId: string; verifyId?: 
     try { await deleteScan(scanId); go('') } catch (e) { setDeleteError((e as Error).message); setDeleting(false) }
   }
   return <main className="page">
-    <header className="bar"><button className="ghost" onClick={() => go('')}>‹ Scans</button><span className="muted">{readOnly ? 'Synthetic example' : `Scan ${scanId.slice(0, 6)}`}</span></header>
+    <header className="bar"><button className="ghost" onClick={() => go('')}>‹ Home</button><span className="muted">{readOnly ? 'Sample report' : `Scan ${scanId.slice(0, 6)}`}</span></header>
     {readOnly && <p className="sample-label">Precomputed synthetic example · no new model calls · Hypersim © Apple Inc., <a href="https://creativecommons.org/licenses/by-sa/3.0/">CC BY-SA 3.0</a>. Not a physical-fix demonstration.</p>}
     {error && <p className="error" role="alert">{error} <button onClick={retryStatus}>Retry status</button></p>}
     {!report && !error && <Timeline events={events} scanId={scanId} />}
@@ -103,8 +103,11 @@ export function ReportView({ report, fixcards, verification, readOnly = false }:
   const legacyVerification = !!verification && verification.schema_version !== 2
   const assessment = report.assessment ?? { status: 'legacy_unknown', warnings: ['Historical report: assessment completeness is unknown.'] }
   return <article className="report">
-    <section className="summary-card"><div><h2>{ROOM_LABELS[report.room.type] ?? 'Room'} · visible findings</h2><p>{report.room.summary}</p>
-      <p>{counts.high} high · {counts.medium} medium · {counts.low} low priority · {counts.needs_check} need checking</p></div></section>
+    <section className="summary-card"><h1>{ROOM_LABELS[report.room.type] ?? 'Room'} · visible findings</h1><p>{report.room.summary}</p>
+      <dl className="stats" aria-label="Findings by priority">
+        <div><dt>High</dt><dd>{counts.high}</dd></div><div><dt>Medium</dt><dd>{counts.medium}</dd></div>
+        <div><dt>Low</dt><dd>{counts.low}</dd></div><div><dt>To check</dt><dd>{counts.needs_check}</dd></div>
+      </dl></section>
     <p className="fine">Model-generated findings, not expert-reviewed. Check each statement against the image; hidden attachments remain unknown.</p>
     <section className={`notice assessment-${assessment.status}`}><b>Assessment: {assessment.status.replace('_', ' ')}</b>
       <p className="fine">Stage completion is not room safety or full-room coverage.</p>
@@ -155,12 +158,12 @@ function HazardCard({ hazard, scanId, hasCard, check, readOnly, legacy = false }
     {view === 'illustration' && <span className="media-tag">AI-generated illustration · not installation guidance or verification</span>}
     {views.length > 1 && <div className="seg" role="tablist" aria-label="Evidence type">{views.map((v) => <button key={v} role="tab" aria-selected={view === v} className={view === v ? 'on' : ''} onClick={() => setView(v)}>{label[v]}</button>)}</div>}
     {!card && supported && !readOnly && <button className="show-fixed" disabled={busy} onClick={() => void illustrate()}>{busy ? 'Creating illustration…' : 'Illustrate recommendation'}</button>}
-  </div><div className="hazard-body"><div className="hazard-head"><span className={`badge ${hazard.severity}`}>{hazard.severity} priority</span><span>{hazard.evidence_status === 'observed' ? 'Reported visible' : hazard.evidence_status === 'needs_check' ? 'Needs checking' : 'Legacy / unknown'}</span></div>
+  </div><div className="hazard-body"><div className="hazard-head"><span className={`badge ${hazard.severity}`}>{hazard.severity} priority</span><span className="status">{hazard.evidence_status === 'observed' ? 'Reported visible' : hazard.evidence_status === 'needs_check' ? 'Needs checking' : 'Legacy / unknown'}</span></div>
     <h4>{hazard.object}</h4><span className="relation">{RELATION_LABELS[hazard.relation] ?? hazard.relation}</span>
     <p>{hazard.evidence_observation}</p><p>{hazard.rationale}</p>
-    <small className="muted">{hazard.tracking_supported ? `Exact-frame tracking support · frame ${hazard.evidence_frame}` : hazard.tracking_note || 'No exact-frame tracking support recorded.'}</small>
+    <small className="tracking">{hazard.tracking_supported ? `Exact-frame tracking support · frame ${hazard.evidence_frame}` : hazard.tracking_note || 'No exact-frame tracking support recorded.'}</small>
     {check && <p className={`verdict ${legacy ? 'cannot_verify' : check.verdict}`}><b>{legacy ? 'Historical result · current safeguards unknown' : VERDICT[check.verdict]}</b> · {check.what_changed}{check.rationale && check.rationale !== check.what_changed && <><br />{check.rationale}</>}{check.next_view_request && <><br />{check.next_view_request}</>}</p>}
-    {hazard.next_view_request && <p>Requested view: {hazard.next_view_request}</p>}
+    {hazard.next_view_request && <p className="request"><b>Requested view:</b> {hazard.next_view_request}</p>}
     {supported && hazard.fix ? <FixBlock fix={hazard.fix} /> : <p className="notice">Source-linked recommendations are unavailable for this finding. No actionable instructions or AI illustration are offered.</p>}
     {!readOnly && <button className="ghost" onClick={() => go(`verify/${scanId}/${hazard.id}`)}>Show this detail</button>}
     {error && <p className="error">{error}</p>}

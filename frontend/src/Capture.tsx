@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
-import { go } from './routing'
+import { go, takePendingUpload, VIDEO_ACCEPT } from './routing'
 import { uploadScan, uploadVerify, getScan, fileUrl, newUploadKey, ensureSession, type Hazard } from './api'
 import { startVoice, type VoiceSession } from './voice'
 
@@ -96,6 +96,16 @@ export default function Capture({ verifyScanId, hazardId }: { verifyScanId?: str
     stopTracks()
     if (video.current) video.current.srcObject = null
   }
+  useEffect(() => {
+    const file = takePendingUpload()
+    if (file) { if (!file.size) setError('The video is empty.'); else select(file, file.name) }
+    else if (selectedRef.current) {
+      // StrictMode re-mount in development: the cleanup above revoked the preview URL.
+      const again = { ...selectedRef.current, url: URL.createObjectURL(selectedRef.current.blob) }
+      selectedRef.current = again; setSelected(again)
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
   async function start() {
     if (!stream.current || starting.current) return
     starting.current = true; setError(''); setSeconds(0)
@@ -171,11 +181,20 @@ export default function Capture({ verifyScanId, hazardId }: { verifyScanId?: str
   const busy = phase === 'uploading' || phase === 'finishing'
   return <main className="page capture-page">
     <header className="bar"><button className="ghost" onClick={() => go(verifyScanId ? `scan/${verifyScanId}` : '')}>‹ Back</button>
-      <span>{verifyScanId ? 'Compare visible changes' : 'Film one room'}</span></header>
+      <span className="muted">{verifyScanId ? 'Re-filming' : 'New scan'}</span></header>
+    <h1>{verifyScanId ? 'Compare visible changes' : selected ? 'Check your video' : 'Film one room'}</h1>
     {target && <section className="notice"><img className="target-image" src={fileUrl(verifyScanId!, target.evidence_image)} alt={target.object} />
       <h3>{target.object}</h3><p>{target.next_view_request || 'Show this item, the relevant attachment or new location, and its surroundings.'}</p></section>}
-    <video ref={video} className="capture-preview" src={selected?.url} autoPlay={!selected} playsInline muted={!selected} controls={!!selected} />
-    <p>Pan slowly from the door. Include the wall above sleeping areas, tall furniture and their surroundings. Show attachment points when possible.</p>
+    {!selected && !verifyScanId && <ol className="checklist">
+      <li>Pan slowly from the door, 30–60 seconds.</li>
+      <li>Include tall furniture, shelves and the wall above beds.</li>
+      <li>Show where items are fixed to the wall when you can.</li>
+    </ol>}
+    <div className="preview-wrap">
+      <video ref={video} className="capture-preview" src={selected?.url} autoPlay={!selected} playsInline muted={!selected} controls={!!selected} />
+      {!selected && !cameraReady && <span className="preview-hint" aria-hidden>Camera preview appears here</span>}
+    </div>
+    {selected && <p className="muted">{selected.filename} · check that the room is visible, then continue.</p>}
     {phase === 'recording' && <p role="status">Recording · {seconds}s / {MAX_SECONDS}s</p>}
     {partial && <p className="muted">Narration: {partial}</p>}
     {error && <p className="error" role="alert">{error}</p>}
@@ -188,12 +207,13 @@ export default function Capture({ verifyScanId, hazardId }: { verifyScanId?: str
       {!verifyScanId && <label className="checkbox"><input type="checkbox" checked={narrationEnabled} onChange={(e) => setNarrationEnabled(e.target.checked)} /> Optional live narration</label>}
       <div className="actions">{!cameraReady ? <button className="primary" disabled={startingCamera} onClick={() => void enableCamera()}>{startingCamera ? 'Opening camera…' : 'Enable camera'}</button>
         : <button className="primary" onClick={() => void start()}>Record</button>}
-        <label className="ghost file">Upload video<input aria-label="Upload video" type="file" accept="video/mp4,video/quicktime,video/webm,.mov,.mp4,.webm" hidden
+        <label className="secondary file">Upload video<input aria-label="Upload video" type="file" accept={VIDEO_ACCEPT} hidden
           onChange={(e) => { const f = e.target.files?.[0]; if (f) { if (!f.size) setError('The video is empty.'); else select(f, f.name) } e.target.value = '' }} /></label></div>
     </>}
     {phase === 'recording' && <button className="primary big" onClick={() => void stop()}>Stop recording</button>}
     {phase === 'preview' && <div className="actions"><button className="primary" onClick={() => void send()}>{attempted ? 'Retry upload' : 'Use video'}</button><button className="ghost" onClick={retake}>Retake / choose another</button></div>}
     {busy && <p role="status">{phase === 'uploading' ? 'Uploading…' : 'Finishing recording and narration…'}</p>}
-    <p className="fine privacy-note">Avoid filming people, documents or private screens. Meta AI processes your video. This browser owns the private report; clearing cookies removes access. Source media is retained for 7 days and reports/evidence for 30 days. Expired content is inaccessible; physical cleanup runs hourly while active and on startup. Delete your scan at any time from its report.</p>
+    <p className="fine privacy-note">Avoid filming people, documents or private screens. Meta AI models process your video; the report is private to this browser.</p>
+    <details className="fine"><summary>Retention and deletion</summary><p>Source media is retained for 7 days and reports/evidence for 30 days. Clearing cookies removes access. Expired content is inaccessible; physical cleanup runs hourly while active and on startup. Delete your scan at any time from its report.</p></details>
   </main>
 }
