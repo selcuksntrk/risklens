@@ -179,41 +179,47 @@ export default function Capture({ verifyScanId, hazardId }: { verifyScanId?: str
     setPhase('ready'); setError(''); setCameraReady(false)
   }
   const busy = phase === 'uploading' || phase === 'finishing'
+  const tip = COACH[Math.floor(seconds / 6) % COACH.length]
   return <main className="page capture-page">
     <header className="bar"><button className="ghost" onClick={() => go(verifyScanId ? `scan/${verifyScanId}` : '')}>‹ Back</button>
       <span className="muted">{verifyScanId ? 'Re-filming' : 'New scan'}</span></header>
     <h1>{verifyScanId ? 'Compare visible changes' : selected ? 'Check your video' : 'Film one room'}</h1>
     {target && <section className="notice"><img className="target-image" src={fileUrl(verifyScanId!, target.evidence_image)} alt={target.object} />
       <h3>{target.object}</h3><p>{target.next_view_request || 'Show this item, the relevant attachment or new location, and its surroundings.'}</p></section>}
-    {!selected && !verifyScanId && <ol className="checklist">
-      <li>Pan slowly from the door, 30–60 seconds.</li>
+    {!selected && !verifyScanId && phase === 'ready' && <ol className="checklist">
+      <li>Start at the door and pan slowly, 30–60 seconds.</li>
       <li>Include tall furniture, shelves and the wall above beds.</li>
       <li>Show where items are fixed to the wall when you can.</li>
     </ol>}
-    <div className="preview-wrap">
-      <video ref={video} className="capture-preview" src={selected?.url} autoPlay={!selected} playsInline muted={!selected} controls={!!selected} />
-      {!selected && !cameraReady && <span className="preview-hint" aria-hidden>Camera preview appears here</span>}
+    <div className={`camera${selected ? ' has-file' : ''}`}>
+      <video ref={video} src={selected?.url} autoPlay={!selected} playsInline muted={!selected} controls={!!selected} />
+      {!selected && cameraReady && <span className="guide" aria-hidden />}
+      {!selected && !cameraReady && <span className="hint" aria-hidden>{startingCamera ? 'Opening camera…' : 'Your camera preview appears here. Video only; the microphone stays off unless you turn on narration.'}</span>}
+      {phase === 'recording' && <><div className="coach" aria-hidden><span key={tip}>{tip}</span></div>
+        <span className="rec-timer" role="status">Recording · {seconds}s / {MAX_SECONDS}s</span>
+        <span className="rec-progress" style={{ width: `${Math.min(100, (seconds / MAX_SECONDS) * 100)}%` }} aria-hidden /></>}
     </div>
     {selected && <p className="muted">{selected.filename} · check that the room is visible, then continue.</p>}
-    {phase === 'recording' && <p role="status">Recording · {seconds}s / {MAX_SECONDS}s</p>}
     {partial && <p className="muted">Narration: {partial}</p>}
     {error && <p className="error" role="alert">{error}</p>}
-    {!verifyScanId && <label className="field">Room context (optional)
+    {phase === 'ready' && <div className="capture-actions">
+      {!cameraReady ? <button className="primary big" disabled={startingCamera} onClick={() => void enableCamera()}>{startingCamera ? 'Opening camera…' : 'Enable camera'}</button>
+        : <button className="record-btn" onClick={() => void start()}><span className="visually-hidden">Record</span></button>}
+      <label className="secondary file">Upload video instead<input aria-label="Upload video" type="file" accept={VIDEO_ACCEPT} hidden
+        onChange={(e) => { const f = e.target.files?.[0]; if (f) { if (!f.size) setError('The video is empty.'); else select(f, f.name) } e.target.value = '' }} /></label>
+      {!verifyScanId && <label className="checkbox"><input type="checkbox" checked={narrationEnabled} onChange={(e) => setNarrationEnabled(e.target.checked)} /> Optional live narration</label>}
+    </div>}
+    {phase === 'recording' && <button className="record-btn stop" onClick={() => void stop()}><span className="visually-hidden">Stop recording</span></button>}
+    {!verifyScanId && (selected || phase === 'ready') && <label className="field">Room context (optional)
       <textarea maxLength={4000} value={context} disabled={busy || attempted}
         onChange={(e) => setContext(e.target.value)} placeholder="For example: bedroom; children sleep here." />
       <small className="muted">Your statement is context, not visual evidence. Gallery audio is not transcribed automatically.</small>
     </label>}
-    {phase === 'ready' && <>
-      {!verifyScanId && <label className="checkbox"><input type="checkbox" checked={narrationEnabled} onChange={(e) => setNarrationEnabled(e.target.checked)} /> Optional live narration</label>}
-      <div className="actions">{!cameraReady ? <button className="primary" disabled={startingCamera} onClick={() => void enableCamera()}>{startingCamera ? 'Opening camera…' : 'Enable camera'}</button>
-        : <button className="primary" onClick={() => void start()}>Record</button>}
-        <label className="secondary file">Upload video<input aria-label="Upload video" type="file" accept={VIDEO_ACCEPT} hidden
-          onChange={(e) => { const f = e.target.files?.[0]; if (f) { if (!f.size) setError('The video is empty.'); else select(f, f.name) } e.target.value = '' }} /></label></div>
-    </>}
-    {phase === 'recording' && <button className="primary big" onClick={() => void stop()}>Stop recording</button>}
-    {phase === 'preview' && <div className="actions"><button className="primary" onClick={() => void send()}>{attempted ? 'Retry upload' : 'Use video'}</button><button className="ghost" onClick={retake}>Retake / choose another</button></div>}
+    {phase === 'preview' && <div className="capture-actions"><button className="primary big" onClick={() => void send()}>{attempted ? 'Retry upload' : verifyScanId ? 'Use video' : 'Use video'}</button><button className="ghost" onClick={retake}>Retake / choose another</button></div>}
     {busy && <p role="status">{phase === 'uploading' ? 'Uploading…' : 'Finishing recording and narration…'}</p>}
     <p className="fine privacy-note">Avoid filming people, documents or private screens. Meta AI models process your video; the report is private to this browser.</p>
     <details className="fine"><summary>Retention and deletion</summary><p>Source media is retained for 7 days and reports/evidence for 30 days. Clearing cookies removes access. Expired content is inaccessible; physical cleanup runs hourly while active and on startup. Delete your scan at any time from its report.</p></details>
   </main>
 }
+
+const COACH = ['Pan slowly', 'Show the tops of tall furniture', 'Include the wall above the bed', 'Show shelves and hanging items', 'Finish facing the door']

@@ -65,6 +65,7 @@ def package(example_id: str, scan: Path, video: Path, events: Path | None):
     if out.exists():
         shutil.rmtree(out)
     out.mkdir(parents=True)
+    run_id = report['scan_id']
     report['scan_id'] = row['scan_id']   # only the locator changes; provenance and observations stay intact
     (out / 'report.json').write_text(json.dumps(report, indent=2) + '\n')
     for folder in ('evidence', 'marked'):
@@ -72,8 +73,10 @@ def package(example_id: str, scan: Path, video: Path, events: Path | None):
             shutil.copytree(scan / folder, out / folder)
     shutil.copyfile(video, out / 'source.mp4')
     if events:
-        (out / 'events.json').write_text(events.read_text())
-    poster = out / 'evidence' / 'h1.jpg'
+        (out / 'events.json').write_text(events.read_text().replace(f'"{run_id}"', f'"{row["scan_id"]}"'))
+    order = {'high': 0, 'medium': 1, 'low': 2}
+    first = min(report['hazards'], key=lambda h: (order[h['severity']], h['evidence_status'] != 'observed'), default=None)
+    poster = out / (first['evidence_image'] if first else 'evidence/h1.jpg')
     if poster.exists():
         shutil.copyfile(poster, out / 'poster.jpg')
     key = answer_key(row, report)
@@ -98,7 +101,10 @@ def build_catalog():
         report = json.loads((folder / 'report.json').read_text())
         key_path = folder / 'answer_key.json'
         key = json.loads(key_path.read_text()) if key_path.exists() else None
+        order = {'high': 0, 'medium': 1, 'low': 2}
+        top = min(report['hazards'], key=lambda h: (order[h['severity']], h['evidence_status'] != 'observed'), default=None)
         rows.append({k: row.get(k) for k in PUBLIC_FIELDS} | {
+            'top_finding': {k: top[k] for k in ('id', 'object', 'severity', 'relation', 'evidence_status')} if top else None,
             'room': report['room']['type'], 'findings': len(report['hazards']), 'counts': counts(report),
             'duration_s': row.get('duration_s'), 'seconds': report.get('seconds'),
             'cost_usd': round(report.get('cost_usd', {}).get('total', 0), 3),

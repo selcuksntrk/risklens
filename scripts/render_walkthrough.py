@@ -89,8 +89,8 @@ def render(scene_id: str) -> Path:
     out = BUILD / scene_id / 'walkthrough.mp4'
     ff = subprocess.Popen(
         ['ffmpeg', '-y', '-loglevel', 'error', '-f', 'rawvideo', '-pix_fmt', 'rgb24', '-s', f'{W}x{H}', '-r', str(FPS), '-i', '-',
-         '-vf', "eq=brightness='0.012*sin(2*PI*t/6.5)':eval=frame,noise=alls=7:allf=t,vignette=angle=PI/6",
-         '-c:v', 'libx264', '-preset', 'medium', '-crf', '20', '-pix_fmt', 'yuv420p', '-movflags', '+faststart',
+         '-vf', "eq=brightness='0.012*sin(2*PI*t/6.5)':eval=frame,noise=alls=4:allf=t,vignette=angle=PI/6",
+         '-c:v', 'libx264', '-preset', 'medium', '-crf', '24', '-maxrate', '6M', '-bufsize', '12M', '-pix_fmt', 'yuv420p', '-movflags', '+faststart',
          '-an', '-map_metadata', '-1', '-fflags', '+bitexact', str(out)], stdin=subprocess.PIPE)
     t_global = 0.0
 

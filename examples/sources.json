@@ -27,8 +27,8 @@
     "synthetic": true,
     "modifications": "Six Muse Image stills (consistency-checked by Muse Spark) animated into a phone-style walkthrough by scripts/render_walkthrough.py.",
     "context": "",
-    "duration_s": null,
-    "sha256": "PENDING"
+    "duration_s": 33.2,
+    "sha256": "65d5fa47fdc6e314b7e1a8f080cb7799cd324b4e6fed09d504dab14e7959af6d"
   },
   {
     "id": "designed-kids-bedroom",
@@ -43,8 +43,8 @@
     "synthetic": true,
     "modifications": "Six Muse Image stills (consistency-checked by Muse Spark) animated into a phone-style walkthrough by scripts/render_walkthrough.py.",
     "context": "",
-    "duration_s": null,
-    "sha256": "PENDING"
+    "duration_s": 33.2,
+    "sha256": "fea0cada76fec090fb8c39f392a3c85c9cbc0e1881ec73cc5fd24aab01d00b56"
   },
   {
     "id": "designed-kitchen-entry",
@@ -59,7 +59,7 @@
     "synthetic": true,
     "modifications": "Six Muse Image stills (consistency-checked by Muse Spark) animated into a phone-style walkthrough by scripts/render_walkthrough.py.",
     "context": "",
-    "duration_s": null,
-    "sha256": "PENDING"
+    "duration_s": 33.2,
+    "sha256": "bdf8ae70b321583bc3b0e13d1c237faf7f3fcee3ba8044a75a0ec01905095bbd"
   }
 ]
