@@ -1,0 +1,30 @@
+{
+  "id": "istanbul-kids-bedroom",
+  "title": "Children's bedroom, Istanbul apartment",
+  "room_type": "kids_room",
+  "description": "A lived-in children's bedroom in an Istanbul apartment, about 3.5 x 4 m. Pale mint-green walls, light laminate parquet, a round blue rug, a white PVC window with sheer tulle curtains and a white panel radiator below it. A single bed with a white wooden frame and a star-pattern duvet stands with its headboard against the left wall. A small white desk with a lamp and colouring pencils sits by the window. A few toys on the floor.",
+  "window_side": "right",
+  "objects": {
+    "shelf": "a long wooden wall shelf mounted on two small metal brackets about 60 cm directly above the head of the bed, loaded with a heavy row of hardcover books, a glass snow globe and a ceramic piggy bank",
+    "wardrobe": "a tall white two-door wardrobe, 210 cm tall, standing free beside the bed with no visible wall bracket, three cardboard storage boxes and a plastic suitcase stacked on its top almost to the ceiling",
+    "picture": "a large picture frame with glass, about 70 x 50 cm, showing a painted hot-air balloon, hanging on the wall directly above the headboard",
+    "aquarium": "a 60-litre glass aquarium with water, gravel and plants, standing on top of a waist-high white chest of drawers",
+    "toy_bin": "a low blue plastic toy bin on the floor, knee height",
+    "door": "the open white bedroom door, the doorway clear"
+  },
+  "answer_key": [
+    {"id": "K1", "object": "shelf", "label": "Heavy items on a shelf directly above the bed", "relation": "above_sleeping_area"},
+    {"id": "K2", "object": "wardrobe", "label": "Tall wardrobe with boxes and a suitcase stacked on top, beside the bed", "relation": "tall_tip_over"},
+    {"id": "K3", "object": "picture", "label": "Glass-framed picture above the headboard", "relation": "above_sleeping_area"},
+    {"id": "K4", "object": "aquarium", "label": "Glass aquarium full of water on a chest of drawers", "relation": "glass_breakage"}
+  ],
+  "controls": [{"object": "toy_bin", "label": "Low toy bin on the floor (low-risk control)"}],
+  "shots": [
+    {"id": 0, "camera": "standing in the doorway, looking into the room, wide view", "visible": ["bed", "shelf", "picture", "wardrobe", "window"], "expected": ["K1", "K2", "K3"], "pan": "lr"},
+    {"id": 1, "camera": "at the foot of the bed, facing the headboard wall, tilted slightly up", "visible": ["shelf", "picture", "bed"], "expected": ["K1", "K3"], "pan": "rl"},
+    {"id": 2, "camera": "turned toward the wardrobe beside the bed, tilted up to show the top", "visible": ["wardrobe", "bed"], "expected": ["K2"], "pan": "lr"},
+    {"id": 3, "camera": "turned toward the window wall", "visible": ["desk", "window", "radiator", "toy_bin"], "expected": [], "pan": "rl"},
+    {"id": 4, "camera": "turned toward the right-hand wall", "visible": ["aquarium", "toy_bin"], "expected": ["K4"], "pan": "lr"},
+    {"id": 5, "camera": "near the window, looking back toward the open door", "visible": ["door", "wardrobe", "bed"], "expected": ["K2"], "pan": "rl"}
+  ]
+}

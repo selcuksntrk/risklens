@@ -1,51 +1,122 @@
-"""Publish ONLY a verified Hypersim-derived report into the explicit example allowlist.
-No personal scan can be packaged merely by passing its ID: the original source must match the licensed clip.
+"""Publish ONLY registered sample videos into the public example allowlist.
+
+`examples/sources.json` is the committed registry: one row per sample with its rights statement and the SHA-256
+of the exact source video. A personal scan can never be published by passing its ID: the video handed to this
+script must hash to a registered row, and the report must have been produced from that same file.
+
+Usage:
+  python scripts/package_example.py <example_id> <scan_dir> <video> --events <events.json>
+  python scripts/package_example.py --catalog          # rebuild catalog.json from packaged examples
 """
 import argparse
 import hashlib
 import json
-from pathlib import Path
 import shutil
+from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
-EXPECTED_SHA256 = '7c8b51a659cb7614b5a05156d5e6569d013c2d3abd102469e7c0932ddbaaf54c'
+REGISTRY = ROOT / 'examples' / 'sources.json'
+OUT = ROOT / 'examples' / 'generated'
+SCENES = ROOT / 'scripts' / 'scenes'
+MATCHES = ROOT / 'examples' / 'matches'
+PUBLIC_FIELDS = ('id', 'scan_id', 'kind', 'title', 'description', 'license', 'license_url', 'source_url',
+                 'synthetic', 'modifications', 'context')
 
-def package(scan: Path, video: Path):
-    report = json.loads((scan/'report.json').read_text())
-    digest = hashlib.sha256(video.read_bytes()).hexdigest()
-    approved = digest == EXPECTED_SHA256
-    attribution_file = video.parent/'attribution.json'
-    if not approved and attribution_file.is_file():
-        source = json.loads(attribution_file.read_text())
-        manifest_path = ROOT/'examples/hypersim-source.json'
-        approved = (source.get('clip_sha256') == digest and source.get('manifest_sha256') == hashlib.sha256(manifest_path.read_bytes()).hexdigest())
-        manifest = json.loads(manifest_path.read_text())
-        approved = approved and all((video.parent/'frames'/f'{i:04d}.jpg').is_file() and
-            hashlib.sha256((video.parent/'frames'/f'{i:04d}.jpg').read_bytes()).hexdigest() == h
-            for i, h in enumerate(manifest['frame_sha256']))
-    if not approved or report['provenance']['source_sha256'] != digest:
-        raise SystemExit('Source is not the approved Hypersim ai_048_004/cam_00 clip. Nothing published.')
+
+def registry() -> list[dict]:
+    return json.loads(REGISTRY.read_text())
+
+
+def sha256(path: Path) -> str:
+    return hashlib.sha256(path.read_bytes()).hexdigest()
+
+
+def answer_key(row: dict, report: dict) -> dict | None:
+    """Designed hazards from the scene bible, plus the author's finding-to-hazard match (committed, reviewable)."""
+    if not row.get('scene'):
+        return None
+    bible = json.loads((SCENES / f"{row['scene']}.json").read_text())
+    match_path = MATCHES / f"{row['id']}.json"
+    match = json.loads(match_path.read_text()) if match_path.exists() else {'matches': {}, 'note': 'Not yet matched.'}
+    if match.get('source_sha256') not in (None, report['provenance']['source_sha256']):
+        raise SystemExit(f'{match_path} was written for a different run.')
+    found = {h: f for f, h in match['matches'].items() if h}
+    hazards = [{**h, 'matched_finding': found.get(h['id'])} for h in bible['answer_key']]
+    finding_ids = {h['id'] for h in report['hazards']}
+    extras = sorted(finding_ids - set(match['matches']))
+    unmatched_listed = sorted(f for f, h in match['matches'].items() if not h)
+    return {'designed': len(hazards), 'matched': sum(1 for h in hazards if h['matched_finding']),
+            'hazards': hazards, 'controls': bible.get('controls', []),
+            'other_findings': extras + unmatched_listed, 'method': match.get('method', 'author-matched'),
+            'note': match.get('note', '')}
+
+
+def package(example_id: str, scan: Path, video: Path, events: Path | None):
+    row = next((r for r in registry() if r['id'] == example_id), None)
+    if not row:
+        raise SystemExit(f'{example_id} is not in {REGISTRY}. Nothing published.')
+    digest = sha256(video)
+    report = json.loads((scan / 'report.json').read_text())
+    if digest != row['sha256'] or report['provenance']['source_sha256'] != digest:
+        raise SystemExit('Video or report does not match the registered source hash. Nothing published.')
     if report.get('schema_version') != 2:
         raise SystemExit('Run the current pipeline first; legacy results are not upgraded or presented as current.')
-    out = ROOT/'examples/generated/hypersimbedroom'
-    out.mkdir(parents=True, exist_ok=True)
-    # Change only the locator in a COPY. Provenance, observations and original version remain intact.
-    report['scan_id'] = 'hypersimbedroom'
-    (out/'report.json').write_text(json.dumps(report, indent=2) + '\n')
+    out = OUT / row['scan_id']
+    if out.exists():
+        shutil.rmtree(out)
+    out.mkdir(parents=True)
+    report['scan_id'] = row['scan_id']   # only the locator changes; provenance and observations stay intact
+    (out / 'report.json').write_text(json.dumps(report, indent=2) + '\n')
     for folder in ('evidence', 'marked'):
-        if (scan/folder).exists(): shutil.copytree(scan/folder, out/folder, dirs_exist_ok=True)
-    shutil.copyfile(video, out/'source.mp4')
-    attribution = {'id': 'hypersim-bedroom', 'scan_id': 'hypersimbedroom', 'title': 'A synthetic bedroom walkthrough',
-        'description': 'A completed screening of sampled Hypersim views. No real-world fix or installation is demonstrated.',
-        'license': 'Hypersim © Apple Inc. · CC BY-SA 3.0', 'license_url': 'https://creativecommons.org/licenses/by-sa/3.0/',
-        'source_url': 'https://github.com/apple-aiml-research/ml-hypersim', 'synthetic': True,
-        'scene': 'ai_048_004', 'camera': 'cam_00', 'source_sha256': digest,
-        'modifications': '100 tonemapped preview frames encoded as a 6 fps video; evidence frames sampled and marked by RiskLens.',
-        'context': 'Synthetic bedroom from Hypersim. Attachment conditions are unknown.'}
-    (ROOT/'examples/generated/catalog.json').write_text(json.dumps([attribution], indent=2) + '\n')
-    (out/'ATTRIBUTION.json').write_text(json.dumps(attribution, indent=2) + '\n')
+        if (scan / folder).exists():
+            shutil.copytree(scan / folder, out / folder)
+    shutil.copyfile(video, out / 'source.mp4')
+    if events:
+        (out / 'events.json').write_text(events.read_text())
+    poster = out / 'evidence' / 'h1.jpg'
+    if poster.exists():
+        shutil.copyfile(poster, out / 'poster.jpg')
+    key = answer_key(row, report)
+    if key:
+        (out / 'answer_key.json').write_text(json.dumps(key, indent=2) + '\n')
+    (out / 'ATTRIBUTION.json').write_text(json.dumps({k: row.get(k) for k in PUBLIC_FIELDS} | {'source_sha256': digest}, indent=2) + '\n')
     print(out)
 
+
+def counts(report: dict) -> dict:
+    hz = report['hazards']
+    return {'high': sum(h['severity'] == 'high' for h in hz), 'medium': sum(h['severity'] == 'medium' for h in hz),
+            'low': sum(h['severity'] == 'low' for h in hz), 'needs_check': sum(h['evidence_status'] != 'observed' for h in hz)}
+
+
+def build_catalog():
+    rows = []
+    for row in registry():
+        folder = OUT / row['scan_id']
+        if not (folder / 'report.json').is_file():
+            continue
+        report = json.loads((folder / 'report.json').read_text())
+        key_path = folder / 'answer_key.json'
+        key = json.loads(key_path.read_text()) if key_path.exists() else None
+        rows.append({k: row.get(k) for k in PUBLIC_FIELDS} | {
+            'room': report['room']['type'], 'findings': len(report['hazards']), 'counts': counts(report),
+            'duration_s': row.get('duration_s'), 'seconds': report.get('seconds'),
+            'cost_usd': round(report.get('cost_usd', {}).get('total', 0), 3),
+            'has_video': (folder / 'source.mp4').is_file(), 'has_poster': (folder / 'poster.jpg').is_file(),
+            'has_replay': (folder / 'events.json').is_file(), 'answer_key': key,
+            'source_sha256': row['sha256']})
+    (OUT / 'catalog.json').write_text(json.dumps(rows, indent=2) + '\n')
+    print(f'catalog: {[r["id"] for r in rows]}')
+
+
 if __name__ == '__main__':
-    parser = argparse.ArgumentParser(); parser.add_argument('scan', type=Path); parser.add_argument('licensed_video', type=Path)
-    args = parser.parse_args(); package(args.scan, args.licensed_video)
+    parser = argparse.ArgumentParser()
+    parser.add_argument('example_id', nargs='?'); parser.add_argument('scan', type=Path, nargs='?')
+    parser.add_argument('video', type=Path, nargs='?'); parser.add_argument('--events', type=Path)
+    parser.add_argument('--catalog', action='store_true')
+    args = parser.parse_args()
+    if not args.catalog:
+        if not (args.example_id and args.scan and args.video):
+            parser.error('example_id, scan and video are required')
+        package(args.example_id, args.scan, args.video, args.events)
+    build_catalog()
