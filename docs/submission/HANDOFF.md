@@ -4,7 +4,7 @@ Do not mark pending checks complete without evidence.
 
 | Item | Status / evidence |
 |---|---|
-| **Merge PR #1 into `main`** | **Pending — Selçuk.** Submission links point to the default branch; `blob/main/docs/EVALUATION.md` 404s until merged. Use a merge commit to keep the granular history |
+| Merge PR #1 into `main` | Done Nov 3 (merge commit `e8c6bb6`); `main` = release `v2-d7c7fa4d38b3`; repo, EVALUATION and submission links return 200 logged out |
 | Synthetic-only product and submission copy | Prepared |
 | Pre-model observations | AI visual review recorded; human adjudication pending |
 | Measured evaluation | See `docs/EVALUATION.md` and `eval/synthetic-results.json` |

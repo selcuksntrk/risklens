@@ -36,7 +36,7 @@ Uygulama ekran kayıtları ajan tarafından **canlı üründen** alındı (headl
 
 ## 4. Son teslim — 30–45 dakika
 
-**İlk iş:** PR #1'i (`codex/home-test-readiness` → `main`) *merge commit* ile birleştir: `gh pr ready 1 && gh pr merge 1 --merge`. Form ve videodaki linkler `main`'i gösteriyor.
+PR #1 `main`'e birleştirildi (3 Kasım); form ve videodaki linkler `main`'i gösteriyor.
 
 `FORM.md` ve `RIGHTS.md` ile gerçek platform alanlarını/deklarasyonlarını kontrol et. Video bağlantısını giriş yapmadan aç; public kaynak dalının linkini kullan. Platformda gönderimi tamamla ve teyit kaydını `HANDOFF.md` içine yaz.
 

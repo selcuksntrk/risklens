@@ -36,6 +36,8 @@ Costs are the application's recorded usage, not a provider invoice.
 
 Real-room A0/B0–B4, the 3–5-room evaluation, expert labels, the open-weight auditor and the volunteer pilot are future work in [PILOT.md](PILOT.md) and [ACCEPTANCE.md](ACCEPTANCE.md); none is listed as completed.
 
+Source: `main` (PR #1 merged November 3, merge commit `e8c6bb6`).
+
 ## Where to continue
 
 - [Submission package](submission/README.md) · [Evaluation](EVALUATION.md) · [Release runbook](RELEASE.md) · [Acceptance protocol](ACCEPTANCE.md)
