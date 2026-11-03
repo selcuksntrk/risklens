@@ -4,6 +4,7 @@ Usage: backend/.venv/bin/python scripts/visual_qa.py URL OUTPUT_DIR
 """
 import asyncio
 import json
+import os
 import sys
 from pathlib import Path
 
@@ -32,8 +33,11 @@ VIEWPORTS = [('desktop', dict(width=1440, height=900, scale=1)),
 
 async def main(url, out):
     out = Path(out); out.mkdir(parents=True, exist_ok=True); results = {}
-    for name, vp in VIEWPORTS:
+    schemes = os.environ.get('QA_SCHEMES', 'dark,light').split(',')
+    for (name, vp), scheme in [(v, sc) for v in VIEWPORTS for sc in schemes]:
+        name = f'{name}-{scheme}'
         async with Browser(**vp) as b:
+            await b.send('Emulation.setEmulatedMedia', features=[{'name': 'prefers-color-scheme', 'value': scheme}])
             for page, route in PAGES:
                 await b.goto(url.rstrip('/') + '/' + route, settle=3)
                 await b.js('document.querySelectorAll("details").forEach(d => d.open = true)')

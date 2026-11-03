@@ -8,7 +8,8 @@ function useRoute(): string[] {
   const read = () => location.hash.replace(/^#\/?/, '').split('/').filter(Boolean)
   const [route, setRoute] = useState(read)
   useEffect(() => {
-    const onChange = () => setRoute(read())
+    // A new screen starts at the top; hash routing would otherwise keep the previous page's scroll offset.
+    const onChange = () => { setRoute(read()); window.scrollTo(0, 0) }
     window.addEventListener('hashchange', onChange)
     return () => window.removeEventListener('hashchange', onChange)
   }, [])
