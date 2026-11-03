@@ -10,7 +10,7 @@ Do not mark pending checks complete without evidence.
 | Measured evaluation | See `docs/EVALUATION.md` and `eval/synthetic-results.json` |
 | Automated tests and release checks | See `docs/STATUS.md` |
 | Desktop/mobile visual QA | Done in emulation (1440/390/360 px, headless Chrome): no overflow; fixes shipped in `v2-d7c7fa4d38b3`. Physical phone pending |
-| Actual application screen recording | Done: `private/footage/01–07.mp4` from live `v2-d7c7fa4d38b3`, new run `86be749a131d` (complete, 3 findings, 172.8 s server time, $0.21); same-file guard 0 confirmed / 1 not assessable |
+| Actual application screen recording | Done: `private/footage/01–07.mp4` from live `v2-aa81598cfef3` (user-first home), new run `830ab0997f87` (complete, 6 findings, 132 s server time, 199 s click-to-report, $0.21); same-file guard 0 confirmed / 1 not assessable |
 | Selçuk's two English voice takes | Pending |
 | Caption alignment and final 1080p MP4 | Pending voice; silent rehearsal cut at `output/preview/` (175 s). Draft timings are not final subtitles |
 | iPhone/Safari model, iOS, release | Pending |
