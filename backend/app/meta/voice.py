@@ -10,10 +10,13 @@ import json
 import os
 import time
 import uuid
+import math
 from urllib.parse import urlparse
 
 import websockets
 from fastapi import WebSocket, WebSocketDisconnect
+from fastapi import HTTPException
+from app import guard
 
 ASR_URL = "wss://api.meta.ai/v1/asr/realtime"
 KEYWORDS = ["yatak odası", "çocuk odası", "salon", "kitaplık", "dolap", "gardırop", "ayna", "tablo", "televizyon",
@@ -44,7 +47,14 @@ async def proxy(client: WebSocket) -> None:
         await client.send_json({"type": "error", "message": CLOSE_MESSAGES[1013]})
         await client.close()
         return
+    try:
+        charge = guard.Reservation('voice', MAX_SESSION_SECONDS * .18 / 3600)
+    except HTTPException:
+        await client.send_json({'type': 'error', 'message': 'Daily narration budget reached.'})
+        await client.close()
+        return
     ACTIVE["sessions"] += 1
+    audio_bytes = 0
     session = f"risklens-{uuid.uuid4().hex[:8]}"
     try:
         async with websockets.connect(f"{ASR_URL}?sessionId={session}", open_timeout=30) as upstream:
@@ -56,22 +66,24 @@ async def proxy(client: WebSocket) -> None:
                 "languageBias": ["Turkish", "English"],
                 "keywords": KEYWORDS,
             }))
-            ack = json.loads(await upstream.recv())
+            ack = json.loads(await asyncio.wait_for(upstream.recv(), 30))
             if "sessionId" not in ack:
                 await client.send_json({"type": "error", "message": "Narration could not start."})
                 return
             await client.send_json({"type": "ready"})
 
             async def uplink() -> None:
+                nonlocal audio_bytes
                 deadline = time.monotonic() + MAX_SESSION_SECONDS
                 try:
                     while time.monotonic() < deadline:
                         message = await client.receive()
                         data = message.get("bytes")
                         if data:
-                            if len(data) > MAX_FRAME_BYTES:
+                            if len(data) > MAX_FRAME_BYTES or audio_bytes + len(data) > MAX_SESSION_SECONDS * 48000:
                                 break
                             await upstream.send(data)
+                            audio_bytes += len(data)
                         elif message.get("text") == "end" or message["type"] == "websocket.disconnect":
                             break
                 finally:
@@ -90,15 +102,18 @@ async def proxy(client: WebSocket) -> None:
                 await client.send_json({"type": "error", "message": CLOSE_MESSAGES.get(code, "Narration stopped.")})
             finally:
                 up.cancel()
+                await asyncio.gather(up, return_exceptions=True)
+            charge.settle(math.ceil(audio_bytes / 48000) * .18 / 3600)
     except WebSocketDisconnect:
         pass
     except Exception as exc:
-        print(f"voice proxy: {exc!r}")
         try:
             await client.send_json({"type": "error", "message": "Narration stopped."})
         except Exception:
             pass
     finally:
+        if not charge.settled:
+            charge.settle(None)
         ACTIVE["sessions"] -= 1
         try:
             await client.close()

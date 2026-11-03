@@ -44,7 +44,7 @@ def draw_marks(frame_path: Path, frame: int, marks: dict[str, Track], out: Path,
     for mark, track in marks.items():
         if only is not None and mark not in only:
             continue
-        box = box_near(track, frame)
+        box = track.boxes.get(frame)  # never project a neighbouring frame's box onto this evidence
         if box is None:
             continue
         color = PALETTE[(int(mark) - 1) % len(PALETTE)]

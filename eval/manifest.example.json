@@ -1,0 +1,6 @@
+{
+  "clips": [
+    {"clip_id": "room01-a0", "room_id": "room01", "split": "development", "case": "A0", "video": "room01/a0.mp4", "sha256": "REPLACE_AFTER_CAPTURE", "pre_model_observations_recorded": false, "context": ""},
+    {"clip_id": "room01-b0", "room_id": "room01", "split": "development", "case": "B0", "video": "room01/a0.mp4", "sha256": "REPLACE_AFTER_CAPTURE", "pre_model_observations_recorded": false, "baseline_clip_id": "room01-a0"}
+  ]
+}

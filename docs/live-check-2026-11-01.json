@@ -1,0 +1,21 @@
+{
+  "version": "v2-99bee4f3f001",
+  "checks": [
+    "health_and_frontend_release_match",
+    "completed_licensed_example_readable_without_session",
+    "secure_session_and_readonly_example",
+    "own_upload_idempotency_conflict_and_deletion",
+    "live_sample_returned_persistent_assessment",
+    "targeted_identical_video_zero_confirmations_and_history",
+    "cross_browser_private_routes_denied",
+    "deleted_scans_unavailable_and_not_replayed"
+  ],
+  "live": true,
+  "sample": {
+    "assessment": "complete",
+    "findings": 3,
+    "seconds": 107.0,
+    "cost_usd": 0.22644
+  },
+  "elapsed_seconds": 135.1
+}

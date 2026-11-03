@@ -11,8 +11,8 @@ from app.config import META_BASE_URL
 def meta_client() -> AsyncOpenAI:
     key = os.environ.get("MODEL_API_KEY")
     if not key:
-        raise SystemExit("MODEL_API_KEY is not set. Run with: uv run --env-file ../../.env ...")
-    return AsyncOpenAI(base_url=META_BASE_URL, api_key=key, timeout=600)
+        raise RuntimeError("Model service is not configured.")
+    return AsyncOpenAI(base_url=META_BASE_URL, api_key=key, timeout=180, max_retries=0)
 
 
 async def upload_video(api: AsyncOpenAI, path) -> str:

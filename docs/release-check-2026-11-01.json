@@ -1,0 +1,8 @@
+{
+  "version": "v2-dbfa1e82417a",
+  "checks": [
+    "health_and_frontend_release_match",
+    "completed_licensed_example_readable_without_session"
+  ],
+  "live": false
+}

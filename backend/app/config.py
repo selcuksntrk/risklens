@@ -25,3 +25,8 @@ KEYFRAMES = 6           # frames the planner/surveyor see
 SAM_CONCURRENCY = 8      # all planned concepts at once; SAM allows 3,000 RPM
 
 SCANS_DIR = Path(os.environ.get("RISKLENS_SCANS", Path(__file__).resolve().parents[2] / "scans"))
+VERSION_FILE = Path(__file__).resolve().parents[2] / "VERSION"
+APP_VERSION = os.environ.get("RISKLENS_VERSION", VERSION_FILE.read_text().strip() if VERSION_FILE.exists() else "development")
+SCHEMA_VERSION = 2
+COOKIE_SECURE = os.environ.get("RISKLENS_COOKIE_SECURE", "0") == "1"
+EXAMPLES_DIR = Path(os.environ.get("RISKLENS_EXAMPLES", Path(__file__).resolve().parents[2] / "examples" / "generated"))

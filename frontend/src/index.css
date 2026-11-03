@@ -6,6 +6,7 @@
   --muted: #8d9aa8;
   --line: #2a3846;
   --accent: #f5b83d;
+  --link: #f5b83d;
   --high: #ef5350;
   --medium: #f5a623;
   --low: #4caf8e;
@@ -25,6 +26,7 @@
     --text: #15202b;
     --muted: #5d6b79;
     --line: #dde3e9;
+    --link: #805600;
     color-scheme: light;
   }
 }
@@ -149,3 +151,54 @@ p { margin: 0 0 .6em; }
 .verdict.fixed { background: color-mix(in srgb, var(--low) 20%, transparent); }
 .verdict.not_fixed { background: color-mix(in srgb, var(--high) 16%, transparent); }
 .verdict.cannot_verify { background: var(--surface-2); }
+
+/* Capture, assessment and private-report controls. */
+button:disabled { cursor: wait; opacity: .6; }
+a, .fix a { color: var(--link); text-underline-offset: 3px; overflow-wrap: anywhere; }
+.actions { display: flex; flex-wrap: wrap; gap: 10px; margin: 14px 0; }
+.notice { padding: 14px 16px; border: 1px solid var(--line); background: var(--surface-2); border-radius: var(--radius); margin: 14px 0; }
+.assessment-incomplete, .assessment-partial { border-color: var(--medium); }
+.summary-card { border-left-color: var(--accent); }
+.capture-preview { display: block; width: 100%; max-height: 52dvh; min-height: 180px; object-fit: contain; background: #000; border-radius: var(--radius); margin-bottom: 14px; }
+.field { display: grid; gap: 8px; margin: 16px 0; }
+.field textarea { width: 100%; min-height: 96px; resize: vertical; font: inherit; padding: 12px; background: var(--surface); color: var(--text); border: 1px solid var(--line); border-radius: 10px; }
+.checkbox { display: flex; gap: 8px; align-items: center; }
+.file { display: inline-flex; align-items: center; cursor: pointer; }
+.target-image { max-height: 220px; object-fit: contain; }
+.privacy-note { margin-top: 24px; }
+.danger { color: var(--high); margin-top: 22px; }
+.hazard-head { flex-wrap: wrap; }
+.media img { height: auto; object-fit: contain; }
+.media .seg { position: static; flex-wrap: wrap; border-radius: 0; gap: 4px; padding: 8px; }
+.media .show-fixed { position: static; margin: 10px; }
+.media-tag { position: static; display: block; border-radius: 0; }
+.provenance dl { grid-template-columns: minmax(70px, 110px) minmax(0, 1fr); }
+.fix li small { display: block; margin-top: 5px; }
+@media (prefers-reduced-motion: reduce) { * { animation: none !important; transition: none !important; } }
+
+.step.failed::before { background: var(--medium); }
+.step.failed { color: var(--medium); }
+
+/* Keep the judge's first action and evidence legible on narrow screens. */
+.eyebrow { display: block; color: var(--muted); font-size: .78rem; font-weight: 650; letter-spacing: .04em; margin-bottom: 10px; }
+.hero { margin-bottom: 16px; }
+.sample-label { font-size: .85rem; color: var(--muted); margin-bottom: 16px; }
+.report .summary-card { margin-bottom: 12px; }
+.report .notice { margin: 12px 0; }
+button, .file { min-height: 44px; }
+button:focus-visible, a:focus-visible, summary:focus-visible { outline: 3px solid var(--link); outline-offset: 4px; }
+.hazard-body, .grow { min-width: 0; overflow-wrap: anywhere; }
+@media (max-width: 420px) {
+  .hero { padding: 16px; }
+  .actions > button { width: 100%; }
+  .bar { gap: 10px; flex-wrap: wrap; }
+}
+
+/* Visual QA, Nov 3: evidence image stays at the top of its column; legible badges; touch-size toggles. */
+.badge { font-size: .75rem; }
+details > summary { display: list-item; padding: 10px 0; cursor: pointer; }
+.report > h3 { margin-top: 20px; }
+@media (min-width: 640px) {
+  .hazard { grid-template-columns: minmax(300px, 42%) 1fr; }
+  .media { align-self: start; }
+}

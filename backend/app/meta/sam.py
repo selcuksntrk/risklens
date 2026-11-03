@@ -17,6 +17,7 @@ from dataclasses import dataclass, field
 from openai import APIStatusError, AsyncOpenAI
 
 from app.config import PRICES, SAM_MODEL
+from app import guard
 
 # Frame markers start a line; an object id follows a line start, a comma or a frame marker. Anchoring matters:
 # mask payloads are base85 and may contain text that looks like "<12f>" (docs: sam/reading-segmentation).
@@ -48,6 +49,8 @@ class SamResult:
     tracks: list[Track] = field(default_factory=list)
     raw_text: str = ""
     error: str | None = None
+    cost_usd: float = 0.0
+    usage_estimated: bool = False
     frames_billed: int = 0                  # usage.video_frames_processed, summed over every attempt
 
 
@@ -73,7 +76,9 @@ def sam_cost(frames: int) -> float:
 
 def result_cost(result: SamResult, n_frames: int) -> float:
     """What SAM billed (usage.video_frames_processed), or the per-frame estimate when usage is missing."""
-    return result.frames_billed * PRICES["sam-3.1-frame"] if result.frames_billed else sam_cost(n_frames)
+    if result.cost_usd:
+        return result.cost_usd
+    return sam_cost(result.frames_billed) if result.frames_billed else sam_cost(n_frames)
 
 
 def backoff(attempt: int, retry_after: str | None) -> float:
@@ -85,13 +90,15 @@ def backoff(attempt: int, retry_after: str | None) -> float:
     return min(wait, 10.0)
 
 
-async def track_concept(api: AsyncOpenAI, file_id: str, concept: str, retries: int = 2) -> SamResult:
+async def track_concept(api: AsyncOpenAI, file_id: str, concept: str, retries: int = 2, n_frames: int = 450) -> SamResult:
     """Segment and track one noun-phrase concept through an uploaded video (one concept per request)."""
-    billed = 0
+    billed, charged_total, estimated = 0, 0.0, False
     for attempt in range(retries + 1):
         started = time.perf_counter()
         chunks: list[str] = []
         status, error, retry_after = "incomplete", None, None
+        charge = guard.Reservation('sam', sam_cost(n_frames))
+        attempt_frames = 0
         try:
             stream = await api.responses.create(
                 model=SAM_MODEL,
@@ -108,7 +115,7 @@ async def track_concept(api: AsyncOpenAI, file_id: str, concept: str, retries: i
                     elif event.type in ("response.completed", "response.failed", "response.incomplete"):
                         status = event.response.status
                         error = getattr(event.response, "error", None)
-                        billed += getattr(event.response.usage, "video_frames_processed", 0) or 0
+                        attempt_frames = getattr(event.response.usage, "video_frames_processed", 0) or 0
                     elif event.type == "error":     # the stream itself failed (e.g. server_shutting_down)
                         status, error = "error", f"{getattr(event, 'code', None)}: {getattr(event, 'message', '')}"
         except APIStatusError as exc:
@@ -118,6 +125,11 @@ async def track_concept(api: AsyncOpenAI, file_id: str, concept: str, retries: i
             retry_after = exc.response.headers.get("retry-after")
         except Exception as exc:  # stream drop / timeout
             status, error = "error", repr(exc)
+        finally:
+            charge.settle(sam_cost(attempt_frames) if attempt_frames else None)
+            charged_total += charge.amount
+            billed += attempt_frames
+            estimated = estimated or not attempt_frames
         if status == "completed" or attempt == retries:
             break
         await asyncio.sleep(backoff(attempt, retry_after))
@@ -125,4 +137,4 @@ async def track_concept(api: AsyncOpenAI, file_id: str, concept: str, retries: i
     boxes, media = parse_boxes(text)
     tracks = [Track(concept, oid, b) for oid, b in boxes.items() if len(b) >= 2]  # drop 1-frame flickers
     return SamResult(concept, status, round(time.perf_counter() - started, 1), media, tracks, text,
-                     None if status == "completed" else str(error), billed)
+                     None if status == "completed" else str(error), charged_total, estimated, billed)

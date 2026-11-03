@@ -1,0 +1,29 @@
+{
+  "data_type": "synthetic",
+  "evaluation_kind": "development_regression",
+  "reviewer": "Codex visual inspection of six evenly sampled views per clip before new inference",
+  "human_review_status": "pending",
+  "limitations": "All five scenes were used in earlier development. These observations are not exhaustive hazard labels, expert review or an independent benchmark. Attachment strength, wall material and hidden fixings are unknown throughout.",
+  "scenes": {
+    "ai_018_005_cam_00": {
+      "visible": ["Living/dining space with a sofa, dining table and a tall translucent storage/partition unit", "Objects and vessels visible on open shelves", "A doorway and passage are visible in several views"],
+      "unknown": ["Partition and shelf anchorage", "Whether vessels are restrained", "Passage width and actual obstruction"]
+    },
+    "ai_036_006_cam_00": {
+      "visible": ["Open office with desks, monitors and a lounge seating area", "Long suspended lighting above the work area", "Small framed pictures on a yellow wall and a bicycle nearby"],
+      "unknown": ["Monitor restraints", "Suspended fixture support", "Picture attachments and exit routes"]
+    },
+    "ai_048_004_cam_00": {
+      "visible": ["Bedroom with a large bed and tall purple shelving", "Large black panels leaning near the desk/window area; their material and function are uncertain", "Blue hanging light and a suspended multi-part fixture", "Objects on desk and shelving surfaces"],
+      "unknown": ["Whether shelves are built in or anchored", "Panel restraint and material", "Ceiling fixture connections", "Whether an exit is obstructed"]
+    },
+    "ai_048_005_cam_01": {
+      "visible": ["Bedroom with low bed, potted plants, chair and arc floor lamp", "Storage shelving with objects on upper surfaces", "Different camera heights and angles within the same static scene"],
+      "unknown": ["Shelf and object restraints", "Plant weights", "Floor-lamp stability", "Fixture attachment adequacy"]
+    },
+    "ai_051_002_cam_03": {
+      "visible": ["Mezzanine office with desk monitors, speakers and loose cables under the desk", "A large framed mirror near the landing railing", "Tall dark cabinetry with an open display niche and objects"],
+      "unknown": ["Cabinet anchorage or built-in construction", "Mirror fixing", "Monitor and speaker restraints", "Cable proximity to an actual walking route"]
+    }
+  }
+}

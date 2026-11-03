@@ -1,0 +1,203 @@
+1
+00:00:00,000 --> 00:00:02,344
+I’m Selçuk, building in Istanbul.
+
+2
+00:00:02,344 --> 00:00:06,094
+Earthquake preparation includes the
+things inside a room.
+
+3
+00:00:06,094 --> 00:00:12,188
+RiskLens connects a visible finding to
+its evidence and a practical next step.
+
+4
+00:00:12,188 --> 00:00:15,000
+This room is synthetic, from Hypersim.
+
+5
+00:00:15,000 --> 00:00:20,366
+You do not need to
+share your home to try it.
+
+6
+00:00:20,366 --> 00:00:26,220
+Open the completed example instantly, or
+run the sample through Meta’s models
+
+7
+00:00:26,220 --> 00:00:26,707
+again.
+
+8
+00:00:26,707 --> 00:00:32,561
+I built this prototype for people
+preparing their living spaces, under the
+
+9
+00:00:32,561 --> 00:00:35,000
+Build for Your World theme.
+
+10
+00:00:35,000 --> 00:00:39,179
+Muse Spark first
+selects objects worth examining.
+
+11
+00:00:39,179 --> 00:00:43,358
+SAM tracks candidate
+objects through the video.
+
+12
+00:00:43,358 --> 00:00:49,328
+Spark then reviews sampled frames
+with those objects marked, connecting
+
+13
+00:00:49,328 --> 00:00:52,313
+findings to specific visual evidence.
+
+14
+00:00:52,313 --> 00:00:57,687
+The report separates observations
+from details that need checking.
+
+15
+00:00:57,687 --> 00:01:04,851
+A connection hidden behind furniture is
+unknown, not proof that the furniture
+
+16
+00:01:04,851 --> 00:01:06,045
+is unsecured.
+
+17
+00:01:06,045 --> 00:01:13,209
+Waiting is shortened here; the audit
+trail records the actual processing time
+
+18
+00:01:13,209 --> 00:01:15,000
+and model cost.
+
+19
+00:01:15,000 --> 00:01:19,500
+For a finding, RiskLens
+looks up relevant FEMA guidance.
+
+20
+00:01:19,500 --> 00:01:24,000
+Suggestions link to sections
+actually returned by that lookup.
+
+21
+00:01:24,000 --> 00:01:28,500
+If the source check
+fails, actionable instructions are withheld.
+
+22
+00:01:28,500 --> 00:01:34,500
+These links show what the model
+read; they are not expert approval.
+
+23
+00:01:34,500 --> 00:01:37,500
+Installation conditions still
+need appropriate assessment.
+
+24
+00:01:37,500 --> 00:01:44,500
+The aim is to make the next
+question and the supporting evidence easy to
+
+25
+00:01:44,500 --> 00:01:45,000
+understand.
+
+26
+00:01:45,000 --> 00:01:47,326
+Comparison also needs evidence.
+
+27
+00:01:47,326 --> 00:01:53,140
+Uploading the original video cannot
+demonstrate a new physical change.
+
+28
+00:01:53,140 --> 00:01:58,372
+That check uses the
+file hash, not model perception.
+
+29
+00:01:58,372 --> 00:02:04,767
+We also test unchanged rendered
+footage and a different synthetic room.
+
+30
+00:02:04,767 --> 00:02:09,419
+Those are limited regression
+controls, not real-world before-and-after
+
+31
+00:02:09,419 --> 00:02:10,000
+validation.
+
+32
+00:02:10,000 --> 00:02:15,729
+The evaluation compares Spark-only and
+the full pipeline on five synthetic
+
+33
+00:02:15,729 --> 00:02:18,333
+scenes previously used in development.
+
+34
+00:02:18,333 --> 00:02:25,104
+We record failures, completion, time and
+cost, and repeat the main scene to
+
+35
+00:02:25,104 --> 00:02:26,146
+expose variation.
+
+36
+00:02:26,146 --> 00:02:30,312
+More findings do not
+automatically mean better accuracy.
+
+37
+00:02:30,312 --> 00:02:34,479
+Human correctness review and
+positive physical-change validation remain
+
+38
+00:02:34,479 --> 00:02:35,000
+unfinished.
+
+39
+00:02:35,000 --> 00:02:40,581
+RiskLens is a visual screening prototype,
+not a building inspection or safety
+
+40
+00:02:40,581 --> 00:02:41,047
+certificate.
+
+41
+00:02:41,047 --> 00:02:47,558
+The public example is ready to explore,
+and the code documents what was built
+
+42
+00:02:47,558 --> 00:02:48,953
+during the hackathon.
+
+43
+00:02:48,953 --> 00:02:54,535
+Find the evidence, understand the uncertainty,
+and decide what needs a closer
+
+44
+00:02:54,535 --> 00:02:55,000
+look.

@@ -1,4 +1,4 @@
-"""Provenance manifest: what went into a report, so an insurer can audit and reproduce it."""
+"""Provenance manifest: what went into a report, so a reviewer can trace its inputs and configuration."""
 from __future__ import annotations
 
 import hashlib
