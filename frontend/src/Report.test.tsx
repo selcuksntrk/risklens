@@ -83,3 +83,11 @@ it('microphone denial does not block video, stop is single-use and tracks are re
   expect(URL.revokeObjectURL).toHaveBeenCalledWith('blob:recording')
   vi.restoreAllMocks(); vi.unstubAllGlobals()
 })
+
+it('shows a same-file guard reason once, not as both change and rationale', () => {
+  const reason = 'This is the original video. It cannot demonstrate a new physical change.'
+  const check = { verdict: 'cannot_verify', what_changed: reason, rationale: reason, next_view_request: 'Show the original object' }
+  const verification = { schema_version: 2, fixed: 0, verify_id: 'v1', created_at: '2026-11-03', results: { h1: check }, unchecked_hazard_ids: [] } as unknown as api.Verification
+  const { container } = render(<ReportView report={report} fixcards={[]} verification={verification} />)
+  expect(container.querySelector('.verdict')!.textContent!.split(reason).length - 1).toBe(1)
+})

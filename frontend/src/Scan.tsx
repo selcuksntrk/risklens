@@ -159,7 +159,7 @@ function HazardCard({ hazard, scanId, hasCard, check, readOnly, legacy = false }
     <h4>{hazard.object}</h4><span className="relation">{RELATION_LABELS[hazard.relation] ?? hazard.relation}</span>
     <p>{hazard.evidence_observation}</p><p>{hazard.rationale}</p>
     <small className="muted">{hazard.tracking_supported ? `Exact-frame tracking support · frame ${hazard.evidence_frame}` : hazard.tracking_note || 'No exact-frame tracking support recorded.'}</small>
-    {check && <p className={`verdict ${legacy ? 'cannot_verify' : check.verdict}`}><b>{legacy ? 'Historical result · current safeguards unknown' : VERDICT[check.verdict]}</b> · {check.what_changed}<br />{check.rationale}{check.next_view_request && <><br />{check.next_view_request}</>}</p>}
+    {check && <p className={`verdict ${legacy ? 'cannot_verify' : check.verdict}`}><b>{legacy ? 'Historical result · current safeguards unknown' : VERDICT[check.verdict]}</b> · {check.what_changed}{check.rationale && check.rationale !== check.what_changed && <><br />{check.rationale}</>}{check.next_view_request && <><br />{check.next_view_request}</>}</p>}
     {hazard.next_view_request && <p>Requested view: {hazard.next_view_request}</p>}
     {supported && hazard.fix ? <FixBlock fix={hazard.fix} /> : <p className="notice">Source-linked recommendations are unavailable for this finding. No actionable instructions or AI illustration are offered.</p>}
     {!readOnly && <button className="ghost" onClick={() => go(`verify/${scanId}/${hazard.id}`)}>Show this detail</button>}
