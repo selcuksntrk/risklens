@@ -6,6 +6,7 @@ export default function Home() {
   const [scans, setScans] = useState<ScanRow[]>([])
   const [examples, setExamples] = useState<Example[]>([])
   const [error, setError] = useState('')
+  const [runError, setRunError] = useState('')
   const [busy, setBusy] = useState(false)
   const keys = useRef<Record<string, string>>({})
   useEffect(() => {
@@ -16,10 +17,10 @@ export default function Home() {
   }, [])
   async function tryExample(id: string) {
     if (busy) return
-    setBusy(true); setError('')
+    setBusy(true); setRunError('')
     keys.current[id] ??= newUploadKey()
     try { go(`scan/${await runExample(id, keys.current[id])}`) }
-    catch (e) { setError((e as Error).message); setBusy(false) }
+    catch (e) { setRunError((e as Error).message); setBusy(false) }
   }
   const sample = examples[0]
 
@@ -73,6 +74,7 @@ export default function Home() {
             <button className="secondary" onClick={() => go(`scan/${sample.scan_id}`)}>Open sample report</button>
             <button className="link-button" disabled={busy} onClick={() => void tryExample(sample.id)}>{busy ? 'Starting…' : 'Run the sample analysis (~2–3 min)'}</button>
           </div>
+          {runError && <p className="error" role="alert">{runError} The sample report still opens without any model calls.</p>}
           <p className="fine">The report opens instantly with no new model calls; running the analysis starts a fresh Meta model run, so findings can differ. {sample.synthetic && 'Synthetic scene, not a real household. '}<a href={sample.source_url} target="_blank" rel="noreferrer">{sample.license}</a></p>
         </div>
       </div>

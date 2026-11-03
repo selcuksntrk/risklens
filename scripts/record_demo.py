@@ -109,10 +109,12 @@ async def main():
         rec = Recorder(b, OUT / 'raw-run.mp4')
         async with rec:
             t0 = time.time()
-            await b.goto(URL + '/#/', settle=3); await asyncio.sleep(4)
-            await b.smooth_scroll(330, 3); await asyncio.sleep(4)
-            await b.click_text('Run sample with Meta AI'); t_click = time.time() - t0
-            await b.wait_for('location.hash.startsWith("#/scan/") && location.hash !== "#/scan/hypersimbedroom"', 60)
+            await b.goto(URL + '/#/', settle=3); await asyncio.sleep(5)   # own-video actions first
+            await b.js('document.getElementById("sample-title").scrollIntoView({behavior: "smooth", block: "start"})'); await asyncio.sleep(5)
+            await b.click_text('Run the sample analysis'); t_click = time.time() - t0
+            await b.wait_for('(location.hash.startsWith("#/scan/") && location.hash !== "#/scan/hypersimbedroom") || !!document.querySelector(".sample .error")', 60)
+            if not (await b.js('location.hash')).startswith('#/scan/'):
+                raise RuntimeError('Sample run refused: ' + await b.js('document.querySelector(".sample .error").textContent'))
             log['run_scan_id'] = (await b.js('location.hash')).split('/')[2]
             await b.wait_for('!!document.querySelector("article.report") || !!document.querySelector(".error")', 600, 1)
             t_done = time.time() - t0

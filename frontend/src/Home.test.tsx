@@ -8,7 +8,7 @@ vi.mock('./api', async (original) => ({ ...await original<typeof api>(),
   listScans: vi.fn().mockResolvedValue([]),
   listExamples: vi.fn().mockResolvedValue([{ id: 'hypersim-bedroom', scan_id: 'hypersimbedroom', title: 'A synthetic bedroom walkthrough',
     description: 'Sample', license: 'CC BY-SA 3.0', source_url: 'https://example.org', synthetic: true }]),
-  uploadScan: vi.fn().mockResolvedValue('newscan'), ensureSession: vi.fn().mockResolvedValue(undefined) }))
+  runExample: vi.fn(), uploadScan: vi.fn().mockResolvedValue('newscan'), ensureSession: vi.fn().mockResolvedValue(undefined) }))
 
 it('leads with recording or uploading your own video; the sample stays one tap away', async () => {
   render(<Home />)
@@ -33,4 +33,13 @@ it('a file chosen on the home screen opens the capture preview ready to send', a
   await waitFor(() => expect(api.uploadScan).toHaveBeenCalledTimes(1))
   expect(vi.mocked(api.uploadScan).mock.calls[0].slice(0, 2)).toEqual([file, 'bedroom.mp4'])
   vi.unstubAllGlobals()
+})
+
+it('shows a failed sample run next to the sample, not at the top of the page', async () => {
+  vi.mocked(api.runExample).mockRejectedValueOnce(new Error('Daily scan limit for this network reached.'))
+  render(<Home />)
+  fireEvent.click(await screen.findByText(/Run the sample analysis/))
+  const alert = await screen.findByRole('alert')
+  expect(alert.textContent).toContain('Daily scan limit')
+  expect(alert.closest('.sample')).not.toBeNull()
 })
