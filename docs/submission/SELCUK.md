@@ -36,6 +36,8 @@ Uygulama ekran kayıtları ajan tarafından **canlı üründen** alındı (headl
 
 ## 4. Son teslim — 30–45 dakika
 
+**İlk iş:** PR #1'i (`codex/home-test-readiness` → `main`) *merge commit* ile birleştir: `gh pr ready 1 && gh pr merge 1 --merge`. Form ve videodaki linkler `main`'i gösteriyor.
+
 `FORM.md` ve `RIGHTS.md` ile gerçek platform alanlarını/deklarasyonlarını kontrol et. Video bağlantısını giriş yapmadan aç; public kaynak dalının linkini kullan. Platformda gönderimi tamamla ve teyit kaydını `HANDOFF.md` içine yaz.
 
 İç hedef: **4 Kasım 22:00 İstanbul / 14:00 ET**. Resmî son tarih: **5 Kasım 05:00 İstanbul / 4 Kasım 21:00 ET**. Taslak form, video dosyası veya çalışan site teslim teyidi yerine geçmez.
