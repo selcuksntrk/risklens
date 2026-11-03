@@ -4,6 +4,10 @@ Film a room, review visible earthquake-related findings with evidence, read sour
 
 Theme: **Build for Your World**. Built in Istanbul for people preparing their homes for earthquakes.
 
+**Explore without recording your home:** [open RiskLens](https://selcuksntrk--risklens-web.us-east.modal.run), then choose **Open completed report**. It opens a previously computed, licensed synthetic example without new model calls. **Run sample with Meta AI** starts a new analysis; outcomes and latency can vary.
+
+**Hackathon delivery:** [measured synthetic regression](docs/EVALUATION.md) · [submission package](docs/submission/README.md) · [tested source branch](https://github.com/selcuksntrk/risklens/tree/codex/home-test-readiness). Final voiceover, actual screen recording, iPhone review and platform submission remain separately tracked. Real-world physical-change validation has not been completed.
+
 The application distinguishes observed conditions from details that need another view. An unseen attachment is unknown; a visible bracket does not establish adequate installation. Technical failures cannot become a “low risk” result. Assessment completeness describes the analysis stages, not whole-room coverage or safety.
 
 The existing deployment is [RiskLens on Modal](https://selcuksntrk--risklens-web.us-east.modal.run). Check `/api/health` against the local `VERSION` before treating a deployment as this revision. See [implementation and validation status](docs/STATUS.md) for outstanding release gates.
@@ -80,7 +84,7 @@ The public sample is an explicitly attributed **synthetic Hypersim scene**, lice
 
 The packaging tool accepts only approved licensed source provenance and schema-2 reports. Source media and generated examples are excluded from Git. See [data licenses](DATA_LICENSES.md), `scripts/fetch_example.py`, `scripts/package_example.py`, and [evaluation protocol](eval/README.md).
 
-There is no claimed real-home precision, recall, safety percentage or successful physical fix yet. A0/B0–B4 and phone tests must be recorded, not inferred from unit tests. Target 3–5 rooms / 10–15 clips; report actual counts, false confirmations with denominators, abstentions, duration and cost. Keep development and evaluation rooms separate. See [acceptance tests](docs/ACCEPTANCE.md).
+There is no claimed real-home precision, recall, safety percentage or successful physical fix. The current delivery uses five previously used Hypersim scenes for **development regression**, not an independent benchmark. The same inputs run through Spark-only and the full pipeline; demo repetitions and limited synthetic negative controls are reported separately. Human correctness review remains pending. Real-room A0/B0–B4 and the 3–5-room pilot are future validation, not completed entry evidence. See [acceptance tests](docs/ACCEPTANCE.md).
 
 Context for the problem: a study of New Zealand commercial buildings during the 2010–2014 earthquakes reported 556 of 947 injuries attributable to non-structural damage ([Yeow et al., 2020](https://doi.org/10.1177/8755293019900775)). This specific sample is not a universal estimate for homes or all earthquakes.
 
@@ -88,7 +92,7 @@ Context for the problem: a study of New Zealand commercial buildings during the 
 
 `python3 scripts/build_release.py` derives one release ID from the application sources and lockfiles, builds the frontend with it, and writes `VERSION` and `release.json`. The backend health endpoint returns that version and supported report schema. [Release runbook](docs/RELEASE.md) covers clean installation, deployment, negative access checks and rollback without deleting user data.
 
-[Demo storyboard and submission checklist](docs/SUBMISSION.md) is a preparation artifact. Actual home footage, measured performance and submission links remain to be supplied. The open-weight auditor, expert labels, advanced re-identification, revocable sharing and volunteer pilot are **future work**, gated by evidence in [pilot protocol](docs/PILOT.md).
+[Demo storyboard and submission checklist](docs/SUBMISSION.md) routes to the synthetic-only delivery package. No personal-home footage is required for this delivery. Final media, actual phone/visual review and submission confirmation remain pending. The open-weight auditor, expert labels, advanced re-identification, revocable sharing and volunteer pilot are **future work**, gated by evidence in [pilot protocol](docs/PILOT.md).
 
 ## Event work and third-party material
 

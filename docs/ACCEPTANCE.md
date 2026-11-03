@@ -1,6 +1,10 @@
-# Acceptance record — real tests still required
+# Acceptance record — synthetic delivery and future real tests
 
-Schedule: real-room capture November 1, 2026. Test on physical iPhone/Safari and Android/Chrome. Record device, OS/browser version, application release, timestamp, case ID, observed outcome and artifact location. Do not put private clips or narration in Git.
+**November 3 delivery decision:** the hackathon demo uses licensed synthetic footage only. The real-room table below is a future validation protocol, not a claim of completed work or an official entry requirement. Phone testing for this delivery is **iPhone/Safari with a supplied synthetic file**; see [Selçuk's checklist](submission/SELCUK.md). Camera recording, microphone behavior and Android hardware remain untested unless separately recorded. Actual desktop/mobile visual QA remains pending because computer-control access was unavailable.
+
+Synthetic negative controls are recorded in [evaluation results](EVALUATION.md): B0 same file, B1 re-encoding, B3 crop and B4 different rendered room. They do not replace real-camera tests. No synthetic B2 physical success is permitted.
+
+Future physical-validation protocol: test on physical iPhone/Safari and Android/Chrome when consented real-room work resumes. Record device, OS/browser version, application release, timestamp, case ID, observed outcome and artifact location. Do not put private clips or narration in Git.
 
 ## Mobile cases (run on both phones)
 
