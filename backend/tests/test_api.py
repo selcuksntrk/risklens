@@ -158,3 +158,17 @@ def owned_root(client, tmp_path, scan_id):
     owner = hashlib.sha256(client.cookies[access.COOKIE].encode()).hexdigest()
     access.new_metadata(root, owner)
     return root
+
+
+def test_cache_headers_keep_safari_from_pinning_a_stale_index(client):
+    from app import main
+    if not main.FRONTEND.is_dir():
+        pytest.skip('frontend not built')
+    index = client.get('/')
+    assert index.status_code == 200 and index.headers['cache-control'] == 'no-cache'
+    asset = next(p for p in (main.FRONTEND / 'assets').iterdir() if p.suffix == '.js')
+    hashed = client.get(f'/assets/{asset.name}')
+    assert hashed.status_code == 200 and 'immutable' in hashed.headers['cache-control']
+    gone = client.get('/assets/index-deleted.js')
+    assert gone.status_code == 404 and 'immutable' not in gone.headers.get('cache-control', '')
+    assert client.get('/api/health').headers['cache-control'] == 'no-store'

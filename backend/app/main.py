@@ -87,6 +87,13 @@ async def protect_requests(request, call_next):
     response = await call_next(request)
     if request.url.path.startswith('/api/'):
         response.headers['Cache-Control'] = 'no-store'
+    elif request.url.path.startswith('/assets/') and response.status_code == 200:
+        # Content-hashed build output: safe to cache forever.
+        response.headers['Cache-Control'] = 'public, max-age=31536000, immutable'
+    else:
+        # index.html / manifest / favicon: always revalidate (ETag → 304). Without this, Safari's
+        # heuristic caching kept an old index.html pointing at deleted asset hashes → blank page.
+        response.headers['Cache-Control'] = 'no-cache'
     response.headers['X-Content-Type-Options'] = 'nosniff'
     response.headers['Referrer-Policy'] = 'same-origin'
     return response
