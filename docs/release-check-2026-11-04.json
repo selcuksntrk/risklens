@@ -1,5 +1,5 @@
 {
-  "version": "v2-c3a70a9e1077",
+  "version": "v2-f04011cd606b",
   "checks": [
     "health_and_frontend_release_match",
     "completed_licensed_example_readable_without_session"

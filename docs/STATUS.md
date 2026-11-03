@@ -1,6 +1,6 @@
 # Implementation and validation status — November 4, 2026
 
-Current release: **v2-c3a70a9e1077** (Nov 4; previous known-good: v2-7cfff1fcf71c). [Live application](https://selcuksntrk--risklens-web.us-east.modal.run) · [health/version](https://selcuksntrk--risklens-web.us-east.modal.run/api/health). The homepage footer shows the same release ID.
+Current release: **v2-f04011cd606b** (Nov 4, simplified notebook UI; previous: v2-c3a70a9e1077, v2-7cfff1fcf71c). [Live application](https://selcuksntrk--risklens-web.us-east.modal.run) · [health/version](https://selcuksntrk--risklens-web.us-east.modal.run/api/health). The homepage footer shows the same release ID.
 
 This is a tested software prototype, measured on licensed synthetic scenes and demonstrated on one real recording of the author's home. It is **not** an expert safety assessment, a real-home accuracy result or a demonstration of a successful physical precaution.
 
@@ -17,6 +17,8 @@ This is a tested software prototype, measured on licensed synthetic scenes and d
 | G — Nov 3 delivery | Synthetic development regression ([results](EVALUATION.md)); judge-first homepage; model-generated labelling; visual QA fixes; headless-Chrome QA and footage recorder |
 
 ## Recorded checks (November 4)
+
+- **Simplified UI** deployed as `v2-f04011cd606b`: plain-language copy, report as summary + numbered list with one finding per screen, light analysis screen, About page for models/limits/privacy/examples, home process section built from the real run. 14 frontend + 72 backend tests; visual QA (emulated) at 1440/390/360 in light and dark: no page overflow, no text below 13 px. Release check passes ([machine-readable](release-check-2026-11-04.json)).
 
 - **Redesign + samples** deployed as `v2-c3a70a9e1077`: “evidence lens” UI (home gallery, dark live/replay analysis stage, image-led report, capture stage). Samples: the author's real home (blurred, no audio) + three Muse Image designed scenes (18/18 shots passed the Spark QA gate).
 - Recorded sample runs (local CLI, same code): real home complete, 3 findings, 100 s, $0.275; living room 6 findings, designed 5/5 matched; children's bedroom 6 findings, 4/4; kitchen/entrance 5 findings, 4/5 (missed the narrowed exit path). Author-matched, one run each; not accuracy for real homes.
