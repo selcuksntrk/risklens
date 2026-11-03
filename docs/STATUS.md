@@ -1,6 +1,6 @@
-# Implementation and validation status — November 3, 2026
+# Implementation and validation status — November 4, 2026
 
-Submitted release candidate: **v2-7cfff1fcf71c**. [Live application](https://selcuksntrk--risklens-web.us-east.modal.run) · [health/version](https://selcuksntrk--risklens-web.us-east.modal.run/api/health). The homepage footer shows the same release ID.
+Current release: **v2-c3a70a9e1077** (Nov 4; previous known-good: v2-7cfff1fcf71c). [Live application](https://selcuksntrk--risklens-web.us-east.modal.run) · [health/version](https://selcuksntrk--risklens-web.us-east.modal.run/api/health). The homepage footer shows the same release ID.
 
 This is a tested software prototype, measured on licensed synthetic scenes and demonstrated on one real recording of the author's home. It is **not** an expert safety assessment, a real-home accuracy result or a demonstration of a successful physical precaution.
 
@@ -15,6 +15,14 @@ This is a tested software prototype, measured on licensed synthetic scenes and d
 | E — privacy/operations | Random browser session; owner checks on all private routes; read-only public allowlist; 7/30-day retention; remote-file deletion; one active + two queued jobs; call-level reservations; restart interruption; Modal volume commits at persistence boundaries; $15/day model cap |
 | F — example/release | Licensed synthetic example opened in one tap without model calls; live sample run; own-video upload; matching frontend/backend release; release runbook |
 | G — Nov 3 delivery | Synthetic development regression ([results](EVALUATION.md)); judge-first homepage; model-generated labelling; visual QA fixes; headless-Chrome QA and footage recorder |
+
+## Recorded checks (November 4)
+
+- **Redesign + samples** deployed as `v2-c3a70a9e1077`: “evidence lens” UI (home gallery, dark live/replay analysis stage, image-led report, capture stage). Samples: the author's real home (blurred, no audio) + three Muse Image designed scenes (18/18 shots passed the Spark QA gate).
+- Recorded sample runs (local CLI, same code): real home complete, 3 findings, 100 s, $0.275; living room 6 findings, designed 5/5 matched; children's bedroom 6 findings, 4/4; kitchen/entrance 5 findings, 4/5 (missed the narrowed exit path). Author-matched, one run each; not accuracy for real homes.
+- **Production live run** of the children's-bedroom sample: complete, 5 findings, 173 s, $0.316, all 4 designed hazards reported; a second browser session gets 404 on the private scan.
+- 72 backend + 13 frontend tests, lint and build pass. Visual QA (headless Chrome emulation, 1440/390/360, light and dark, 5 pages): no horizontal overflow, no text below 13 px; small targets are inline source links, 20 px checkboxes inside 44 px labels and the hidden file input.
+- Release check: health/frontend match and public read-only examples ([machine-readable](release-check-2026-11-04.json)).
 
 ## Recorded checks (November 3)
 

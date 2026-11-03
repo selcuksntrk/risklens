@@ -23,6 +23,7 @@ The existing deployment is [RiskLens on Modal](https://selcuksntrk--risklens-web
 | Recommendations | Muse Spark 1.3 + FEMA E-74 lookup | Cite sections actually returned by the lookup, with per-action references |
 | Optional narration | Muse Voice Transcribe 1.0 | Live transcription through a server-side proxy; gallery audio is not automatically transcribed |
 | Optional illustration | Muse Image 1.0 | Explain a sourced precaution with an image visibly labelled “AI-generated illustration”; never verification evidence |
+| Designed sample scenes | Muse Image 1.0 + Muse Spark 1.3 | `scripts/generate_scenes.py`: generate each room from a scene bible with designed hazards (answer key), anchor every view to the establishing shot, and gate each shot on a Spark consistency/visibility check (all 18 shots passed; 2 needed a second attempt) |
 | Re-filming | SAM 3.1 + Muse Spark 1.3 + deterministic guards | Compare a selected candidate with original evidence; require same-object identity, a relevant visible change and high confidence |
 
 React/TypeScript frontend → FastAPI → bounded job queue → ffmpeg → Meta models → atomic JSON reports and evidence on a Modal Volume. One container, one active scan/verification, two queued jobs. Restarted jobs are interrupted, never silently restarted with paid calls. SSE shows progress; persistent job endpoints and polling recover state after disconnects.
@@ -80,9 +81,18 @@ Each model call reserves budget before dispatch. Actual usage settles reservatio
 
 ## Example and evaluation
 
-The public sample is an explicitly attributed **synthetic Hypersim scene**, licensed CC BY-SA 3.0. It is not someone's home and is not evidence of a physical precaution. The sample report opens without new inference. “Run the sample analysis” starts a new private pipeline run.
+The home page offers **four samples**, each with a precomputed report (no new model calls), an **analysis replay** of its recorded run (stored timeline events on a compressed clock, labelled as a replay) and an optional new live run:
 
-The packaging tool accepts only approved licensed source provenance and schema-2 reports. Source media and generated examples are excluded from Git. See [data licenses](DATA_LICENSES.md), `scripts/fetch_example.py`, `scripts/package_example.py`, and [evaluation protocol](eval/README.md).
+| Sample | Source | Recorded run |
+|---|---|---|
+| Real home, Istanbul | The author's own 37 s phone video (photos blurred, audio removed); shown with permission, no reuse licence | complete · 3 findings · 100 s · $0.275 |
+| Designed living room | Muse Image scene with 5 designed hazards + 1 secured control | complete · 6 findings · designed hazards matched **5/5** |
+| Designed children's bedroom | Muse Image scene with 4 designed hazards + 1 low-risk control | complete · 6 findings · matched **4/4** |
+| Designed kitchen and entrance | Muse Image scene with 5 designed hazards + 1 secured control | complete · 5 findings · matched **4/5** (missed the boxes narrowing the path to the front door; flagged the fridge, which was not designed) |
+
+Designed scenes are rendered into phone-style 1080×1920 walkthroughs (`scripts/render_walkthrough.py`: handheld drift, whip pans, sensor noise, an “AI-generated scene · Muse Image” label on every frame). Answer-key matches are author-matched from each finding's object and evidence box (`examples/matches/`), one run per scene, and pending a second human check. They show the pipeline on known content; they are **not** an accuracy measurement for real homes. The model reviewing generated images is a known limitation.
+
+The packaging tool publishes only videos whose SHA-256 is in the committed registry `examples/sources.json` and schema-2 reports produced from that same file. Source media and generated examples are excluded from Git. See [data licenses](DATA_LICENSES.md), `scripts/fetch_example.py`, `scripts/package_example.py`, and [evaluation protocol](eval/README.md).
 
 There is no claimed real-home precision, recall, safety percentage or successful physical fix. The current delivery uses five previously used Hypersim scenes for **development regression**, not an independent benchmark. The same inputs run through Spark-only and the full pipeline; demo repetitions and limited synthetic negative controls are reported separately. Human correctness review remains pending. Real-room A0/B0–B4 and the 3–5-room pilot are future validation, not completed entry evidence. See [acceptance tests](docs/ACCEPTANCE.md).
 
@@ -101,6 +111,8 @@ Application development began during the Oct 26–Nov 4, 2026 event window. Comm
 Built during the hackathon (all of `backend/`, `frontend/src/`, `deploy/`, `eval/`, `scripts/`):
 
 - Video ingestion, proxy encoding and live progress timeline (SSE with polling fallback).
+- Nov 4 “evidence lens” interface: sample gallery, dark live/replay analysis stage showing each Meta model's step, image-led report with seen vs. unknown, next-step checklist, answer key and print/PDF.
+- Designed sample scenes: Muse Image generation gated by Muse Spark QA, phone-style walkthrough renderer, hash-checked sample registry and recorded-run replay.
 - Spark planner → SAM 3.1 tracking → Spark surveyor on marked frames; observed vs. needs-check report contract with exact-frame evidence.
 - FEMA E-74 lookup tool and source-checked suggestions; unsupported actions withheld.
 - Re-filming comparison with SHA-256 same-file guard, same-object/relevant-change/confidence requirements and attempt history.
@@ -108,6 +120,6 @@ Built during the hackathon (all of `backend/`, `frontend/src/`, `deploy/`, `eval
 - Licensed synthetic example packaging, synthetic development-regression runner/summary (Nov 3), and headless-Chrome visual QA and demo-footage recorders (`scripts/cdp.py`, `scripts/visual_qa.py`, `scripts/record_demo.py`, `scripts/record_own_video.py`, using the locally installed Google Chrome).
 - User-first interface (Nov 3): record/upload on the home screen, sample one tap away, token-based light/dark design system; duration-based keyframe sampling; cache headers that keep Safari from loading stale builds.
 
-The SAM request grammar follows Meta's Model Cookbook (MIT, © Meta Platforms, Inc.). The frontend started from the Vite React/TypeScript template. Dependencies include React/Vite (MIT), openai (Apache-2.0), Pillow (MIT-CMU), FastAPI (MIT), uvicorn/websockets (BSD), and python-multipart (Apache-2.0). ffmpeg is an external program; its build has its own LGPL/GPL licensing. FEMA source excerpts and Hypersim-derived assets have separate notices in [DATA_LICENSES.md](DATA_LICENSES.md).
+The SAM request grammar follows Meta's Model Cookbook (MIT, © Meta Platforms, Inc.). The frontend started from the Vite React/TypeScript template. Dependencies include React/Vite (MIT), openai (Apache-2.0), Pillow (MIT-CMU), FastAPI (MIT), uvicorn/websockets (BSD), and python-multipart (Apache-2.0). ffmpeg is an external program; its build has its own LGPL/GPL licensing. FEMA source excerpts, Hypersim evaluation assets and the sample videos have separate notices in [DATA_LICENSES.md](DATA_LICENSES.md).
 
 Application code: MIT, see [LICENSE](LICENSE). Hypersim-derived assets are CC BY-SA 3.0, not relicensed under the application license.
