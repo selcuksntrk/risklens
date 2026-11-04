@@ -1,35 +1,81 @@
 # Form-ready project copy
 
-Use the current platform's actual field lengths. This document is not a completed submission.
+Paste-ready text for the Cerebral Valley submission form. Check each field's length limit on the real form; shorter versions are given where a limit is likely. This is not a completed submission.
 
-**Name:** RiskLens
+## Basics
 
-**Track:** Indie Developer
+- **Name:** RiskLens
+- **Track:** Indie Developer
+- **Theme:** Build for Your World
+- **Team:** Selçuk (solo). Use the platform's participant identity.
+- **Live product:** https://selcuksntrk--risklens-web.us-east.modal.run
+- **Source code:** https://github.com/selcuksntrk/risklens
+- **Demo video:** add the login-free link after upload
+- **Evaluation notes:** https://github.com/selcuksntrk/risklens/blob/main/docs/EVALUATION.md
 
-**Theme:** Build for Your World
+## Tagline
 
-**Tagline:** Room findings linked to visual evidence, source-backed precautions, and explicit uncertainty.
+Film a room. See what could fall in an earthquake, with the exact frame and what to do next.
 
-**Short description:** RiskLens is an earthquake-preparedness prototype built in Istanbul. It uses Muse Spark and SAM to review sampled room views, connect findings to tracked objects, and suggest precautions linked to FEMA guidance. The demo video opens with a real recording of the author's bedroom in Istanbul (suitcases stacked on a tall wardrobe). Visitors can explore four samples without filming their homes: that real recording plus three Istanbul rooms designed with Muse Image, each with hazards placed on purpose and an answer key.
+## Short description
 
-**Problem and impact:** Preparing a room involves deciding which visible conditions deserve attention, what remains unknown, and which guidance supports a next step. RiskLens brings those pieces into one inspectable workflow. Its intended users are people preparing their living spaces. This submission demonstrates the workflow on one real home recording and on synthetic interiors (Hypersim for development regression; three Muse Image designed scenes where RiskLens matched 5/5, 4/4 and 4/5 designed hazards in one author-matched run each). It does not establish real-home accuracy, behavior change or reduced losses.
+RiskLens turns a one-minute phone video of a room into a list of things that could fall, tip over or block your way out in an earthquake. Each finding shows the exact frame it is based on, says what the video can't show, and links next steps to FEMA guidance. Built in Istanbul with Muse Spark, SAM 3.1 and Muse Image.
 
-**How it works / Meta models:** Muse Spark 1.3 selects tracking concepts, reviews marked frames and uses a bounded FEMA lookup workflow to prepare source-linked suggestions. SAM 3.1 tracks candidate objects through the clip and supports exact-frame evidence. Experimental comparison uses SAM and Spark with deterministic checks for identity and visible change. Muse Image 1.0 draws a labelled picture of a possible fix on request (never verification evidence) and generated the three test rooms: each room starts from a written scene description with planted hazards, Muse Image draws six views anchored to the first, and Muse Spark checks every view before it is used (18/18 passed). Muse Voice Transcribe is an optional implemented feature for spoken room notes. No open-weight bonus eligibility is claimed.
+## Problem and impact
 
-**What makes it different:** The product connects findings to object evidence, records source access, withholds unsupported actionable suggestions, and distinguishes missing evidence from confirmed changes. The contribution is the inspectable multi-step workflow. We do not claim to be the first property-inspection or earthquake-preparedness application.
+I live in Istanbul, where most of us know an earthquake is a question of when. What we can't easily tell is what to do about it at home. An engineer can't visit every flat, but a wardrobe that tips over, a shelf above a child's bed or boxes narrowing the way to the front door are things a family can deal with today, if someone points them out.
 
-**Built during the event:** Video ingestion and progress reporting; model orchestration; tracking and marked evidence; observed/needs-check report contract; source-checked suggestions; experimental comparison safeguards; session ownership and deletion; metered model calls; hash-checked public examples (the author's real home and three Muse Image test rooms with answer keys) and recorded-run replay; Muse Image scene generator with Spark QA and phone-style walkthrough renderer; plain-language, mobile-first interface with one finding per screen; reproducible release and evaluation tooling; duration-based keyframe sampling. Commit history and README identify the event work and third-party components. Development began after the October 26 kickoff.
+RiskLens is for people preparing the rooms they live in. It needs a phone and about a minute, with no account and no expert on site. The problem is wider than one city: in a study of New Zealand commercial buildings during the 2010–2014 earthquakes, 556 of 947 injuries were attributed to non-structural damage (Yeow et al., 2020). That sample isn't homes, and RiskLens hasn't yet been tested for behaviour change or reduced harm; a volunteer pilot is the next step.
 
-**Evaluation:** Three Muse Image test rooms with planted hazards: 13 of 14 found (5/5, 4/4, 4/5; one run each, author-matched; not an accuracy score). See the linked measured report for five previously used Hypersim scenes, same-input Spark-only/full runs, repeated demo runs and negative controls. The report includes failures and cost/time accounting. This is development regression, not an independent benchmark. Human correctness adjudication and positive physical-change testing are pending. Do not replace these qualifications with an accuracy percentage.
+## How it uses Meta's models
 
-**Limitations:** Sampled views can miss objects or relationships. Hidden attachment conditions are unknown. Source-linked suggestions are not expert approval. A visible change does not certify installation adequacy. No structural inspection, earthquake prediction, calibrated risk score or insurance decision is provided.
+Each model does the part it is best at, and each hands its result to the next:
 
-**Links:**
+- **Muse Spark 1.3 (planner)** studies 6–12 still frames and decides which objects matter in this kind of room.
+- **SAM 3.1** follows those objects through the whole video, so every finding points to a real box on a real frame.
+- **Muse Spark 1.3 (surveyor)** reviews the boxed frames and keeps what it could see apart from what it couldn't, such as a hidden wall fixing.
+- **Muse Spark 1.3 (fix planner)** looks up sections of FEMA E-74 through a tool and writes next steps that cite them. A step that can't be traced to a section it read is withheld.
+- **Muse Image 1.0** draws what a fix could look like, always labelled as AI-made and never treated as proof.
+- **SAM 3.1 + Muse Spark 1.3 (film again)** compare a new video of an item with the first one, requiring the same object and a visible change.
+- **Muse Voice Transcribe 1.0** turns a spoken note about the room into text (optional).
 
-- Live product: https://selcuksntrk--risklens-web.us-east.modal.run
-- Public source: https://github.com/selcuksntrk/risklens
-- Evaluation: https://github.com/selcuksntrk/risklens/blob/main/docs/EVALUATION.md
-- Demo video: **pending actual screen recording, Selçuk's voice, review and upload**
-- Team: Selçuk; confirm the platform's participant identity rather than inventing profile details.
+**The less obvious use: Meta models built our test set.** To test on content with known answers, I wrote down three Istanbul rooms and their hazards first. Muse Image drew six views of each room, anchored to the first view, and Muse Spark checked every view for the same room and the planted hazards before it was used (18 of 18 passed, 2 on a second attempt). The views became phone-style walkthrough videos, labelled as AI-made. RiskLens then found 5 of 5, 4 of 4 and 4 of 5 planted hazards. It missed the boxes narrowing a hallway, and that miss is shown in the app.
 
-**Bonus positioning:** The implemented agent workflow may be described where the form asks. Do not claim open-weight execution or add models purely for a bonus. Social posting is not part of the automated submission work.
+## Technical depth
+
+- Exact-frame evidence: findings link to a tracked object and frame, not just a description of the room.
+- Source checks are enforced in code: unsupported suggestions are blocked in the interface and the endpoint.
+- Re-filming guards: an identical file is caught by a SHA-256 check before any model runs, and a change needs the same object, a relevant visible difference and high confidence.
+- Reliability: bounded job queue, idempotent uploads, per-call budget reservations, a $15 daily model cap, polling fallback for live progress, and interrupted jobs that never silently restart paid calls.
+- Privacy: private scans belong to a browser session, access is checked on every private route, videos are deleted after 7 days and reports after 30. Public examples come from a hash-checked list, so a private scan can't become public by its ID.
+- Measured: 73 backend and 14 frontend tests, plus a synthetic regression comparing Spark-only with the full pipeline, including negative controls with zero false confirmations.
+
+## Evaluation
+
+Three Muse Image test rooms with planted hazards: 13 of 14 found (one run per room, matched by hand). Five Hypersim scenes provide development regression, with failures, time and cost recorded. These are test scenes, so no accuracy on real homes is claimed. Positive before-and-after validation of a physical fix is future work.
+
+## Limitations
+
+It only sees what the video shows, and can miss objects or relationships. Hidden fixings are reported as unknown. It is not a building inspection and says nothing about structural safety. FEMA-linked steps are not reviewed by an engineer. A visible change does not prove a fix is adequate. Repeated runs can return somewhat different findings, and a run can take longer than the usual 2–3 minutes.
+
+## Built during the event
+
+All of it, from the October 26 kickoff: video processing and live progress, model orchestration, tracking and evidence frames, source-checked next steps, re-filming checks, privacy and budget controls, the test-room generator and its QA gate, recorded-run replay, and the interface. Third-party code and data (the SAM request grammar from Meta's cookbook, open-source dependencies, FEMA E-74 excerpts, Hypersim scenes) are labelled in the README and `DATA_LICENSES.md`.
+
+## Bonus fields (only if the form asks)
+
+- **Best Agentic:** planner, tracker, surveyor and tool-using fix planner with verification gates. Fair to mention.
+- **Open weights:** no open-weight model is used; do not claim it.
+- **Most Viral:** add the X post link once posted.
+
+## X post draft (Selçuk posts this himself, after submitting)
+
+> I live in Istanbul. So I built RiskLens: film a room for a minute, and Meta's Muse Spark and SAM 3.1 point out what could fall, tip over or block your way out, on the exact video frame, with next steps from FEMA guidance.
+>
+> It also tells you what it can't see.
+>
+> Built solo for the @Meta AI Developer Hackathon.
+>
+> [video] [live link]
+
+Check the correct event account and hashtag on the event page before posting.

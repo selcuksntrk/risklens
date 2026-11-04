@@ -26,9 +26,26 @@ The existing deployment is [RiskLens on Modal](https://selcuksntrk--risklens-web
 | Designed sample scenes | Muse Image 1.0 + Muse Spark 1.3 | `scripts/generate_scenes.py`: generate each room from a scene bible with designed hazards (answer key), anchor every view to the establishing shot, and gate each shot on a Spark consistency/visibility check (all 18 shots passed; 2 needed a second attempt) |
 | Re-filming | SAM 3.1 + Muse Spark 1.3 + deterministic guards | Compare a selected candidate with original evidence; require same-object identity, a relevant visible change and high confidence |
 
+```mermaid
+flowchart LR
+  V[Phone video] --> F[ffmpeg: keyframes and proxy]
+  F --> P[Muse Spark 1.3<br/>planner: what to track]
+  P --> S[SAM 3.1<br/>tracks objects through the video]
+  S --> M[Boxed frames]
+  M --> U[Muse Spark 1.3<br/>surveyor: visible vs unknown]
+  U --> X[Muse Spark 1.3 + FEMA E-74 lookup<br/>source-checked next steps]
+  X --> R[Report: frame, unknowns, steps]
+  R -. on request .-> I[Muse Image 1.0<br/>labelled picture of a fix]
+  R -. film again .-> C[SHA-256 guard, then SAM 3.1 + Muse Spark 1.3<br/>same object, visible change]
+  T[Scene description with planted hazards] --> G[Muse Image 1.0<br/>six anchored views]
+  G --> Q[Muse Spark 1.3<br/>QA gate per view]
+  Q --> W[Test-room walkthrough video]
+  W -. public example with answer key .-> V
+```
+
 React/TypeScript frontend → FastAPI → bounded job queue → ffmpeg → Meta models → atomic JSON reports and evidence on a Modal Volume. One container, one active scan/verification, two queued jobs. Restarted jobs are interrupted, never silently restarted with paid calls. SSE shows progress; persistent job endpoints and polling recover state after disconnects.
 
-`fixed` is an internal compatibility value. The UI says **Visible change confirmed**. It does not mean earthquake safety or adequate mounting has been certified. Reinterpretation of an incorrect original finding is manual review, not a completed precaution. Identical videos, untracked findings, missing objects and uncertain identity cannot automatically close a finding. Similar candidates retain separate IDs and evidence frames.
+`fixed` is an internal compatibility value. The UI says **Change visible**. It does not mean earthquake safety or adequate mounting has been certified. Reinterpretation of an incorrect original finding is manual review, not a completed precaution. Identical videos, untracked findings, missing objects and uncertain identity cannot automatically close a finding. Similar candidates retain separate IDs and evidence frames.
 
 Recommendations link to source sections; this is **not expert validation of each action**. Unsupported actions are withheld. Costs and times are estimates. Source recommendations and installation conditions still require expert evaluation in the pilot.
 
