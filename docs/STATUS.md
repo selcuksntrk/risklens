@@ -46,7 +46,7 @@ Costs are the application's recorded usage, not a provider invoice.
 ## Still required before submission (owner: Selçuk)
 
 1. Physical **iPhone/Safari** check with the supplied synthetic file ([checklist](submission/SELCUK.md)). Android, camera recording and microphone remain untested and are not claimed.
-2. Two English voice takes; caption alignment; final 1080p export via `scripts/assemble_demo.py`; phone review of the export.
+2. Final video uploaded: https://youtu.be/5rq5IBgD-AE.
 3. Human review of the synthetic observations if any correctness number is to be published (otherwise publish none).
 4. Authenticated rules/form review, login-free video URL, platform submission and confirmation record in [HANDOFF](submission/HANDOFF.md).
 
