@@ -2,7 +2,7 @@
 
 Spends model budget: one live run of the designed children's-bedroom sample (~$0.3), one Muse Image illustration
 ($0.01), one same-file comparison (hash guard, no verifier model call).
-Outputs (git-ignored) under docs/submission/private/footage-v2/:
+Outputs (git-ignored) under docs/submission/private/footage-v3/:
   01 real-home report · 02 home + samples · 03 live run (wait shortened, labelled) · 04 evidence, next steps, illustration
   05 same-file guard · 06 designed scenes + answer key · 07 real-home replay + end card
   cards/*.html and recording-log.json (timings, scan IDs, release, outcomes)
@@ -21,20 +21,20 @@ sys.path.insert(0, str(Path(__file__).resolve().parent))
 from cdp import Browser, Recorder  # noqa: E402
 
 ROOT = Path(__file__).resolve().parents[1]
-OUT = ROOT / 'docs/submission/private/footage-v2'
+OUT = ROOT / 'docs/submission/private/footage-v3'
 SAME_FILE = ROOT / 'examples/generated/designedkids/source.mp4'
 FONT = '/System/Library/Fonts/Supplemental/Arial Bold.ttf'
 URL = (sys.argv[1] if len(sys.argv) > 1 else 'https://selcuksntrk--risklens-web.us-east.modal.run').rstrip('/')
 LIVE_SAMPLE = 'designed-kids-bedroom'
 
-CARD_CSS = '''*{box-sizing:border-box}body{margin:0;background:#0a0e13;color:#e7eef5;font:20px/1.4 -apple-system,"Helvetica Neue",Arial,sans-serif;
+CARD_CSS = '''*{box-sizing:border-box}body{margin:0;background:#131313;color:#e7eef5;font:20px/1.4 -apple-system,"Helvetica Neue",Arial,sans-serif;
 height:100vh;display:flex;align-items:center;justify-content:center}main{width:1180px}h1{font-size:46px;margin:0 0 6px;letter-spacing:-.02em}h2{font-size:30px;margin:0 0 12px;letter-spacing:-.01em}
-.muted{color:#9fb0c2}.tag{display:inline-block;color:#38d9f0;font-size:16px;letter-spacing:.08em;font-weight:700;margin-bottom:10px}
-table{width:100%;border-collapse:collapse;margin:10px 0 14px}th,td{text-align:left;padding:6px 12px;border-bottom:1px solid #223040}th{color:#9fb0c2;font-weight:600;font-size:17px}
-td.n{font-weight:800;font-size:22px;color:#38d9f0;font-variant-numeric:tabular-nums}
-.flow{display:flex;gap:12px;align-items:stretch;margin:10px 0}.box{flex:1;background:#121922;border:1px solid #223040;border-radius:14px;padding:14px;font-size:18px}
-.box b{display:block;color:#38d9f0;font-size:19px;margin-bottom:4px}.arrow{align-self:center;color:#9fb0c2;font-size:26px}.note{font-size:17px;color:#9fb0c2;margin-top:12px}
-img{width:100%;border-radius:12px;border:1px solid #223040}a{color:#38d9f0}.big{font-size:30px;margin:8px 0}'''
+.muted{color:#a5a5a5}.tag{display:inline-block;color:#ff7a3d;font-size:16px;letter-spacing:.08em;font-weight:700;margin-bottom:10px}
+table{width:100%;border-collapse:collapse;margin:10px 0 14px}th,td{text-align:left;padding:6px 12px;border-bottom:1px solid #2e2e2e}th{color:#a5a5a5;font-weight:600;font-size:17px}
+td.n{font-weight:800;font-size:22px;color:#ff7a3d;font-variant-numeric:tabular-nums}
+.flow{display:flex;gap:12px;align-items:stretch;margin:10px 0}.box{flex:1;background:#1b1b1b;border:1px solid #2e2e2e;border-radius:14px;padding:14px;font-size:18px}
+.box b{display:block;color:#ff7a3d;font-size:19px;margin-bottom:4px}.arrow{align-self:center;color:#a5a5a5;font-size:26px}.note{font-size:17px;color:#a5a5a5;margin-top:12px}
+img{width:100%;border-radius:12px;border:1px solid #2e2e2e}a{color:#ff7a3d}.big{font-size:30px;margin:8px 0}'''
 
 
 def cards():
@@ -108,58 +108,60 @@ async def main():
         await b.goto(URL + '/#/', settle=3)
         log['release'] = await b.js('fetch("/api/health").then(r => r.json()).then(j => j.version)')
 
-        # 01 · the real home: report opens on the author's own recording, then the top finding's seen/unknown split.
+        # 01 · the real home: the list of things to check, then the top finding on its own screen.
         async with Recorder(b, OUT / '01-raw.mp4'):
-            await b.goto(URL + '/#/scan/realhomeistanbul', settle=4); await asyncio.sleep(3)
-            await scroll_to(b, '.report-hero', wait=5)
-            await scroll_to(b, '.hazards li', wait=7)
-            await b.smooth_scroll(240, 3); await asyncio.sleep(4)
+            await b.goto(URL + '/#/scan/realhomeistanbul', settle=4); await asyncio.sleep(4)
+            await b.js('document.querySelector(".finding-row").click()'); await asyncio.sleep(5)
+            await scroll_to(b, '.unknown', block='center', wait=6)
+            await scroll_to(b, '.todo', block='center', wait=6)
 
-        # 02 · home: hero, then the sample gallery.
+        # 02 · home: the question, the examples, the process told with the real run.
         async with Recorder(b, OUT / '02.mp4'):
-            await b.goto(URL + '/#/', settle=3); await asyncio.sleep(7)
-            await scroll_to(b, '#samples', wait=7)
-            await b.smooth_scroll(520, 4); await asyncio.sleep(5)
+            await b.goto(URL + '/#/', settle=3); await asyncio.sleep(6)
+            await scroll_to(b, '#examples', wait=6)
+            await scroll_to(b, '#how', wait=5)
+            await b.smooth_scroll(420, 4); await asyncio.sleep(4)
 
-        # 03 · a genuinely new live run of a designed sample (uncut raw; the wait is shortened and labelled later).
+        # 03 · a genuinely new live run of a designed example, started from its report (wait shortened later, labelled).
         rec = Recorder(b, OUT / 'raw-run.mp4')
         async with rec:
             t0 = time.time()
-            await b.goto(URL + '/#/', settle=3)
-            await scroll_to(b, f'[aria-labelledby="s-{LIVE_SAMPLE}"]', block='center', wait=4)
-            await b.js(f'document.querySelector(\'[aria-labelledby="s-{LIVE_SAMPLE}"] .link-button\').click()'); t_click = time.time() - t0
-            await b.wait_for('(location.hash.startsWith("#/scan/") && !location.hash.includes("designed")) || !!document.querySelector(".sample .error")', 60)
-            if not (await b.js('location.hash')).startswith('#/scan/'):
-                raise RuntimeError('Sample run refused: ' + await b.js('document.querySelector(".sample .error").textContent'))
+            await b.goto(URL + '/#/scan/designedkids', settle=4); await asyncio.sleep(3)
+            await b.click_text('Run it again live'); t_click = time.time() - t0
+            await b.wait_for('(location.hash.startsWith("#/scan/") && !location.hash.includes("designed")) || !!document.querySelector(".error")', 60)
+            if not (await b.js('location.hash')).startswith('#/scan/') or 'designed' in await b.js('location.hash'):
+                raise RuntimeError('Live run refused: ' + await b.js('document.querySelector(".error")?.textContent'))
             log['run_scan_id'] = (await b.js('location.hash')).split('/')[2]
             await b.wait_for('!!document.querySelector("article.report") || !!document.querySelector(".error")', 600, 1)
             t_done = time.time() - t0
-            await asyncio.sleep(4); await scroll_to(b, '.report-hero', wait=5)
+            await asyncio.sleep(6)
             t_end = time.time() - t0
         log['run'] = await b.js(f'fetch("/api/scans/{log["run_scan_id"]}").then(r => r.json()).then(j => ({{status: j.status, '
                                 f'assessment: j.report?.assessment?.status, findings: j.report?.hazards?.length, objects: j.report?.hazards?.map(h => h.object), '
                                 f'seconds: j.report?.seconds ?? null, cost_usd: j.report?.cost_usd ?? null, app_version: j.report?.provenance?.app_version}}))')
         log['run']['click_to_report_seconds'] = round(t_done - t_click, 1)
 
-        # 04 · on the new private report: evidence + seen/unknown, FEMA-linked next steps, a labelled Muse Image illustration.
-        async with Recorder(b, OUT / '04.mp4'):
+        # 04 · one finding: photo, what we couldn't see, FEMA-linked steps, then a labelled Muse Image picture of a fix.
+        async with Recorder(b, OUT / '04-raw.mp4'):
             await b.goto(f'{URL}/#/scan/{log["run_scan_id"]}', settle=4)
-            await scroll_to(b, '.hazards li', wait=6)
-            await scroll_to(b, '.hazards li .fix', block='center', wait=5)
-            await b.js('(() => { const a = document.querySelector(".hazards li .fix a"); if (a) { a.style.outline = "3px solid #38d9f0"; a.style.outlineOffset = "4px"; } })()')
+            await b.js('document.querySelector(".finding-row").click()'); await asyncio.sleep(5)
+            await scroll_to(b, '.todo', block='center', wait=4)
+            await b.js('(() => { const a = document.querySelector(".todo .src a"); if (a) { a.style.outline = "3px solid #d9480f"; a.style.outlineOffset = "4px"; } })()')
             await asyncio.sleep(4)
-            clicked = await b.js('(() => { const btn = [...document.querySelectorAll(".hazards li button")].find(x => x.textContent.includes("Illustrate recommendation")); '
-                                 'if (!btn) return false; btn.closest("li").scrollIntoView({behavior:"smooth", block:"start"}); btn.click(); return true })()')
-            log['illustration'] = 'requested' if clicked else 'no source-linked finding offered an illustration'
+            t_ill = time.time()
+            clicked = await b.js('(() => { const btn = [...document.querySelectorAll("button")].find(x => x.textContent.includes("Show what the fix could look like")); '
+                                 'if (!btn) return false; btn.click(); scrollTo({top: 0, behavior: "smooth"}); return true })()')
+            log['illustration'] = 'requested' if clicked else 'no source-linked finding offered a picture'
             if clicked:
                 try:
-                    await b.wait_for('!!document.querySelector(".media-tag") && document.querySelector(".media-tag").textContent.includes("AI-generated illustration")', 120, 1)
+                    await b.wait_for('[...document.querySelectorAll(".caption")].some(c => c.textContent.includes("AI-made picture"))', 120, 1)
                     log['illustration'] = 'shown'
                 except Exception:
                     log['illustration'] = 'timed out or refused'
-            await asyncio.sleep(7)
+            log['illustration_wait_s'] = round(time.time() - t_ill, 1)
+            await asyncio.sleep(8)
 
-        # 05 · re-filming with the same file: SHA-256 guard, no verifier model call.
+        # 05 · film again with the same file: SHA-256 guard, no verifier model call.
         hid = await b.js(f'fetch("/api/scans/{log["run_scan_id"]}").then(r => r.json()).then(j => j.report.hazards[0].id)')
         async with Recorder(b, OUT / '05-raw.mp4'):
             t1 = time.time()
@@ -167,34 +169,50 @@ async def main():
             doc = await b.send('DOM.getDocument', depth=-1, pierce=True)
             node = await b.send('DOM.querySelector', nodeId=doc['root']['nodeId'], selector='input[type=file]')
             await b.send('DOM.setFileInputFiles', files=[str(SAME_FILE)], nodeId=node['nodeId']); await asyncio.sleep(4)
-            await b.click_text('Use video')
-            await b.wait_for('[...document.querySelectorAll("article.report section h3")].some(h => h.textContent.includes("Re-filming results"))', 300, 1)
+            await b.click_text('Compare with the first video')
+            await b.wait_for('[...document.querySelectorAll(".verdict")].some(v => v.textContent.includes("After your new video"))', 300, 1)
             t_verify = time.time() - t1
-            await b.js('scrollTo({top: 0, behavior: "smooth"})'); await asyncio.sleep(3)
-            await scroll_to(b, '.verified-card, article.report .notice h3', block='center', wait=5)
-            await scroll_to(b, f'#finding-{hid} .verdict', block='center', wait=6)
-        log['verify'] = {'hazard_id': hid, 'seconds_to_result': round(t_verify, 1), 'file': 'same bytes as the packaged sample',
-                         'result_text': await b.js('[...document.querySelectorAll("article.report section")].find(s => s.textContent.includes("Re-filming results"))?.innerText')}
+            await asyncio.sleep(5)
+            await b.js('[...document.querySelectorAll(".finding-row")].find(r => r.textContent.includes("Can’t tell"))?.click()'); await asyncio.sleep(4)
+            await scroll_to(b, '.verdict', block='center', wait=6)
+        log['verify'] = {'hazard_id': hid, 'seconds_to_result': round(t_verify, 1), 'file': 'same bytes as the packaged example',
+                         'result_text': await b.js('document.querySelector(".verdict")?.innerText')}
 
-        # 06 · designed scenes: how they were made, then the answer key on the packaged living-room report.
+        # 06 · the test rooms: how they were made, then the answer key on the living room.
         async with Recorder(b, OUT / '06.mp4'):
             await b.goto((d / 'designed.html').as_uri(), settle=1); await asyncio.sleep(13)
             await b.goto(URL + '/#/scan/designedliving', settle=4)
-            await scroll_to(b, '.answer-key', wait=12)
+            await b.js('[...document.querySelectorAll("details.fold summary")].find(s => s.textContent.includes("planted"))?.click()')
+            await scroll_to(b, 'details.fold[open]', wait=12)
 
-        # 07 · the real home's analysis replay, then the end card.
+        # 07 · the real home's run replayed, then the end card.
         async with Recorder(b, OUT / '07.mp4'):
             await b.goto(URL + '/#/replay/real-home-istanbul', settle=2); await asyncio.sleep(12)
             await b.goto((d / 'end.html').as_uri(), settle=1); await asyncio.sleep(12)
 
     labelled(OUT / '01-raw.mp4', OUT / '01.mp4', "Real recording · Selçuk's home, Istanbul · personal photos blurred")
     raw = OUT / 'raw-run.mp4'
-    pre = OUT / '03-pre.mp4'; cut(raw, pre, max(0, t_click - 4), t_click + 6)
-    wait = (t_click + 6, t_done + 1); speed = max(1.0, (wait[1] - wait[0]) / 24.0)
+    pre = OUT / '03-pre.mp4'; cut(raw, pre, max(0, t_click - 3), t_click + 6)
+    wait = (t_click + 6, t_done + 1); speed = max(1.0, (wait[1] - wait[0]) / 28.0)
     cut(raw, OUT / '03a.mp4', *wait, speed=speed, label=f'Live run · waiting shortened {speed:.1f}× · actual {t_done - t_click:.0f} s')
     cut(raw, OUT / '03b.mp4', t_done + 1, t_end)
     concat([pre, OUT / '03a.mp4', OUT / '03b.mp4'], OUT / '03.mp4')
-    labelled(OUT / '05-raw.mp4', OUT / '05.mp4', 'Same-file guard · SHA-256 match · no verifier model call')
+    w = log.get('illustration_wait_s', 0); start_w = 17.0
+    if w > 6:
+        r4 = max(1.0, w / 3)
+        cut(OUT / '04-raw.mp4', OUT / '04a.mp4', 0, start_w)
+        cut(OUT / '04-raw.mp4', OUT / '04b.mp4', start_w, start_w + w, speed=r4, label=f'Muse Image drawing · shortened {r4:.0f}× · actual {w:.0f} s')
+        cut(OUT / '04-raw.mp4', OUT / '04c.mp4', start_w + w, 9999)
+        concat([OUT / '04a.mp4', OUT / '04b.mp4', OUT / '04c.mp4'], OUT / '04.mp4')
+    else:
+        cut(OUT / '04-raw.mp4', OUT / '04.mp4', 0, 9999)
+    g = 'Same-file guard · SHA-256 match · no verifier model call'
+    up = max(0.0, t_verify - 8)
+    r5 = max(1.0, up / 4)
+    cut(OUT / '05-raw.mp4', OUT / '05a.mp4', 0, 8, label=g)
+    cut(OUT / '05-raw.mp4', OUT / '05b.mp4', 8, 8 + up, speed=r5, label=f'Upload and file check · shortened {r5:.0f}× · actual {up:.0f} s')
+    cut(OUT / '05-raw.mp4', OUT / '05c.mp4', 8 + up, 9999, label=g)
+    concat([OUT / '05a.mp4', OUT / '05b.mp4', OUT / '05c.mp4'], OUT / '05.mp4')
     log.update(t_click=round(t_click, 1), t_done=round(t_done, 1), wait_speedup=round(speed, 2), finished=time.strftime('%Y-%m-%dT%H:%M:%S%z'))
     (OUT / 'recording-log.json').write_text(json.dumps(log, indent=2) + '\n'); print(json.dumps(log, indent=2))
 

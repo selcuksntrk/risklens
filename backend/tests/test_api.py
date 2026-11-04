@@ -208,3 +208,16 @@ def test_private_scan_source_video_is_never_served(client, tmp_path):
     scan_id = r.json()["scan_id"]
     assert client.get(f"/api/scans/{scan_id}/files/source.mp4").status_code == 404
     assert client.get(f"/api/examples/{scan_id}/media/source.mp4").status_code == 404
+
+
+def test_example_media_is_cacheable_but_private_scans_never_are(client, tmp_path):
+    _example(tmp_path)
+    (tmp_path / '_examples' / 'samplehome' / 'evidence' / 'h1.jpg').write_bytes(b'jpg')
+    assert client.get('/api/examples/sample-home/media/poster.jpg').headers['cache-control'] == 'public, max-age=86400'
+    assert client.get('/api/examples/sample-home/events').headers['cache-control'] == 'public, max-age=86400'
+    assert client.get('/api/scans/samplehome/files/evidence/h1.jpg').headers['cache-control'] == 'public, max-age=86400'
+    assert client.get('/api/examples/sample-home/media/secret.txt').headers['cache-control'] == 'no-store'
+    scan_id = client.post("/api/scans", files={"video": ("room.mp4", b"\x00" * 10, "video/mp4")}).json()["scan_id"]
+    import time; time.sleep(0.2)
+    private = client.get(f"/api/scans/{scan_id}/files/evidence/h1.jpg")
+    assert private.status_code == 200 and private.headers['cache-control'] == 'no-store'

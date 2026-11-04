@@ -82,7 +82,7 @@ def silent_preview(folder, captions, out):
 
 if __name__=='__main__':
     p=argparse.ArgumentParser();p.add_argument('--voice',type=Path);p.add_argument('--captions',type=Path,required=True)
-    p.add_argument('--clips',type=Path,default=ROOT/'docs/submission/private/footage-final')
+    p.add_argument('--clips',type=Path,default=ROOT/'docs/submission/private/footage-v3')
     p.add_argument('--output',type=Path,default=ROOT/'docs/submission/output/review-1')
     p.add_argument('--silent-preview',action='store_true',help='rehearsal cut without voice; draft captions allowed')
     args=p.parse_args()

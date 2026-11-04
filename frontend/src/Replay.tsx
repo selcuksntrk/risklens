@@ -3,6 +3,7 @@ import { replaySpeed, useReplay } from './useReplay'
 import { getExampleEvents, listExamples, type Example, type TimelineEvent } from './api'
 import Stage from './Analysis'
 import { go } from './routing'
+import { Top } from './components'
 
 export default function Replay({ exampleId }: { exampleId: string }) {
   const [example, setExample] = useState<Example | null>(null)
@@ -19,16 +20,15 @@ export default function Replay({ exampleId }: { exampleId: string }) {
   const speed = replaySpeed(total)
   const { clock, visible, finished } = useReplay(events, speed)
   const report = () => example && go(`scan/${example.scan_id}`)
-  return <main className="page wide">
-    <header className="bar"><button className="ghost" onClick={() => go('')}>‹ Home</button>
-      <span className="muted">{example?.title ?? 'Sample'}</span></header>
+  return <main className="page">
+    <Top />
     {error && <p className="error" role="alert">{error}</p>}
     {example && <Stage events={visible} scanId={example.scan_id} elapsed={clock}
-      title={finished ? 'Analysis complete' : 'Replaying the analysis'}
-      subtitle="The same events the Meta models produced during the recorded run, in their original order."
-      banner={<div className="replay-banner" role="note">
-        <span><b>Replay of a recorded run</b> · {Math.round(total)} s shown at {speed}× · no new model calls{example.synthetic ? ' · AI-generated scene' : ' · real home, photos blurred'}</span>
-        <button className={finished ? 'primary' : 'ghost'} onClick={report}>{finished ? 'Open the report' : 'Skip to report'}</button>
+      title={finished ? 'Done' : example.synthetic ? 'Replay: an AI-made test room' : 'Replay: a real flat in Istanbul'}
+      subtitle="This is a recording of an earlier run, played back faster. Nothing new is sent to the models."
+      banner={<div className="replay" role="note">
+        <span>Recorded run · {Math.round(total)} s shown {speed}× faster</span>
+        <button className={finished ? 'btn primary small' : 'text-btn'} onClick={report}>{finished ? 'See the report' : 'Skip to the report'}</button>
       </div>} />}
   </main>
 }
