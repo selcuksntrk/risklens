@@ -41,7 +41,6 @@ p{font-size:40px;line-height:1.3;color:#cfd0d2}.small{font-size:27px;color:#a7a9
 .row{display:flex;gap:26px;align-items:flex-start}.fig img{height:600px;border-radius:16px;display:block}.fig span{display:block;font-size:27px;color:#cfd0d2;margin-top:12px}
 .bars{margin-top:16px}.bar{display:flex;align-items:center;gap:18px;margin:9px 0;font-size:26px;color:#cfd0d2}.bar i{font-style:normal;width:190px;flex:none;text-align:right}
 .track{position:relative;flex:1;height:24px;background:#1c1d21;border-radius:6px}.track u{position:absolute;top:0;bottom:0;border-radius:6px;display:block}
-.check{display:flex;gap:18px;font-size:44px;font-weight:650;margin-top:18px}.check em{color:#78e08c;font-style:normal}
 .line{font-size:58px;line-height:1.14;font-weight:700;letter-spacing:-.015em;margin-top:28px}
 .full{position:absolute;left:110px;top:72px;width:1700px}
 .label{position:absolute;top:673px;font-size:36px;font-weight:650}.badge{position:absolute;top:566px;background:#0f1012ee;border-radius:16px;padding:2px 26px;font-size:92px;font-weight:800}
@@ -96,8 +95,8 @@ def build_layers(report):
                f'<div class=fig><img src="file://{A}/fixcards/h1.jpg" style="height:640px"><span>Possible fix: AI-made picture</span></div></div></div>',
         'noproof': '<div class=panel style="top:852px"><p style="color:#ff7a3d;font-weight:700;font-size:37px;text-align:right">Not proof anything was fixed.</p></div>',
         'film': panel('After a fix', 'Film the item again'),
-        'same': '<div class=panel style="top:270px"><div class="card warn"><b>Same file</b><p>SHA-256 match: caught before any model runs. Result: can\'t tell from this video.</p></div></div>',
-        'change': '<div class=panel style="top:590px"><p style="font-size:40px;color:#f4f4f2;font-weight:650">A real change needs</p><div class=check><em>✓</em>The same object</div><div class=check><em>✓</em>A visible difference</div></div>',
+        'same': '<div class=panel style="top:270px"><div class="card warn"><b>In this demo: the same file again</b><p>Result: can\'t tell from this video. A SHA-256 match catches it before any model runs.</p></div></div>',
+        'change': '<div class=panel style="top:560px"><div class="card src"><b>To show a change, a new video needs</b><p>The same object, and a visible difference.</p></div></div>',
         'rooms': '<div class=full><div class=eye>Tested on known answers · AI-made with Muse Image</div><h2>Three test rooms, hazards placed on purpose</h2></div>'
                  + ''.join(f'<div class=label style="left:{x}px">{t}</div>' for x, t in zip(ROOM_X, ('Living room', "Children's bedroom", 'Kitchen and entrance'))),
         'qa': '<div class=full style="top:760px"><span class=chip style="display:inline-block">Muse Spark checked every view: 18 of 18 passed</span></div>',
