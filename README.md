@@ -4,7 +4,7 @@ Film a room, review visible earthquake-related findings with evidence, read sour
 
 Theme: **Build for Your World**. Built in Istanbul for people preparing their homes for earthquakes.
 
-**Demo video (2:55):** https://youtu.be/5rq5IBgD-AE
+**Demo video (2:32):** https://youtu.be/1TXu7cT5JyQ
 
 **Try it:** [open RiskLens](https://selcuksntrk--risklens-web.us-east.modal.run) and **Record a room** or **Upload a video**. To explore without filming your home, open one of the four examples on the home page: the author's real flat in Istanbul or one of three test rooms made with Muse Image. Each report opens instantly without new model calls; **Replay the analysis** plays back the recorded run, and **Run it again live** starts a new Meta model run (outcomes and latency vary). **How it works** explains each model, the limits and privacy.
 
@@ -121,7 +121,7 @@ Context for the problem: a study of New Zealand commercial buildings during the 
 
 `python3 scripts/build_release.py` derives one release ID from the application sources and lockfiles, builds the frontend with it, and writes `VERSION` and `release.json`. The backend health endpoint returns that version and supported report schema. [Release runbook](docs/RELEASE.md) covers clean installation, deployment, negative access checks and rollback without deleting user data.
 
-[Demo storyboard and submission checklist](docs/SUBMISSION.md) routes to the delivery package: a real recording of the author's home (personal photos blurred, audio removed, never committed) opens the video; the synthetic sample covers comparison and measurement. The final video is at https://youtu.be/5rq5IBgD-AE. Physical-phone review and submission confirmation remain pending. The open-weight auditor, expert labels, advanced re-identification, revocable sharing and volunteer pilot are **future work**, gated by evidence in [pilot protocol](docs/PILOT.md).
+[Demo storyboard and submission checklist](docs/SUBMISSION.md) routes to the delivery package: a real recording of the author's home (personal photos blurred, audio removed, never committed) opens the video; the synthetic sample covers comparison and measurement. The final video is at https://youtu.be/1TXu7cT5JyQ. Physical-phone review and submission confirmation remain pending. The open-weight auditor, expert labels, advanced re-identification, revocable sharing and volunteer pilot are **future work**, gated by evidence in [pilot protocol](docs/PILOT.md).
 
 ## Event work and third-party material
 
@@ -139,6 +139,6 @@ Built during the hackathon (all of `backend/`, `frontend/src/`, `deploy/`, `eval
 - Licensed synthetic example packaging, synthetic development-regression runner/summary (Nov 3), and headless-Chrome visual QA and demo-footage recorders (`scripts/cdp.py`, `scripts/visual_qa.py`, `scripts/record_demo.py`, `scripts/record_own_video.py`, using the locally installed Google Chrome).
 - User-first interface (Nov 3): record/upload on the home screen, sample one tap away, token-based light/dark design system; duration-based keyframe sampling; cache headers that keep Safari from loading stale builds.
 
-The SAM request grammar follows Meta's Model Cookbook (MIT, © Meta Platforms, Inc.). The frontend started from the Vite React/TypeScript template. Dependencies include React/Vite (MIT), openai (Apache-2.0), Pillow (MIT-CMU), FastAPI (MIT), uvicorn/websockets (BSD), and python-multipart (Apache-2.0). ffmpeg is an external program; its build has its own LGPL/GPL licensing. FEMA source excerpts, Hypersim evaluation assets and the sample videos have separate notices in [DATA_LICENSES.md](DATA_LICENSES.md).
+The SAM request grammar follows Meta's Model Cookbook (MIT, © Meta Platforms, Inc.). The frontend started from the Vite React/TypeScript template. Dependencies include React/Vite (MIT), openai (Apache-2.0), Pillow (MIT-CMU), FastAPI (MIT), uvicorn/websockets (BSD), and python-multipart (Apache-2.0). ffmpeg is an external program; its build has its own LGPL/GPL licensing. The demo video's captions and titles use Archivo and IBM Plex Mono (SIL OFL); neither ships with the app. FEMA source excerpts, Hypersim evaluation assets and the sample videos have separate notices in [DATA_LICENSES.md](DATA_LICENSES.md).
 
 Application code: MIT, see [LICENSE](LICENSE). Hypersim-derived assets are CC BY-SA 3.0, not relicensed under the application license.

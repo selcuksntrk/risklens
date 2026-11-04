@@ -10,7 +10,7 @@ Paste-ready text for the Cerebral Valley submission form. Check each field's len
 - **Team:** Selçuk (solo). Use the platform's participant identity.
 - **Live product:** https://selcuksntrk--risklens-web.us-east.modal.run
 - **Source code:** https://github.com/selcuksntrk/risklens
-- **Demo video:** https://youtu.be/5rq5IBgD-AE
+- **Demo video:** https://youtu.be/1TXu7cT5JyQ
 - **Evaluation notes:** https://github.com/selcuksntrk/risklens/blob/main/docs/EVALUATION.md
 
 ## Tagline
