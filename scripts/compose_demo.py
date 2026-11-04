@@ -95,7 +95,7 @@ def build_layers(report):
                f'<div class=fig><img src="file://{A}/fixcards/h1.jpg" style="height:640px"><span>Possible fix: AI-made picture</span></div></div></div>',
         'noproof': '<div class=panel style="top:852px"><p style="color:#ff7a3d;font-weight:700;font-size:37px;text-align:right">Not proof anything was fixed.</p></div>',
         'film': panel('After a fix', 'Film the item again'),
-        'same': '<div class=panel style="top:270px"><div class="card warn"><b>In this demo: the same file again</b><p>Result: can\'t tell from this video. A SHA-256 match catches it before any model runs.</p></div></div>',
+        'same': '<div class=panel style="top:270px"><div class="card warn"><b>The same video again?</b><p>A SHA-256 check catches it before any model runs.</p></div></div>',
         'change': '<div class=panel style="top:560px"><div class="card src"><b>To show a change, a new video needs</b><p>The same object, and a visible difference.</p></div></div>',
         'rooms': '<div class=full><div class=eye>Tested on known answers · AI-made with Muse Image</div><h2>Three test rooms, hazards placed on purpose</h2></div>'
                  + ''.join(f'<div class=label style="left:{x}px">{t}</div>' for x, t in zip(ROOM_X, ('Living room', "Children's bedroom", 'Kitchen and entrance'))),
@@ -198,7 +198,8 @@ def main(out, until=None):
         (at(2, 'Then SAM'), at(2, 'So every'), allh, 24.0, 29.6, WIDE),
         (at(2, 'So every'), at(2, 'Then Spark'), video('run'), 38.0, 56.0, PHONE), (at(2, 'Then Spark'), at(2, 'Last'), video('run'), 56.0, 96.0, PHONE), (at(2, 'Last'), gap(t3), video('run'), 96.0, 126.0, PHONE),
         (t4['start'], at(3, 'Each next'), video('finding'), 7.5, 15.0, PHONE), (at(3, 'Each next'), at(3, 'Muse Image'), video('finding'), 15.5, 22.0, PHONE), (at(3, 'Muse Image'), gap(t4), video('finding'), 33.0, 44.0, PHONE),
-        (t5['start'], at(4, 'The same'), video('verify'), 5.0, 9.8, PHONE), (at(4, 'The same'), at(4, 'A real change'), video('verify'), 9.8, 16.0, PHONE), (at(4, 'A real change'), gap(t5), video('verify'), 17.5, 25.0, PHONE),
+        (t5['start'], at(4, 'The same'), video('verify'), 5.5, 9.0, PHONE), (at(4, 'The same'), at(4, 'A real change'), video('verify'), 9.0, 9.4, PHONE),
+        (at(4, 'A real change'), gap(t5), video('verify'), 10.12, 10.15, PHONE),   # holds on "Comparing…", before the result screen
         (t7['start'], at(6, 'and it helps'), video('finding'), .5, 6.5, PHONE), (at(6, 'and it helps'), t7['end'] + .6, focus, 29.2, 31.4, WIDE),
     ]
     def text(name, a, b): return (name, a, b)
