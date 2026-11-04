@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import { go, takePendingUpload, VIDEO_ACCEPT } from './routing'
-import { uploadScan, uploadVerify, getScan, fileUrl, newUploadKey, ensureSession, type Hazard } from './api'
+import { uploadScan, uploadVerify, getScan, fileUrl, newUploadKey, ensureSession, hasRequest, type Hazard } from './api'
 import { startVoice, type VoiceSession } from './voice'
 import { Fold } from './components'
 
@@ -185,7 +185,7 @@ export default function Capture({ verifyScanId, hazardId }: { verifyScanId?: str
     <header className="top"><a className="back" href={`#/${verifyScanId ? `scan/${verifyScanId}` : ''}`}>‹ Back</a></header>
     <h1>{verifyScanId ? (target ? `Film the ${target.object.toLowerCase()} again` : 'Film the room again') : selected ? 'Does the video look right?' : 'Film one room'}</h1>
     {target && <div className="target"><img src={fileUrl(verifyScanId!, target.evidence_image)} alt="" />
-      <p>{target.next_view_request || 'Show the item, how it is fixed or where it now stands, and a bit of what is around it.'}</p></div>}
+      <p>{hasRequest(target.next_view_request) ? target.next_view_request : 'Show the item, how it is fixed or where it now stands, and a bit of what is around it.'}</p></div>}
     {verifyScanId && !target && <p className="muted">After you’ve fixed something, film it again. We compare the new video with the first one and tell you what visibly changed.</p>}
     {!selected && !verifyScanId && phase === 'ready' && <ul className="tips">
       <li>Start at the door and turn slowly, for 30–60 seconds.</li>
