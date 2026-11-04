@@ -24,7 +24,7 @@ upload a video.
 
 6
 00:00:28,880 --> 00:00:34,700
-Or try one of four samples, no filming
+Or try one of four examples, no filming
 needed.
 
 7
@@ -79,45 +79,46 @@ recommendation, always labelled as
 AI-generated, never as proof.
 
 17
-00:01:45,300 --> 00:01:50,476
-After a fix, you re-film the item.
+00:01:45,300 --> 00:01:51,041
+After a fix, you film the item again.
 
 18
-00:01:50,476 --> 00:01:57,130
+00:01:51,041 --> 00:01:57,500
 Uploading the same video again cannot
 prove anything changed.
 
 19
-00:01:57,130 --> 00:02:04,524
+00:01:57,500 --> 00:02:04,676
 That check is a file hash, before any
 model call.
 
 20
-00:02:04,524 --> 00:02:09,700
+00:02:04,676 --> 00:02:09,700
 Real before-and-after validation is still
 future work.
 
 21
-00:02:10,300 --> 00:02:16,530
+00:02:10,300 --> 00:02:16,276
 I also designed three Istanbul rooms with
 hazards placed on purpose, made
 
 22
-00:02:16,530 --> 00:02:21,721
+00:02:16,276 --> 00:02:21,255
 with Muse Image and checked view by view
 with Spark.
 
 23
-00:02:21,721 --> 00:02:27,951
+00:02:21,255 --> 00:02:27,231
 RiskLens matched five of five, four of
 four, and four of five,
 
 24
-00:02:27,951 --> 00:02:31,585
-missing a blocked path to the door.
+00:02:27,231 --> 00:02:31,712
+missing boxes that narrow the path to the
+door.
 
 25
-00:02:31,585 --> 00:02:34,700
+00:02:31,712 --> 00:02:34,700
 Designed scenes, not an accuracy claim.
 
 26

@@ -16,7 +16,7 @@ This is my bedroom in Istanbul. RiskLens flagged the wardrobe with suitcases on 
 
 ## 02 · 00:15–00:35 · Built for my world
 
-In Istanbul, earthquake preparation includes what is inside our homes. Film one room for under a minute, or upload a video. Or try one of four samples, no filming needed.
+In Istanbul, earthquake preparation includes what is inside our homes. Film one room for under a minute, or upload a video. Or try one of four examples, no filming needed.
 
 ## 03 · 00:35–01:15 · Three Meta models, each with one job
 
@@ -28,11 +28,11 @@ Every finding shows what the video shows and what is still unknown. Each next st
 
 ## 05 · 01:45–02:10 · A change needs new evidence
 
-After a fix, you re-film the item. Uploading the same video again cannot prove anything changed. That check is a file hash, before any model call. Real before-and-after validation is still future work.
+After a fix, you film the item again. Uploading the same video again cannot prove anything changed. That check is a file hash, before any model call. Real before-and-after validation is still future work.
 
 ## 06 · 02:10–02:35 · Testing on known content
 
-I also designed three Istanbul rooms with hazards placed on purpose, made with Muse Image and checked view by view with Spark. RiskLens matched five of five, four of four, and four of five, missing a blocked path to the door. Designed scenes, not an accuracy claim.
+I also designed three Istanbul rooms with hazards placed on purpose, made with Muse Image and checked view by view with Spark. RiskLens matched five of five, four of four, and four of five, missing boxes that narrow the path to the door. Designed scenes, not an accuracy claim.
 
 ## 07 · 02:35–02:55 · Close
 
