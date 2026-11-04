@@ -4,7 +4,7 @@ Film a room, review visible earthquake-related findings with evidence, read sour
 
 Theme: **Build for Your World**. Built in Istanbul for people preparing their homes for earthquakes.
 
-**Demo video (2:32):** https://youtu.be/1TXu7cT5JyQ
+**Demo video (2:32):** https://youtu.be/2tA6bLuztSk
 
 **Try it:** [open RiskLens](https://selcuksntrk--risklens-web.us-east.modal.run) and **Record a room** or **Upload a video**. To explore without filming your home, open one of the four examples on the home page: the author's real flat in Istanbul or one of three test rooms made with Muse Image. Each report opens instantly without new model calls; **Replay the analysis** plays back the recorded run, and **Run it again live** starts a new Meta model run (outcomes and latency vary). **How it works** explains each model, the limits and privacy.
 
@@ -121,7 +121,7 @@ Context for the problem: a study of New Zealand commercial buildings during the 
 
 `python3 scripts/build_release.py` derives one release ID from the application sources and lockfiles, builds the frontend with it, and writes `VERSION` and `release.json`. The backend health endpoint returns that version and supported report schema. [Release runbook](docs/RELEASE.md) covers clean installation, deployment, negative access checks and rollback without deleting user data.
 
-[Demo storyboard and submission checklist](docs/SUBMISSION.md) routes to the delivery package: a real recording of the author's home (personal photos blurred, audio removed, never committed) opens the video; the synthetic sample covers comparison and measurement. The final video is at https://youtu.be/1TXu7cT5JyQ. Physical-phone review and submission confirmation remain pending. The open-weight auditor, expert labels, advanced re-identification, revocable sharing and volunteer pilot are **future work**, gated by evidence in [pilot protocol](docs/PILOT.md).
+[Demo storyboard and submission checklist](docs/SUBMISSION.md) routes to the delivery package: a real recording of the author's home (personal photos blurred, audio removed, never committed) opens the video; the synthetic sample covers comparison and measurement. The final video is at https://youtu.be/2tA6bLuztSk. Physical-phone review and submission confirmation remain pending. The open-weight auditor, expert labels, advanced re-identification, revocable sharing and volunteer pilot are **future work**, gated by evidence in [pilot protocol](docs/PILOT.md).
 
 ## Event work and third-party material
 
