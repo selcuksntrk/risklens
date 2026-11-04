@@ -21,7 +21,34 @@ def duration(path):
     return float(json.loads(data)['format']['duration'])
 
 
-def assemble(folder, voice, captions, out):
+def burn_captions(picture, captions, out, dst):
+    """Burn single-line captions into a band under the footage labels (label box ends at y=1032).
+    Uses rendered PNGs because this ffmpeg build has no subtitles/drawtext filter. Needs Pillow."""
+    from PIL import Image, ImageDraw, ImageFont
+    font=ImageFont.truetype('/System/Library/Fonts/Helvetica.ttc',36)
+    band=(1920,46); folder=out/'caption-frames'; folder.mkdir()
+    blank=folder/'blank.png'; Image.new('RGBA',band,(0,0,0,0)).save(blank)
+    def secs(h,m,s,ms): return int(h)*3600+int(m)*60+int(s)+int(ms)/1000
+    cues=re.findall(r'(\d\d):(\d\d):(\d\d),(\d\d\d) --> (\d\d):(\d\d):(\d\d),(\d\d\d)\n(.+?)(?:\n\n|\n*\Z)',captions.read_text(),re.S)
+    lines,t=[],0.0
+    for i,c in enumerate(cues):
+        a,b,text=secs(*c[:4]),secs(*c[4:8]),' '.join(c[8].split())
+        img=Image.new('RGBA',band,(0,0,0,0));d=ImageDraw.Draw(img);w=d.textlength(text,font=font)
+        if w>1840: raise ValueError(f'Caption too wide for one line: {text}')
+        x=(1920-w)/2
+        d.rounded_rectangle((x-18,0,x+w+18,45),10,fill=(0,0,0,215));d.text((x,3),text,font=font,fill=(255,255,255,255))
+        png=folder/f'{i:03d}.png';img.save(png)
+        if a>t: lines+= [f"file '{blank.name}'",f'duration {a-t:.3f}']
+        lines+=[f"file '{png.name}'",f'duration {b-a:.3f}'];t=b
+    lines+=[f"file '{blank.name}'",f'duration {max(175-t,.1):.3f}',f"file '{blank.name}'"]
+    listing=folder/'captions.ffconcat';listing.write_text('ffconcat version 1.0\n'+'\n'.join(lines)+'\n')
+    subprocess.run(['ffmpeg','-hide_banner','-loglevel','error','-i',str(picture),'-f','concat','-safe','0','-i',str(listing),
+                    '-filter_complex','[1:v]fps=30,format=rgba[c];[0:v][c]overlay=0:1033:shortest=1,format=yuv420p',
+                    '-c:v','libx264','-crf','18',str(dst)],check=True)
+    shutil.rmtree(folder)
+
+
+def assemble(folder, voice, captions, out, burn=False):
     clips=[folder/f'{i:02d}.mp4' for i in range(1,8)]
     for file in [*clips,voice,captions]:
         if not file.is_file(): raise ValueError(f'Missing required actual recording/captions: {file.name}')
@@ -48,9 +75,15 @@ def assemble(folder, voice, captions, out):
     subprocess.run(['ffmpeg','-hide_banner','-loglevel','error','-f','concat','-safe','1','-i',str(listing),
                     '-c','copy',str(joined)],check=True)
     exported=out/'risklens-review.mp4'
-    subprocess.run(['ffmpeg','-hide_banner','-loglevel','error','-i',str(joined),'-i',str(voice),'-i',str(captions),
-                    '-map','0:v:0','-map','1:a:0','-map','2:0','-c:v','copy','-c:a','aac','-b:a','192k',
-                    '-af','loudnorm=I=-16:TP=-1.5:LRA=11,apad','-c:s','mov_text','-metadata:s:s:0','language=eng',
+    if burn:
+        burned=out/'picture-captioned.mp4';burn_captions(joined,captions,out,burned)
+        subs_in,subs_out=[],[]
+        joined=burned
+    else:
+        subs_in,subs_out=['-i',str(captions)],['-map','2:0','-c:s','mov_text','-metadata:s:s:0','language=eng']
+    subprocess.run(['ffmpeg','-hide_banner','-loglevel','error','-i',str(joined),'-i',str(voice),*subs_in,
+                    '-map','0:v:0','-map','1:a:0','-c:v','copy','-c:a','aac','-b:a','192k',
+                    '-af','loudnorm=I=-16:TP=-1.5:LRA=11,apad',*subs_out,
                     '-t','175','-movflags','+faststart',str(exported)],check=True)
     shutil.copyfile(captions,out/'risklens.srt')
     actual=duration(exported)
@@ -85,7 +118,8 @@ if __name__=='__main__':
     p.add_argument('--clips',type=Path,default=ROOT/'docs/submission/private/footage-v3')
     p.add_argument('--output',type=Path,default=ROOT/'docs/submission/output/review-1')
     p.add_argument('--silent-preview',action='store_true',help='rehearsal cut without voice; draft captions allowed')
+    p.add_argument('--burn-captions',action='store_true',help='burn captions into the picture instead of a soft track (needs Pillow)')
     args=p.parse_args()
     if args.silent_preview: silent_preview(args.clips,args.captions,args.output)
     elif not args.voice: p.error('--voice is required for a review export')
-    else: assemble(args.clips,args.voice,args.captions,args.output)
+    else: assemble(args.clips,args.voice,args.captions,args.output,args.burn_captions)
