@@ -1,5 +1,5 @@
 """Draw real SAM 3.1 masks from saved API output onto the source walkthrough (nothing is hand-placed).
-Inputs: hero/<concept>.txt = raw SAM text for a 15 fps, 540x960 proxy of the source. Output: 552x980, 30 fps.
+Inputs: hero/<concept>.txt = raw SAM text for a 15 fps, 540x960 proxy of the source. Output: 608x1080, 30 fps.
 Usage: uv run --no-project --with meta-sam-parser --with numpy --with pillow python scripts/render_sam_hero.py <hero dir> <source.mp4> <out.mp4> concept[,concept]
 """
 import re
@@ -11,10 +11,10 @@ import meta_sam_parser as sam
 import numpy as np
 from PIL import Image, ImageDraw, ImageFont
 
-W, H = 552, 980
-COLORS = {'wardrobe': (255, 122, 61), 'suitcase': (64, 196, 255), 'bed': (120, 224, 140)}
+W, H = 608, 1080
+COLORS = {'wardrobe': (255, 214, 10), 'suitcase': (255, 59, 48), 'bed': (255, 255, 255)}
 TOK = re.compile(r"(?m)^<(\d+)f>|(?:^|(?<=,)|(?<=f>))(\d+)<\|box;([^|]*)\|><\|mask;x=(\d+);y=(\d+);data=(\d+),(\d+),(!.*?)\|>")
-FONT = ImageFont.truetype('/System/Library/Fonts/Helvetica.ttc', 22)
+FONT = ImageFont.truetype('/System/Library/Fonts/Menlo.ttc', 22, index=1)
 
 
 def load(path):
@@ -57,7 +57,7 @@ def main(hero, source, output, concepts):
         frame = Image.fromarray(img.astype(np.uint8)); draw = ImageDraw.Draw(frame)
         for name, x, y, color in labels:
             tw = draw.textlength(name, font=FONT); x = min(x + 8, W - tw - 24); y = max(y + 8, 8)
-            draw.rounded_rectangle((x, y, x + tw + 16, y + 30), 6, fill=color); draw.text((x + 8, y + 3), name, font=FONT, fill=(15, 15, 15))
+            draw.rectangle((x, y, x + tw + 16, y + 32), fill=color); draw.text((x + 8, y + 3), name.upper(), font=FONT, fill=(17, 17, 17))
         write.stdin.write(frame.tobytes()); n += 1
     write.stdin.close(); write.wait(); read.wait(); print(output, n, 'frames')
 
