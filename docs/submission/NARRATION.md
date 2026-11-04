@@ -1,12 +1,12 @@
 # English narration and screen-recording sequence (Nov 4, simplified light release)
 
-Target: 2:55. No face camera or music. Record two complete voice takes. Read naturally; do not rush technical names. Pronounce SAM as “Sam”, FEMA as “fee-muh”, Muse as “mews”, E-74 as “E seventy-four”.
+No face camera or music. Read naturally; do not rush technical names. Pronounce SAM as “Sam”, FEMA as “fee-muh”, Muse as “mews”, E-74 as “E seventy-four”.
 
-Footage is recorded from the live app by `scripts/record_demo.py` into `private/footage-v3/01–07.mp4` (segment lengths 15/20/40/30/25/25/20 s, as `scripts/assemble_demo.py` expects). See `private/footage-v3/recording-log.json` for scan IDs, times and costs.
+The final cut is built by `scripts/compose_demo.py` (2:32): phone-viewport footage on the left, the run's real data on the right, captions from the voice take. Footage comes from `scripts/record_phone.py` in `private/footage-v5/`; `recording-log.json` holds scan IDs, times and costs.
 
-- **01:** the packaged report of Selçuk's real home recording (blurred, no audio), labelled on every frame.
-- **03:** a genuinely new live run of the designed children's-bedroom sample. The wait is shortened, with a label stating the actual duration.
-- **06:** the designed-scenes card and the living-room answer key. Every matched count is one designed scene, author-matched; never call it accuracy.
+- **Live run:** the real-home example run through a local server on the same release (`v2-f99acb5fa923`) with the same Meta models, because the deployed app's per-network daily scan limit had been reached. Complete, 3 findings, 114 s, $0.27.
+- **Masks in the opening and the tracking beat:** real SAM 3.1 output on the same video, from a separate 15 fps run (`private/hero/`, drawn by `scripts/render_sam_hero.py`). Nothing is hand-placed.
+- **Test rooms:** every matched count is one designed scene, author-matched; never call it accuracy.
 
 Check every sentence against the selected footage before export.
 
