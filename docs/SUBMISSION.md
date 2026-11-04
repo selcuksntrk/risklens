@@ -6,7 +6,7 @@ Internal target: **November 4, 2026, 22:00 Istanbul / 14:00 ET**. Published dead
 
 ## Delivery package
 
-- [Recording script, 2:55 storyboard and credits](submission/NARRATION.md)
+- [Recording script, storyboard and credits](submission/NARRATION.md)
 - [Form-ready project copy](submission/FORM.md)
 - [Judge questions](submission/JUDGE-QA.md)
 - [Rules and rights record](submission/RIGHTS.md)
