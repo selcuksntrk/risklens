@@ -20,7 +20,7 @@ RiskLens is for people preparing the rooms they live in. It needs a phone and ab
 
 ## Try it in a minute
 
-Open the [live product](https://selcuksntrk--risklens-web.us-east.modal.run). The first visit after an idle period can take 10–15 seconds while the server starts.
+Open the [live product](https://selcuksntrk--risklens-web.us-east.modal.run). The server stays on through judging, so there is no cold start.
 
 1. Open one of the four examples on the home page: the author's real flat in Istanbul, or one of three test rooms made with Muse Image. Each report opens without new model calls.
 2. Open a finding to see its frame, what is still unknown, the FEMA-linked steps and an AI-made picture of a possible fix.

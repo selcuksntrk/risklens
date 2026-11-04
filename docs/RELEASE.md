@@ -16,3 +16,5 @@ Operational checks during judging: health/version, job counts, terminal error co
 Raw cleanup is startup/hourly while active. Moving it to an independent scheduler and introducing a persistent multi-worker queue are pilot work. Local administrative recovery: `python -m app.cli claim-legacy LEGACY_ID --owner-from-scan KNOWN_OWNED_SCAN_ID`; only an operator with filesystem access can run this. It never grants web ownership by knowledge of a scan ID.
 
 Durability: atomic snapshots fsync before rename; the Modal deployment binds persistence to `Volume.commit()` before model dispatch and after deletion. This is deliberate: [Modal documents explicit commits and periodic background commits](https://modal.com/docs/guide/volumes). A failed commit fails the operation instead of claiming a durable accepted job.
+
+Judging window: `RISKLENS_MIN_CONTAINERS=1 modal deploy deploy/modal_app.py` keeps one container warm with the same release ID. After the final, `modal deploy deploy/modal_app.py` returns to scale-to-zero.
