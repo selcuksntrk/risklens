@@ -8,6 +8,8 @@ The final cut is built by `scripts/compose_demo.py` (2:32): phone-viewport foota
 - **Masks in the opening and the tracking beat:** real SAM 3.1 output on the same video, from a separate 15 fps run (`private/hero/`, drawn by `scripts/render_sam_hero.py`). Nothing is hand-placed.
 - **Test rooms:** every matched count is one designed scene, author-matched; never call it accuracy.
 
+Voice in the final cut: the second take, cleaned with WPE dereverberation (nara_wpe), then a gate, EQ, de-esser and light compression in ffmpeg (`private/voice-natural.wav`). No words were changed.
+
 Check every sentence against the selected footage before export.
 
 ## 01 · 00:00–00:15 · A real finding in my home

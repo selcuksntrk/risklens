@@ -98,11 +98,11 @@ def build_layers(report):
         'survey': col('<span class="tape y">MUSE SPARK 1.3 / SURVEYOR</span><div class="H yellow">What it can see. What needs checking.</div><div class="rows white">'
                       + row('CAN SEE', 'Two large suitcases on top of the wardrobe. No rail, lip or strap visible.') + row('NEEDS<br>CHECKING', 'Tall white wardrobe: wall fixing not visible.') + '</div>'),
         'fema': col('<span class="tape y">MUSE SPARK 1.3 / FIX PLANNER</span><div class="H yellow">Reads FEMA E-74, then writes the next steps</div><div class="rows white">'
-                    + row('§6.5.6.1', 'Shelf-mounted items<br><span class=mono>P. 6-566–6-571</span>') + row('§6.5.2.1', 'Bookshelves<br><span class=mono>P. 6-501–6-507</span>')
-                    + row('§6.5.5.3', 'Miscellaneous furniture and fixtures<br><span class=mono>P. 6-561–6-565</span>') + '</div>'),
+                    + row('6.5.6.1', 'Shelf-mounted items<br><span class=mono>P. 6-566–6-571</span>') + row('6.5.2.1', 'Bookshelves<br><span class=mono>P. 6-501–6-507</span>')
+                    + row('6.5.5.3', 'Miscellaneous furniture and fixtures<br><span class=mono>P. 6-561–6-565</span>') + '</div>'),
         'find': col('<span class=tape>ONE FINDING</span><div class="H xl">Blue suitcase on top of the wardrobe</div><div class=b>What the video shows, and what is still unknown.</div>'),
         'todo': col('<span class=tape>WHAT TO DO</span><div class="H m">Move both large suitcases off the wardrobe</div><div class=rows>'
-                    + row('FEMA E-74<br>§6.5.6.1', 'Linked to the section the model read.<br><span class=mono>P. 6-566–6-571</span>') + row('ESTIMATE', 'Under $20, about 15 minutes.') + '</div>'),
+                    + row('FEMA E-74<br>6.5.6.1', 'Linked to the section the model read.<br><span class=mono>P. 6-566–6-571</span>') + row('ESTIMATE', 'Under $20, about 15 minutes.') + '</div>'),
         'nosrc': col('<div class=rows style="margin:0">' + row('NO SOURCE', '<span class=red style="font-weight:700">No steps.</span> Enforced in the interface and the endpoint.') + '</div>', 'top:640px'),
         'img': f'<div style="position:absolute;left:540px;top:0;height:{pair_h}px;width:1380px;display:flex;justify-content:flex-end;gap:0">'
                f'<div style="position:relative;height:100%"><img src="file://{A}/evidence/h1.jpg" style="height:100%;display:block"><span class=tape style="position:absolute;left:0;top:0;margin:0">MY VIDEO</span></div>'
