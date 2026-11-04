@@ -16,9 +16,9 @@ Do not mark pending checks complete without evidence.
 | Caption alignment and final 1080p MP4 | Done Nov 4: `output/review-7/risklens-demo.mp4` (152 s, captions in the picture, cleaned voice, `scripts/compose_demo.py`) |
 | iPhone/Safari model, iOS, release | Pending |
 | iPhone test outcomes | Pending |
-| Current detailed rules / form declarations | Pending authenticated review |
+| Current detailed rules / form declarations | Completed by Selçuk on the platform form, Nov 4 |
 | Login-free video URL | https://youtu.be/2tA6bLuztSk (unlisted; opens without login, 152 s, 1080p) |
-| Submitted project URL / ID | Pending |
-| Submission confirmation timestamp | Pending |
+| Submitted project URL / ID | Not recorded yet; add it from the platform |
+| Submission confirmation timestamp | Selçuk reported the submission as sent by 2026-11-04 22:50 Istanbul (Nov 4, before the 21:00 ET deadline); no platform confirmation has been saved here |
 
 Final publication sequence: verify release and public branch → finish voice/screens → align captions and export → review on phone → upload and test video link → complete platform fields/declarations → record submission confirmation.

@@ -48,7 +48,7 @@ Costs are the application's recorded usage, not a provider invoice.
 1. Physical **iPhone/Safari** check with the supplied synthetic file ([checklist](submission/SELCUK.md)). Android, camera recording and microphone remain untested and are not claimed.
 2. Final video uploaded: https://youtu.be/2tA6bLuztSk.
 3. Human review of the synthetic observations if any correctness number is to be published (otherwise publish none).
-4. Authenticated rules/form review, login-free video URL, platform submission and confirmation record in [HANDOFF](submission/HANDOFF.md).
+4. Done Nov 4: platform submission sent by Selçuk ([HANDOFF](submission/HANDOFF.md)). Still open: X post for Most Viral.
 
 Real-room A0/B0–B4, the 3–5-room evaluation, expert labels, the open-weight auditor and the volunteer pilot are future work in [PILOT.md](PILOT.md) and [ACCEPTANCE.md](ACCEPTANCE.md); none is listed as completed.
 
