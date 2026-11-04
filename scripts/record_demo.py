@@ -193,7 +193,7 @@ async def main():
     labelled(OUT / '01-raw.mp4', OUT / '01.mp4', "Real recording · Selçuk's home, Istanbul · personal photos blurred")
     raw = OUT / 'raw-run.mp4'
     pre = OUT / '03-pre.mp4'; cut(raw, pre, max(0, t_click - 3), t_click + 6)
-    wait = (t_click + 6, t_done + 1); speed = max(1.0, (wait[1] - wait[0]) / 24.0)
+    wait = (t_click + 6, t_done + 1); speed = max(1.0, (wait[1] - wait[0]) / 28.0)
     cut(raw, OUT / '03a.mp4', *wait, speed=speed, label=f'Live run · waiting shortened {speed:.1f}× · actual {t_done - t_click:.0f} s')
     cut(raw, OUT / '03b.mp4', t_done + 1, t_end)
     concat([pre, OUT / '03a.mp4', OUT / '03b.mp4'], OUT / '03.mp4')

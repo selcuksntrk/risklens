@@ -1,6 +1,6 @@
 # Implementation and validation status — November 4, 2026
 
-Current release: **v2-0d61ff9c7dc7** (Nov 4, simplified notebook UI, light theme only; previous: v2-f04011cd606b, v2-c3a70a9e1077, v2-7cfff1fcf71c). [Live application](https://selcuksntrk--risklens-web.us-east.modal.run) · [health/version](https://selcuksntrk--risklens-web.us-east.modal.run/api/health). The homepage footer shows the same release ID.
+Current release: **v2-f99acb5fa923** (Nov 4, simplified notebook UI, light theme only; earlier: v2-a195e628947c, v2-0d61ff9c7dc7, v2-f04011cd606b, v2-c3a70a9e1077, v2-7cfff1fcf71c). [Live application](https://selcuksntrk--risklens-web.us-east.modal.run) · [health/version](https://selcuksntrk--risklens-web.us-east.modal.run/api/health). The homepage footer shows the same release ID.
 
 This is a tested software prototype, measured on licensed synthetic scenes and demonstrated on one real recording of the author's home. It is **not** an expert safety assessment, a real-home accuracy result or a demonstration of a successful physical precaution.
 
@@ -17,6 +17,9 @@ This is a tested software prototype, measured on licensed synthetic scenes and d
 | G — Nov 3 delivery | Synthetic development regression ([results](EVALUATION.md)); judge-first homepage; model-generated labelling; visual QA fixes; headless-Chrome QA and footage recorder |
 
 ## Recorded checks (November 4)
+
+- **`v2-f99acb5fa923`** adds browser caching for public example images and recorded runs (one day; private scans stay `no-store`, tested) and removes the model's placeholder "none" from the film-again screen. 73 backend + 14 frontend tests pass. The server still scales to zero: the first visit after 20 idle minutes waits for a cold start (10–15 s observed), by the owner's choice.
+- **Final footage** recorded on this release (`private/footage-v3/`): new live run of the children's-room test room, complete, 5 findings, 136.3 s, $0.329, all four planted hazards reported; Muse Image picture shown; same-file guard returned "can't tell" with no verifier model call. Live-run time varies (136–273 s across the Nov 4 recordings).
 
 - **Simplified UI** deployed as `v2-f04011cd606b`, then light theme only as `v2-0d61ff9c7dc7` (dark palette removed; light `color-scheme`, theme colour and manifest): plain-language copy, report as summary + numbered list with one finding per screen, light analysis screen, About page for models/limits/privacy/examples, home process section built from the real run. 14 frontend + 72 backend tests; visual QA (emulated) at 1440/390/360 in light and dark: no page overflow, no text below 13 px. Release check passes ([machine-readable](release-check-2026-11-04.json)).
 
