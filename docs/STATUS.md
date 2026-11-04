@@ -1,5 +1,7 @@
 # Implementation and validation status — November 4, 2026
 
+**Submitted November 4, 2026.** Final video: https://youtu.be/2tA6bLuztSk
+
 Current release: **v2-f99acb5fa923** (Nov 4, simplified notebook UI, light theme only; earlier: v2-a195e628947c, v2-0d61ff9c7dc7, v2-f04011cd606b, v2-c3a70a9e1077, v2-7cfff1fcf71c). [Live application](https://selcuksntrk--risklens-web.us-east.modal.run) · [health/version](https://selcuksntrk--risklens-web.us-east.modal.run/api/health). The homepage footer shows the same release ID.
 
 This is a tested software prototype, measured on licensed synthetic scenes and demonstrated on one real recording of the author's home. It is **not** an expert safety assessment, a real-home accuracy result or a demonstration of a successful physical precaution.
@@ -19,7 +21,7 @@ This is a tested software prototype, measured on licensed synthetic scenes and d
 ## Recorded checks (November 4)
 
 - **`v2-f99acb5fa923`** adds browser caching for public example images and recorded runs (one day; private scans stay `no-store`, tested) and removes the model's placeholder "none" from the film-again screen. 73 backend + 14 frontend tests pass. The server still scales to zero: the first visit after 20 idle minutes waits for a cold start (10–15 s observed), by the owner's choice.
-- **Final footage** recorded on this release (`private/footage-v3/`): new live run of the children's-room test room, complete, 5 findings, 136.3 s, $0.329, all four planted hazards reported; Muse Image picture shown; same-file guard returned "can't tell" with no verifier model call. Live-run time varies (136–273 s across the Nov 4 recordings).
+- **Final video:** phone-viewport footage on this release of a new run of the real-home example, through a local server because the deployed app's per-network daily scan limit had been reached: complete, 3 findings, 114 s, $0.27, Muse Image picture shown. An earlier live run of the children's-room test room on the deployed app: complete, 5 findings, 136.3 s, $0.329, all four planted hazards reported. Live-run time varies (100–273 s across recordings).
 
 - **Simplified UI** deployed as `v2-f04011cd606b`, then light theme only as `v2-0d61ff9c7dc7` (dark palette removed; light `color-scheme`, theme colour and manifest): plain-language copy, report as summary + numbered list with one finding per screen, light analysis screen, About page for models/limits/privacy/examples, home process section built from the real run. 14 frontend + 72 backend tests; visual QA (emulated) at 1440/390/360 in light and dark: no page overflow, no text below 13 px. Release check passes ([machine-readable](release-check-2026-11-04.json)).
 
@@ -39,16 +41,15 @@ This is a tested software prototype, measured on licensed synthetic scenes and d
 - **Real-home demonstration:** Selçuk's own 37 s apartment walkthrough (audio removed, photos blurred) uploaded through the live app on `v2-60d4a67b448d`: complete, 3 findings (bedroom wardrobe with suitcases on top, blue suitcase, hallway wardrobe), $0.345. Earlier runs, failures and model errors are listed in [quality notes](QUALITY_NOTES.md). Keyframes now scale with clip length (6–12; synthetic eval clips unchanged at 6). Placeholder “Requested view: none” text is hidden.
 - **Synthetic evaluation:** 16 attempts, 0 failures, $2.08 recorded. Spark-only vs full on five scenes, three demo repeats, four negative controls with 0 confirmations. Precision/recall not measured. See [EVALUATION.md](EVALUATION.md).
 - **Visual QA (emulated):** headless Chrome at 1440×900, 390×844 and 360×740 (`scripts/visual_qa.py`): no horizontal overflow on home, completed report or capture. Fixed: desktop evidence column showed a black block, 11 px badges, 23 px disclosure toggles, “Scan hypers” header, duplicated same-file reason. Inline source links remain text-height (inline exception). **Emulation is not a physical iPhone/Safari test.**
-- **Demo footage:** recorded from the live application by `scripts/record_demo.py` (new sample run, same-file comparison, cards generated from committed results). Shortened waits carry a visible label with the actual duration. Files stay in the ignored `docs/submission/private/footage/`.
+- **Demo footage (Nov 3 cut, since replaced):** recorded from the live application (new sample run, same-file comparison, cards generated from committed results). Shortened waits carry a visible label with the actual duration. Files stay in the ignored `docs/submission/private/footage/`.
 
 Costs are the application's recorded usage, not a provider invoice.
 
-## Still required before submission (owner: Selçuk)
+## Still open after submission
 
-1. Physical **iPhone/Safari** check with the supplied synthetic file ([checklist](submission/SELCUK.md)). Android, camera recording and microphone remain untested and are not claimed.
-2. Final video uploaded: https://youtu.be/2tA6bLuztSk.
-3. Human review of the synthetic observations if any correctness number is to be published (otherwise publish none).
-4. Done Nov 4: platform submission sent by Selçuk ([HANDOFF](submission/HANDOFF.md)). Still open: X post for Most Viral.
+1. Physical **iPhone/Safari** check. Android, camera recording and microphone remain untested and are not claimed.
+2. Human review of the synthetic observations before any correctness number is published.
+3. X post for the Most Viral prize, if Selçuk chooses to compete.
 
 Real-room A0/B0–B4, the 3–5-room evaluation, expert labels, the open-weight auditor and the volunteer pilot are future work in [PILOT.md](PILOT.md) and [ACCEPTANCE.md](ACCEPTANCE.md); none is listed as completed.
 

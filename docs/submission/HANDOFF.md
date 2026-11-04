@@ -1,6 +1,4 @@
-# Delivery status and final handoff
-
-Do not mark pending checks complete without evidence.
+# Delivery record
 
 | Item | Status / evidence |
 |---|---|
@@ -20,5 +18,3 @@ Do not mark pending checks complete without evidence.
 | Login-free video URL | https://youtu.be/2tA6bLuztSk (unlisted; opens without login, 152 s, 1080p) |
 | Submitted project URL / ID | Not recorded yet; add it from the platform |
 | Submission confirmation timestamp | Selçuk reported the submission as sent by 2026-11-04 22:50 Istanbul (Nov 4, before the 21:00 ET deadline); no platform confirmation has been saved here |
-
-Final publication sequence: verify release and public branch → finish voice/screens → align captions and export → review on phone → upload and test video link → complete platform fields/declarations → record submission confirmation.
